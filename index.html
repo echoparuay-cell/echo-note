@@ -4,923 +4,355 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Echo Note Starter Kit – เครื่องสอนภาษาดนตรี</title>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --pink: #f472b6;
-    --blue: #38bdf8;
-    --navy: #0f172a;
-    --gold: #fbbf24;
-    --white: #ffffff;
-    --soft: #f8fafc;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--navy);
-    color: var(--white);
-    overflow-x: hidden;
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(244,114,182,0.15) 0%, transparent 70%);
-    top: -100px; left: -100px;
-    animation: pulse 4s ease-in-out infinite;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
-    bottom: -100px; right: -100px;
-    animation: pulse 4s ease-in-out infinite 2s;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.7; }
-    50% { transform: scale(1.2); opacity: 1; }
-  }
-
-  .badge {
-    display: inline-block;
-    background: linear-gradient(90deg, var(--pink), var(--blue));
-    color: white;
-    font-family: 'Kanit', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 6px 20px;
-    border-radius: 99px;
-    letter-spacing: 0.1em;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 1;
-    animation: fadeDown 0.6s ease both;
-  }
-
-  .hero h1 {
-    font-family: 'Kanit', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2.2rem, 7vw, 4.5rem);
-    line-height: 1.1;
-    position: relative;
-    z-index: 1;
-    animation: fadeDown 0.7s ease both 0.1s;
-  }
-
-  .hero h1 span.pink { color: var(--pink); }
-  .hero h1 span.blue { color: var(--blue); }
-
-  .hero-sub {
-    font-size: clamp(1rem, 3vw, 1.3rem);
-    color: #cbd5e1;
-    margin-top: 16px;
-    max-width: 580px;
-    line-height: 1.7;
-    position: relative;
-    z-index: 1;
-    animation: fadeDown 0.8s ease both 0.2s;
-  }
-
-  .product-img-wrap {
-    margin: 40px 0;
-    position: relative;
-    z-index: 1;
-    animation: fadeUp 1s ease both 0.3s;
-  }
-
-  .product-img-wrap img {
-    width: min(560px, 90vw);
-    border-radius: 24px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(244,114,182,0.15);
-  }
-
-  .color-tags {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 16px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .color-tag {
-    padding: 8px 20px;
-    border-radius: 99px;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-
-  .tag-pink { background: rgba(244,114,182,0.2); border: 1.5px solid var(--pink); color: var(--pink); }
-  .tag-blue { background: rgba(56,189,248,0.2); border: 1.5px solid var(--blue); color: var(--blue); }
-
-  .price-hero {
-    font-family: 'Kanit', sans-serif;
-    font-size: clamp(1.6rem, 5vw, 2.8rem);
-    font-weight: 900;
-    color: var(--gold);
-    position: relative; z-index: 1;
-    animation: fadeUp 1s ease both 0.4s;
-  }
-
-  .price-hero small {
-    font-size: 1rem;
-    color: #94a3b8;
-    text-decoration: line-through;
-    margin-right: 12px;
-  }
-
-  .free-ship { font-size: 0.9rem; color: #86efac; margin-top: 6px; }
-
-  .cta-hero {
-    margin-top: 28px;
-    position: relative; z-index: 1;
-    animation: fadeUp 1s ease both 0.5s;
-  }
-
-  .btn-main {
-    display: inline-block;
-    background: linear-gradient(90deg, #ec4899, #38bdf8);
-    color: white;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 700;
-    font-size: 1.2rem;
-    padding: 18px 48px;
-    border-radius: 99px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 8px 32px rgba(236,72,153,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
-    letter-spacing: 0.03em;
-  }
-
-  .btn-main:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 48px rgba(236,72,153,0.5);
-  }
-
-  .timer-strip {
-    margin-top: 20px;
-    font-size: 0.85rem;
-    color: #fca5a5;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-    position: relative; z-index: 1;
-  }
-
-  .dot { width: 8px; height: 8px; background: #f87171; border-radius: 99px; animation: blink 1s infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  /* ─── PAIN SECTION ─── */
-  .pain {
-    background: #0f172a;
-    padding: 80px 20px;
-    text-align: center;
-  }
-
-  .section-label {
-    font-family: 'Kanit', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    color: var(--blue);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .section-title {
-    font-family: 'Kanit', sans-serif;
-    font-weight: 900;
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    line-height: 1.2;
-    max-width: 700px;
-    margin: 0 auto 16px;
-  }
-
-  .pain-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    max-width: 900px;
-    margin: 48px auto 0;
-  }
-
-  .pain-card {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid #1e3a5f;
-    border-radius: 20px;
-    padding: 28px 24px;
-    flex: 1;
-    min-width: 220px;
-    max-width: 260px;
-    text-align: left;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-
-  .pain-card:hover { border-color: var(--blue); transform: translateY(-4px); }
-
-  .pain-icon { font-size: 2.2rem; margin-bottom: 12px; }
-  .pain-card h3 { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
-  .pain-card p { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
-
-  /* ─── SOLUTION ─── */
-  .solution {
-    background: linear-gradient(135deg, #1e1b4b, #0f172a);
-    padding: 80px 20px;
-    text-align: center;
-  }
-
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
-    max-width: 900px;
-    margin: 48px auto 0;
-  }
-
-  .feature-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 28px 20px;
-    transition: background 0.3s, transform 0.3s;
-  }
-
-  .feature-card:hover {
-    background: rgba(56,189,248,0.08);
-    border-color: rgba(56,189,248,0.3);
-    transform: translateY(-4px);
-  }
-
-  .feature-card .icon { font-size: 2.5rem; margin-bottom: 14px; }
-  .feature-card h3 { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
-  .feature-card p { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; }
-
-  /* ─── COLOR SECTION ─── */
-  .color-section {
-    background: #0a0f1e;
-    padding: 80px 20px;
-    text-align: center;
-  }
-
-  .color-options {
-    display: flex;
-    gap: 32px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 48px;
-  }
-
-  .color-option {
-    flex: 1;
-    min-width: 240px;
-    max-width: 320px;
-    border-radius: 24px;
-    padding: 32px 24px;
-    transition: transform 0.3s;
-    cursor: pointer;
-  }
-
-  .color-option:hover { transform: scale(1.03); }
-
-  .opt-pink { background: linear-gradient(135deg, rgba(244,114,182,0.12), rgba(244,114,182,0.03)); border: 2px solid rgba(244,114,182,0.4); }
-  .opt-blue { background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(56,189,248,0.03)); border: 2px solid rgba(56,189,248,0.4); }
-
-  .color-swatch { width: 60px; height: 60px; border-radius: 99px; margin: 0 auto 16px; }
-  .swatch-pink { background: linear-gradient(135deg, #f9a8d4, #ec4899); }
-  .swatch-blue { background: linear-gradient(135deg, #7dd3fc, #0ea5e9); }
-
-  .color-option h3 { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.4rem; }
-  .color-option p { font-size: 0.9rem; color: #94a3b8; margin-top: 8px; }
-
-  /* ─── SOCIAL PROOF ─── */
-  .proof {
-    background: #0f172a;
-    padding: 80px 20px;
-    text-align: center;
-  }
-
-  .stats-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    max-width: 800px;
-    margin: 48px auto 0;
-  }
-
-  .stat-box {
-    flex: 1;
-    min-width: 160px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid #1e3a5f;
-    border-radius: 20px;
-    padding: 28px 20px;
-  }
-
-  .stat-number {
-    font-family: 'Kanit', sans-serif;
-    font-weight: 900;
-    font-size: 2.5rem;
-    background: linear-gradient(90deg, var(--pink), var(--blue));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .stat-label { font-size: 0.9rem; color: #94a3b8; margin-top: 4px; }
-
-  /* ─── TESTIMONIALS ─── */
-  .testimonials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    max-width: 900px;
-    margin: 48px auto 0;
-  }
-
-  .testi-card {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid #1e3a5f;
-    border-radius: 20px;
-    padding: 24px;
-    flex: 1;
-    min-width: 240px;
-    max-width: 280px;
-    text-align: left;
-  }
-
-  .stars { color: var(--gold); margin-bottom: 10px; font-size: 1.1rem; }
-  .testi-text { font-size: 0.92rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px; }
-  .testi-author { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--blue); }
-
-  /* ─── PRICING ─── */
-  .pricing {
-    background: linear-gradient(135deg, #1e1b4b, #0f172a);
-    padding: 80px 20px;
-    text-align: center;
-  }
-
-  .price-card {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    border: 2px solid;
-    border-image: linear-gradient(135deg, var(--pink), var(--blue)) 1;
-    border-radius: 28px;
-    padding: 48px 36px;
-    max-width: 480px;
-    margin: 48px auto 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .price-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--pink), var(--blue));
-  }
-
-  .hot-badge {
-    display: inline-block;
-    background: linear-gradient(90deg, var(--pink), #ef4444);
-    color: white;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 700;
-    padding: 4px 16px;
-    border-radius: 99px;
-    font-size: 0.8rem;
-    margin-bottom: 16px;
-  }
-
-  .price-big {
-    font-family: 'Kanit', sans-serif;
-    font-weight: 900;
-    font-size: 4rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .price-note { color: #94a3b8; font-size: 0.9rem; margin-top: 6px; }
-  .price-old { text-decoration: line-through; color: #64748b; font-size: 1.1rem; }
-
-  .includes {
-    text-align: left;
-    margin: 28px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .inc-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 0.95rem;
-    color: #e2e8f0;
-  }
-
-  .inc-item .check { color: #86efac; font-size: 1.1rem; flex-shrink: 0; }
-
-  /* ─── FAQ ─── */
-  .faq {
-    background: #0a0f1e;
-    padding: 80px 20px;
-  }
-
-  .faq-wrap {
-    max-width: 680px;
-    margin: 48px auto 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .faq-item {
-    background: #1e293b;
-    border: 1px solid #1e3a5f;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .faq-q {
-    padding: 20px 24px;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    transition: color 0.3s;
-  }
-
-  .faq-q:hover { color: var(--blue); }
-
-  .faq-a {
-    padding: 0 24px;
-    max-height: 0;
-    overflow: hidden;
-    font-size: 0.9rem;
-    color: #94a3b8;
-    line-height: 1.7;
-    transition: max-height 0.4s ease, padding 0.3s;
-  }
-
-  .faq-a.open {
-    max-height: 300px;
-    padding: 0 24px 20px;
-  }
-
-  .faq-chevron { transition: transform 0.3s; flex-shrink: 0; }
-  .faq-chevron.open { transform: rotate(180deg); }
-
-  /* ─── FINAL CTA ─── */
-  .final-cta {
-    background: linear-gradient(135deg, #1e1b4b, #0f172a);
-    padding: 100px 20px;
-    text-align: center;
-  }
-
-  .final-cta h2 {
-    font-family: 'Kanit', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    line-height: 1.2;
-    max-width: 700px;
-    margin: 0 auto 20px;
-  }
-
-  .final-cta p { color: #94a3b8; max-width: 500px; margin: 0 auto 36px; line-height: 1.7; }
-
-  .guarantee {
-    margin-top: 24px;
-    font-size: 0.85rem;
-    color: #64748b;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    background: #050810;
-    padding: 32px 20px;
-    text-align: center;
-    color: #334155;
-    font-size: 0.8rem;
-  }
-
-  footer span { color: #475569; }
-
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* scroll reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* sticky CTA bar */
-  .sticky-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(15,23,42,0.95);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid #1e3a5f;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 100;
-    transform: translateY(100%);
-    transition: transform 0.4s;
-    gap: 12px;
-  }
-
-  .sticky-bar.show { transform: translateY(0); }
-
-  .sticky-price { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--gold); }
-  .sticky-price small { font-size: 0.8rem; color: #64748b; text-decoration: line-through; margin-right: 8px; }
-
-  .btn-small {
-    background: linear-gradient(90deg, #ec4899, #38bdf8);
-    color: white;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    padding: 12px 28px;
-    border-radius: 99px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 480px) {
-    .price-card { padding: 36px 24px; }
-    .price-big { font-size: 3rem; }
-  }
+:root{--orange:#FF6B00;--orange-light:#FFF3E8;--orange-dark:#CC5500;--black:#0D0D0D;--white:#FFFFFF;--gray:#F5F5F5;--text:#1A1A1A;--muted:#666;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;color:var(--text);background:var(--white);line-height:1.7}
+h1,h2,h3{font-family:'Mitr',sans-serif;line-height:1.3}
+.hero{background:var(--black);color:var(--white);padding:60px 20px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--orange)}
+.badge{display:inline-block;background:var(--orange);color:#fff;font-size:13px;font-weight:600;padding:6px 20px;border-radius:30px;margin-bottom:18px;font-family:'Mitr',sans-serif}
+.hero h1{font-size:clamp(26px,5vw,44px);color:#fff;margin-bottom:14px}
+.hero h1 span{color:var(--orange)}
+.hero p{font-size:17px;color:rgba(255,255,255,0.7);max-width:540px;margin:0 auto 28px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--orange);color:#fff;padding:16px 36px;border-radius:6px;font-size:17px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif;display:inline-block;transition:background .2s}
+.btn-primary:hover{background:var(--orange-dark)}
+.btn-line{background:transparent;color:#fff;padding:16px 28px;border-radius:6px;font-size:16px;font-weight:500;text-decoration:none;font-family:'Mitr',sans-serif;border:1px solid rgba(255,255,255,0.3);display:inline-flex;align-items:center;gap:8px}
+.price-hero{margin:22px 0 0;font-size:15px;color:rgba(255,255,255,0.5)}
+.price-hero s{color:rgba(255,255,255,0.3)}
+.price-hero strong{font-size:30px;color:var(--orange);font-family:'Mitr',sans-serif}
+.countdown-bar{background:var(--orange);color:#fff;padding:14px 20px;text-align:center}
+.countdown-bar p{font-size:13px;margin-bottom:8px;opacity:.9}
+.countdown{display:flex;gap:10px;justify-content:center;align-items:center}
+.cd-box{background:rgba(0,0,0,0.2);border-radius:8px;padding:8px 14px;min-width:56px;text-align:center}
+.cd-num{font-size:26px;font-weight:600;font-family:'Mitr',sans-serif;display:block;line-height:1}
+.cd-label{font-size:10px;opacity:.8;margin-top:2px}
+.cd-sep{font-size:22px;font-weight:600;opacity:.7}
+.section{padding:56px 20px;max-width:720px;margin:0 auto}
+.section-title{font-size:clamp(22px,4vw,32px);text-align:center;margin-bottom:8px;color:var(--black)}
+.section-sub{text-align:center;color:var(--muted);font-size:16px;margin-bottom:36px}
+.video-section{background:var(--black);padding:48px 20px}
+.video-section .section-title{color:#fff}
+.video-section .section-sub{color:rgba(255,255,255,0.5)}
+.video-wrap{max-width:400px;margin:0 auto;border-radius:var(--radius);overflow:hidden;border:2px solid var(--orange)}
+.video-wrap iframe{width:100%;aspect-ratio:9/16;display:block;border:none}
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.pain-card{background:var(--gray);border-left:4px solid var(--orange);border-radius:var(--radius);padding:20px}
+.pain-card .emoji{font-size:26px;margin-bottom:8px}
+.pain-card h3{font-size:16px;font-weight:600;margin-bottom:6px;font-family:'Mitr',sans-serif}
+.pain-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.features-wrap{background:var(--gray);padding:56px 20px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;max-width:720px;margin:0 auto}
+.feat-card{background:#fff;border-radius:var(--radius);padding:20px;border-top:3px solid var(--orange)}
+.feat-card .emoji{font-size:26px;margin-bottom:8px}
+.feat-card h3{font-size:15px;font-weight:600;margin-bottom:6px;font-family:'Mitr',sans-serif}
+.feat-card p{font-size:13px;color:var(--muted)}
+.stats{background:var(--black);color:#fff;padding:48px 20px;text-align:center}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;max-width:600px;margin:0 auto}
+.stat-num{font-size:38px;font-weight:600;font-family:'Mitr',sans-serif;color:var(--orange)}
+.stat-label{font-size:13px;opacity:.6;margin-top:4px}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.review-card{background:var(--gray);border-radius:var(--radius);padding:20px;position:relative}
+.review-card::before{content:'"';position:absolute;top:10px;right:16px;font-size:48px;color:var(--orange);opacity:.15;font-family:serif;line-height:1}
+.stars{color:var(--orange);font-size:15px;margin-bottom:8px}
+.review-card p{font-size:14px;line-height:1.65;color:#444;margin-bottom:12px}
+.reviewer{font-size:12px;color:var(--muted);font-weight:500}
+.pricing-box{background:var(--black);border:2px solid var(--orange);border-radius:20px;padding:36px 28px;text-align:center;max-width:480px;margin:0 auto}
+.pricing-box .tag{background:var(--orange);color:#fff;font-size:12px;padding:4px 16px;border-radius:4px;display:inline-block;margin-bottom:16px;font-family:'Mitr',sans-serif;letter-spacing:1px}
+.pricing-box h2{font-size:24px;margin-bottom:4px;color:#fff}
+.old-price{font-size:16px;color:rgba(255,255,255,0.3);text-decoration:line-through;margin-bottom:4px}
+.new-price{font-size:56px;font-weight:600;color:var(--orange);font-family:'Mitr',sans-serif;line-height:1}
+.new-price span{font-size:22px}
+.save-badge{display:inline-block;background:rgba(255,107,0,0.15);color:var(--orange);border:1px solid var(--orange);font-size:13px;padding:4px 14px;border-radius:4px;margin:8px 0 16px;font-family:'Mitr',sans-serif}
+.includes{text-align:left;margin:20px 0;display:flex;flex-direction:column;gap:10px}
+.inc-item{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:rgba(255,255,255,0.85)}
+.inc-item .check{color:var(--orange);font-weight:700;flex-shrink:0}
+.guarantee-badge{background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);border-radius:8px;padding:14px 16px;margin-top:16px;display:flex;align-items:flex-start;gap:10px;text-align:left}
+.guarantee-badge .icon{font-size:22px;flex-shrink:0}
+.guarantee-badge p{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6}
+.guarantee-badge strong{color:var(--orange)}
+.btn-order{display:block;background:var(--orange);color:#fff;padding:18px;border-radius:6px;font-size:18px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif;margin-top:20px;transition:background .2s}
+.btn-order:hover{background:var(--orange-dark)}
+.trust-badges{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:14px;font-size:12px;color:rgba(255,255,255,0.4)}
+.payment-section{background:#fff;border:1px solid #e0e0e0;border-radius:var(--radius);padding:28px;text-align:center;max-width:480px;margin:24px auto 0}
+.payment-section h3{font-family:'Mitr',sans-serif;font-size:18px;margin-bottom:6px}
+.payment-section p{font-size:14px;color:var(--muted);margin-bottom:16px}
+.qr-box{background:var(--gray);border-radius:10px;padding:16px;display:inline-block;margin-bottom:14px}
+.qr-box img{width:200px;height:200px;display:block}
+.bank-info{font-size:14px;color:#444;line-height:1.9}
+.steps{display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:16px;background:var(--gray);border-radius:10px;padding:16px}
+.step{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.step-num{background:var(--orange);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.refund-section{background:var(--gray);padding:48px 20px}
+.refund-box{max-width:600px;margin:0 auto;background:#fff;border-radius:var(--radius);padding:28px;border-top:4px solid var(--orange)}
+.refund-box h3{font-family:'Mitr',sans-serif;font-size:20px;margin-bottom:16px}
+.refund-list{display:flex;flex-direction:column;gap:12px}
+.refund-item{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#444;line-height:1.65}
+.refund-num{background:var(--black);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.refund-note{margin-top:16px;padding:12px 14px;background:var(--orange-light);border-radius:8px;font-size:13px;color:var(--orange-dark);border-left:3px solid var(--orange)}
+.line-section{background:var(--black);padding:48px 20px;text-align:center;border-top:4px solid var(--orange)}
+.line-section h2{font-family:'Mitr',sans-serif;font-size:22px;margin-bottom:8px;color:#fff}
+.line-section p{font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:20px}
+.btn-line-big{background:#06c755;color:#fff;padding:16px 36px;border-radius:6px;font-size:17px;font-weight:700;text-decoration:none;font-family:'Mitr',sans-serif;display:inline-flex;align-items:center;gap:8px}
+.faq-item{border-bottom:1px solid #eee;padding:16px 0}
+.faq-q{font-size:16px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Mitr',sans-serif}
+.faq-a{font-size:14px;color:var(--muted);margin-top:10px;display:none;line-height:1.7}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .arrow{transform:rotate(180deg)}
+.arrow{transition:transform .2s;font-size:12px;color:var(--orange)}
+footer{background:var(--black);color:#fff;padding:32px 20px;text-align:center;border-top:4px solid var(--orange)}
+footer .motto{font-family:'Mitr',sans-serif;color:var(--orange);font-size:15px;margin-bottom:8px}
+footer p{font-size:12px;opacity:.4;margin-top:6px}
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--black);border-top:2px solid var(--orange);padding:10px 16px;display:flex;gap:10px;z-index:100}
+.sticky-cta a{flex:1;text-align:center;padding:13px;border-radius:6px;font-size:15px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif}
+.sticky-buy{background:var(--orange);color:#fff}
+.sticky-line{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2)}
+@media(max-width:480px){.hero{padding:40px 16px 32px}.section{padding:40px 16px}.pricing-box{padding:24px 16px}.new-price{font-size:44px}}
 </style>
 </head>
 <body>
 
-<!-- ──────────── HERO ──────────── -->
 <section class="hero">
-  <div class="badge">🎵 Echo Note Starter Kit · Early Music Education</div>
-
-  <h1>
-    ลูกเล่นดนตรีได้<br>
-    แต่<span class="pink">อ่านโน้ต</span>ไม่ออก<span class="blue">?</span><br>
-    <span style="font-size:0.7em; font-weight:700; color:#cbd5e1;">แก้ได้ภายใน 3 สัปดาห์</span>
-  </h1>
-
-  <p class="hero-sub">
-    เครื่องสอนภาษาดนตรีสำหรับเด็ก — ออกแบบให้ <strong style="color:white;">เด็กอ่านโน้ต ได้ตั้งแต่ครั้งแรก</strong><br>
-    โดยไม่ต้องรอให้ครูสอนทีละตัว
-  </p>
-
-  <div class="product-img-wrap">
-    <img src="/mnt/user-data/uploads/สอนภาษาดนตร_.png" alt="Echo Note Starter Kit">
-    <div class="color-tags">
-      <span class="color-tag tag-pink">🌸 สีชมพู</span>
-      <span class="color-tag tag-blue">💙 สีน้ำเงิน</span>
-    </div>
+  <div class="badge">🎉 ฉลอง 15 ปี Echo Program — ราคาพิเศษจำนวนจำกัด</div>
+  <h1>ลูกเล่นดนตรีได้<br>แต่<span>อ่านโน้ตไม่ออก?</span><br>แก้ได้ภายใน 3 สัปดาห์</h1>
+  <p>ชุดสอนภาษาดนตรีสำหรับเด็ก — ออกแบบให้เด็กอ่านโน้ตได้ตั้งแต่ครั้งแรก โดยไม่ต้องรอให้ครูสอนทีละตัว</p>
+  <div class="hero-btns">
+    <a href="#pricing" class="btn-primary">🛒 สั่งซื้อเลย 990 บาท</a>
+    <a href="https://lin.ee/w1HBKOn" target="_blank" class="btn-line">💬 Line สอบถาม</a>
   </div>
-
-  <div class="price-hero">
-    <small>ราคาปกติ 1,490 บาท</small>เพียง <span style="color:var(--gold)">990 บาท</span>
-    <div class="free-ship">✈️ ส่งฟรีทั่วประเทศ</div>
-  </div>
-
-  <div class="cta-hero">
-    <a href="#pricing" class="btn-main">🛒 สั่งซื้อเลย – ส่งฟรี!</a>
-  </div>
-
-  <div class="timer-strip">
-    <span class="dot"></span>
-    โปรโมชัน 15 ปี Echo Program · จำนวนจำกัด
-  </div>
+  <div class="price-hero"><s>2,400 บาท</s> → <strong>990 บาท</strong> ✈️ ส่งฟรีทั่วประเทศ</div>
 </section>
 
-<!-- ──────────── PAIN ──────────── -->
-<section class="pain">
-  <p class="section-label">ปัญหาที่พ่อแม่เจอบ่อย</p>
-  <h2 class="section-title">เด็กไทยหลายล้านคน<br><span style="color:var(--pink)">เล่นดนตรีได้โดยไม่รู้โน้ต</span></h2>
-  <p style="color:#94a3b8; max-width:560px; margin:0 auto; font-size:1rem; line-height:1.7;">
-    นี่ไม่ใช่ความผิดของเด็ก — แต่เป็นเพราะไม่มีเครื่องมือที่ใช่ให้เขาเรียนรู้ได้เอง
-  </p>
-
-  <div class="pain-cards">
-    <div class="pain-card reveal">
-      <div class="pain-icon">😩</div>
-      <h3>เรียนแล้วลืมเร็ว</h3>
-      <p>เรียนโน้ตดนตรีแบบท่องจำ ไม่มีบริบท ไม่มีการฝึกจริง พอหยุดไปสักพักก็ลืมหมด</p>
-    </div>
-    <div class="pain-card reveal">
-      <div class="pain-icon">💸</div>
-      <h3>ค่าเรียนแพง</h3>
-      <p>ครูดนตรีดีๆ คิดชั่วโมงละ 300–600 บาท ยังไม่รู้ว่าเด็กจะชอบหรือเปล่า</p>
-    </div>
-    <div class="pain-card reveal">
-      <div class="pain-icon">😤</div>
-      <h3>เด็กเบื่อเร็ว</h3>
-      <p>วิธีสอนแบบเก่าน่าเบื่อ เด็กยุคใหม่ต้องการสื่อที่สนุกและเห็นผลทันที</p>
-    </div>
-    <div class="pain-card reveal">
-      <div class="pain-icon">⏰</div>
-      <h3>พ่อแม่ไม่มีเวลา</h3>
-      <p>อยากให้ลูกเรียนดนตรี แต่ตารางงานแน่น พาไปเรียนทุกอาทิตย์ไม่ไหว</p>
-    </div>
+<div class="countdown-bar">
+  <p>⏰ โปรโมชันสิ้นสุดใน</p>
+  <div class="countdown">
+    <div class="cd-box"><span class="cd-num" id="cd-d">03</span><div class="cd-label">วัน</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-box"><span class="cd-num" id="cd-h">00</span><div class="cd-label">ชั่วโมง</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-box"><span class="cd-num" id="cd-m">00</span><div class="cd-label">นาที</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-box"><span class="cd-num" id="cd-s">00</span><div class="cd-label">วินาที</div></div>
   </div>
-</section>
-
-<!-- ──────────── SOLUTION ──────────── -->
-<section class="solution">
-  <p class="section-label">ทางออกคือ</p>
-  <h2 class="section-title reveal">Echo Note Starter Kit<br><span style="color:var(--blue)">เครื่องสอนภาษาดนตรี</span></h2>
-  <p style="color:#94a3b8; max-width:580px; margin:16px auto 0; line-height:1.7;" class="reveal">
-    ออกแบบโดย Echo Program — ประสบการณ์กว่า 16 ปีในการสอนดนตรีเด็ก
-  </p>
-
-  <div class="feature-grid">
-    <div class="feature-card reveal">
-      <div class="icon">🎵</div>
-      <h3>อ่านโน้ตได้จริง</h3>
-      <p>ระบบ Fast Charge ที่ฝึกสมองให้จดจำโน้ตผ่านการเล่นจริง ไม่ใช่แค่ท่องจำ</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="icon">⚡</div>
-      <h3>เห็นผลใน 3 สัปดาห์</h3>
-      <p>เด็กอ่านโน้ตได้ตั้งแต่ครั้งแรก ทดสอบแล้วกับนักเรียนหลายร้อยคน</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="icon">🏠</div>
-      <h3>เรียนที่บ้านได้</h3>
-      <p>ไม่ต้องพาลูกไปเรียนพิเศษ เด็กเรียนได้เองที่บ้าน เพลิดเพลินและกดดันน้อย</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="icon">🎮</div>
-      <h3>สนุกเหมือนเกม</h3>
-      <p>เด็กไม่รู้สึกว่ากำลัง "เรียน" — สีสันสดใส บทเรียนน่าติดตาม</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="icon">🎁</div>
-      <h3>ของขวัญที่ดีที่สุด</h3>
-      <p>เหมาะสำหรับวันเกิด วันเด็ก ปีใหม่ — ของขวัญที่ให้ทักษะตลอดชีวิต</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="icon">🤖</div>
-      <h3>ทักษะแห่งอนาคต</h3>
-      <p>ในยุค AI ความคิดสร้างสรรค์คือสิ่งที่เครื่องจักรแทนไม่ได้ — ดนตรีคือจุดเริ่มต้น</p>
-    </div>
-  </div>
-</section>
-
-<!-- ──────────── COLORS ──────────── -->
-<section class="color-section">
-  <p class="section-label">เลือกสีที่ใช่</p>
-  <h2 class="section-title reveal">มีให้เลือก 2 สี<br>สำหรับลูกหลานที่รัก</h2>
-
-  <div class="color-options">
-    <div class="color-option opt-pink reveal">
-      <div class="color-swatch swatch-pink"></div>
-      <h3 style="color:var(--pink)">🌸 สีชมพู</h3>
-      <p>หวาน นุ่มนวล เหมาะกับหนูน้อยที่รัก</p>
-    </div>
-    <div class="color-option opt-blue reveal">
-      <div class="color-swatch swatch-blue"></div>
-      <h3 style="color:var(--blue)">💙 สีน้ำเงิน</h3>
-      <p>เท่ สงบ ดูดี — สำหรับนักดนตรีตัวน้อย</p>
-    </div>
-  </div>
-</section>
-
-<!-- ──────────── PROOF ──────────── -->
-<section class="proof">
-  <p class="section-label">ตัวเลขที่บอกเองทุกอย่าง</p>
-  <h2 class="section-title reveal">Echo Program<br><span style="color:var(--gold)">16 ปี ไม่หยุดพัฒนา</span></h2>
-
-  <div class="stats-row">
-    <div class="stat-box reveal">
-      <div class="stat-number">16+</div>
-      <div class="stat-label">ปีในวงการดนตรีศึกษา</div>
-    </div>
-    <div class="stat-box reveal">
-      <div class="stat-number">1,000+</div>
-      <div class="stat-label">นักเรียนที่ผ่านมา</div>
-    </div>
-    <div class="stat-box reveal">
-      <div class="stat-number">3 สัปดาห์</div>
-      <div class="stat-label">อ่านโน้ตได้ครั้งแรก</div>
-    </div>
-    <div class="stat-box reveal">
-      <div class="stat-number">990฿</div>
-      <div class="stat-label">ราคาพิเศษวันนี้เท่านั้น</div>
-    </div>
-  </div>
-
-  <div class="testimonials">
-    <div class="testi-card reveal">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">"ลูกสาวเล่นได้มาสักพักแล้ว แต่ไม่เคยรู้จักโน้ตเลย พอลองใช้ชุดนี้ เธอยิ้มและบอก 'หนูรู้แล้วว่ามันคืออะไร!' ดีใจมากค่ะ"</p>
-      <div class="testi-author">คุณแม่น้องแพร — กรุงเทพฯ</div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">"ซื้อให้หลานวันเกิด คิดว่าจะเหมือนของเล่นทั่วไป แต่นี่มันสอนจริงๆ ครับ หลานนั่งเล่นนานมาก แม่หลานโทรมาขอบคุณเลย"</p>
-      <div class="testi-author">คุณลุงมนัส — เชียงใหม่</div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">"คุ้มมากค่ะ เทียบกับค่าเรียนดนตรีที่แพงมาก ชุดนี้ราคาเดียวให้ลูกเรียนได้เองที่บ้าน ส่งไวด้วย"</p>
-      <div class="testi-author">คุณแม่น้องต้นข้าว — อุดรธานี</div>
-    </div>
-  </div>
-</section>
-
-<!-- ──────────── PRICING ──────────── -->
-<section class="pricing" id="pricing">
-  <p class="section-label">ราคาพิเศษ</p>
-  <h2 class="section-title reveal">คว้าโอกาสนี้<br><span style="color:var(--pink)">ก่อนของหมด</span></h2>
-
-  <div class="price-card reveal">
-    <div class="hot-badge">🔥 ราคาพิเศษ 15 Anniversary</div>
-    <div style="font-family:'Kanit',sans-serif; font-weight:700; font-size:1.2rem; margin-bottom:8px;">Echo Note Starter Kit</div>
-    <div class="price-old">ราคาปกติ 1,490 บาท</div>
-    <div class="price-big">990<span style="font-size:1.5rem;">฿</span></div>
-    <div class="price-note">ราคาเดียว · ไม่มีรายเดือน · ส่งฟรีทั่วประเทศ</div>
-
-    <div class="includes">
-      <div class="inc-item"><span class="check">✅</span><span>คีย์บอร์ด Echo Note พร้อมระบบสอนโน้ตในตัว</span></div>
-      <div class="inc-item"><span class="check">✅</span><span>สมุดโน้ตดนตรีสำหรับเด็ก (Early Bird Edition)</span></div>
-      <div class="inc-item"><span class="check">✅</span><span>คู่มือการใช้งาน ภาษาไทย เข้าใจง่าย</span></div>
-      <div class="inc-item"><span class="check">✅</span><span>เลือกสีได้ — ชมพู หรือ น้ำเงิน</span></div>
-      <div class="inc-item"><span class="check">✅</span><span>ส่งฟรีทุกจังหวัด (Kerry / Flash)</span></div>
-      <div class="inc-item"><span class="check">✅</span><span>รับประกัน: ถ้าลูกอ่านโน้ตไม่ได้ใน 3 สัปดาห์ ติดต่อเราได้เลย</span></div>
-    </div>
-
-    <a href="#" class="btn-main" style="width:100%; text-align:center; display:block; font-size:1.1rem;">
-      🛒 สั่งซื้อเลย 990 บาท — ส่งฟรี!
-    </a>
-
-    <div style="margin-top:16px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-      <span style="font-size:0.8rem; color:#64748b;">🔒 ชำระผ่าน QR Code / โอนเงิน</span>
-      <span style="font-size:0.8rem; color:#64748b;">📦 จัดส่งภายใน 1–2 วัน</span>
-    </div>
-  </div>
-</section>
-
-<!-- ──────────── FAQ ──────────── -->
-<section class="faq">
-  <div style="text-align:center;">
-    <p class="section-label">คำถามที่ถามบ่อย</p>
-    <h2 class="section-title reveal">มีข้อสงสัยอะไร<br><span style="color:var(--blue)">เราตอบหมด</span></h2>
-  </div>
-
-  <div class="faq-wrap">
-    <div class="faq-item reveal">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        เหมาะกับเด็กอายุเท่าไหร่? <span class="faq-chevron">▾</span>
-      </div>
-      <div class="faq-a">เหมาะสำหรับเด็กอายุ 5–15 ปี โดยเฉพาะผู้ที่ยังไม่เคยเรียนโน้ตดนตรีมาก่อน หรือเรียนมาแล้วแต่ยังอ่านโน้ตไม่คล่อง</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        ต้องมีพื้นฐานดนตรีก่อนไหม? <span class="faq-chevron">▾</span>
-      </div>
-      <div class="faq-a">ไม่จำเป็นเลยครับ/ค่ะ ชุดนี้ออกแบบสำหรับผู้เริ่มต้นตั้งแต่ศูนย์ เด็กที่ไม่รู้จักโน้ตดนตรีมาก่อนสามารถเริ่มใช้ได้ทันที</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        พ่อแม่ต้องนั่งสอนด้วยไหม? <span class="faq-chevron">▾</span>
-      </div>
-      <div class="faq-a">ไม่ต้องครับ/ค่ะ ชุดนี้ออกแบบให้เด็กเรียนรู้ได้ด้วยตัวเอง แต่ถ้าพ่อแม่นั่งเล่นด้วยกัน จะสนุกยิ่งขึ้น!</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        ส่งไปต่างจังหวัดได้ไหม? ใช้เวลานานไหม? <span class="faq-chevron">▾</span>
-      </div>
-      <div class="faq-a">ส่งได้ทั่วประเทศไทยครับ/ค่ะ ใช้เวลาประมาณ 1–3 วันทำการขึ้นอยู่กับพื้นที่ ส่งฟรีทุกออเดอร์ ไม่มีขั้นต่ำ</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        ถ้าลูกไม่ชอบ คืนได้ไหม? <span class="faq-chevron">▾</span>
-      </div>
-      <div class="faq-a">เราเชื่อมั่นในสินค้า หากมีปัญหาด้านสินค้าชำรุดหรือไม่ตรงตามที่สั่ง ติดต่อทีมงานได้เลย เราดูแลทุกเคสครับ/ค่ะ</div>
-    </div>
-  </div>
-</section>
-
-<!-- ──────────── FINAL CTA ──────────── -->
-<section class="final-cta">
-  <h2 class="reveal">
-    วันนี้คือวันที่<br>
-    <span style="color:var(--pink)">ลูกจะอ่านโน้ตได้</span>
-  </h2>
-  <p class="reveal">
-    อย่าให้ลูกเล่นดนตรีโดยไม่รู้ความหมาย — ให้ Echo Note Starter Kit เป็นกุญแจที่เปิดโลกดนตรีให้เขา
-  </p>
-  <a href="#" class="btn-main reveal">🎵 สั่งซื้อ Echo Note Starter Kit – 990 บาท</a>
-  <div class="guarantee reveal">
-    🔒 ปลอดภัย · ส่งฟรี · จัดส่งเร็ว · สอบถามได้ตลอด
-  </div>
-</section>
-
-<!-- ──────────── FOOTER ──────────── -->
-<footer>
-  <div style="margin-bottom:8px;">
-    <span style="color:#475569; font-family:'Kanit',sans-serif; font-weight:600; font-size:1rem;">Echo Program</span>
-    &nbsp;·&nbsp; Siamskol Music &nbsp;·&nbsp; Early Music Education
-  </div>
-  © 2025 Echo Program · ดนตรี กตัญญู ผู้ผลิต มิตร AI · 15 ปีแห่งความไว้วางใจ
-</footer>
-
-<!-- ──────────── STICKY BAR ──────────── -->
-<div class="sticky-bar" id="stickyBar">
-  <div>
-    <div style="font-size:0.8rem; color:#94a3b8;">Echo Note Starter Kit</div>
-    <div class="sticky-price"><small>1,490฿</small> 990 บาท · ส่งฟรี</div>
-  </div>
-  <a href="#pricing" class="btn-small">สั่งซื้อเลย!</a>
 </div>
 
+<!-- PRODUCT IMAGES -->
+<div style="background:#fff;padding:48px 20px">
+  <div style="max-width:720px;margin:0 auto">
+    <h2 class="section-title">สินค้าในชุด Echo Note Starter Kit</h2>
+    <p class="section-sub">ครบทุกอย่างที่ลูกต้องการเพื่อเริ่มต้น</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto">
+
+      <!-- Product 1: Keyboard -->
+      <div style="border-radius:var(--radius);overflow:hidden;border:2px solid #f0f0f0;background:#fff">
+        <img src="IMG_5986.jpeg" alt="คีย์บอร์ด Echo Note" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block">
+        <div style="padding:14px;text-align:center">
+          <div style="font-family:'Mitr',sans-serif;font-size:15px;font-weight:600;margin-bottom:4px">คีย์บอร์ด Echo Note</div>
+          <div style="font-size:12px;color:var(--muted)">ทนทาน · ปลอดภัยเฉพาะเด็ก · 37 คีย์</div>
+        </div>
+      </div>
+
+      <!-- Product 2: Manual Placeholder -->
+      <div style="border-radius:var(--radius);overflow:hidden;border:2px solid var(--orange);background:var(--black)">
+        <div style="aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:10px">
+          <div style="width:56px;height:56px;border-radius:10px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:28px">🎵</div>
+          <div style="font-family:'Mitr',sans-serif;font-size:16px;font-weight:600;color:#fff;text-align:center">คู่มือ Echo Project</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.5">Flashcard โน้ต<br>+ วิดีโอสอนออนไลน์</div>
+          <div style="background:var(--orange);color:#fff;font-size:10px;padding:3px 10px;border-radius:20px;font-family:'Mitr',sans-serif">นวัตกรรม Echo Program</div>
+        </div>
+        <div style="padding:14px;text-align:center;border-top:1px solid rgba(255,107,0,0.2)">
+          <div style="font-family:'Mitr',sans-serif;font-size:15px;font-weight:600;margin-bottom:4px;color:#fff">ระบบสอนโน้ต Echo</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4)">คู่มือ + Flashcard + QR วิดีโอ</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Detail shot -->
+    <div style="margin-top:14px;border-radius:var(--radius);overflow:hidden;border:2px solid #f0f0f0;max-width:600px;margin-left:auto;margin-right:auto">
+      <img src="IMG_5988.jpeg" alt="รายละเอียดคีย์บอร์ด Echo Note" style="width:100%;max-height:280px;object-fit:cover;display:block">
+      <div style="padding:12px 16px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <span style="font-size:13px;color:var(--muted)">🎹 37 คีย์</span>
+        <span style="font-size:13px;color:var(--muted)">🎤 ไมค์ในตัว</span>
+        <span style="font-size:13px;color:var(--muted)">🔊 ลำโพงในตัว</span>
+        <span style="font-size:13px;color:var(--muted)">🎵 10 Demo songs</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="video-section">
+  <div style="max-width:720px;margin:0 auto">
+    <h2 class="section-title">ดูก่อนตัดสินใจ</h2>
+    <p class="section-sub">เด็กจริง เล่นได้จริง ใน 90 นาที</p>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/inkNDvZjuCQ" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">ปัญหาที่พ่อแม่เจอบ่อย</h2>
+  <p class="section-sub">เด็กไทยหลายล้านคน เล่นดนตรีได้โดยไม่รู้โน้ต</p>
+  <div class="pain-grid">
+    <div class="pain-card"><div class="emoji">😩</div><h3>เรียนแล้วลืมเร็ว</h3><p>ท่องจำโน้ตโดยไม่มีบริบท พอหยุดไปสักพักก็ลืมหมด</p></div>
+    <div class="pain-card"><div class="emoji">💸</div><h3>ค่าเรียนแพง</h3><p>ครูดนตรีดีๆ ชั่วโมงละ 300–600 บาท ยังไม่รู้ว่าลูกจะชอบ</p></div>
+    <div class="pain-card"><div class="emoji">😤</div><h3>เด็กเบื่อเร็ว</h3><p>วิธีสอนแบบเก่าน่าเบื่อ เด็กยุคใหม่ต้องเห็นผลทันที</p></div>
+    <div class="pain-card"><div class="emoji">⏰</div><h3>พ่อแม่ไม่มีเวลา</h3><p>อยากให้ลูกเรียนดนตรี แต่พาไปเรียนทุกอาทิตย์ไม่ไหว</p></div>
+  </div>
+</div>
+
+<div class="features-wrap">
+  <div style="max-width:720px;margin:0 auto">
+    <h2 class="section-title">Echo Note แก้ปัญหาได้อย่างไร</h2>
+    <p class="section-sub">ออกแบบโดย Echo Program — ประสบการณ์กว่า 16 ปี</p>
+    <div class="features-grid">
+      <div class="feat-card"><div class="emoji">🎵</div><h3>อ่านโน้ตได้จริง</h3><p>ระบบ Fast Charge ฝึกสมองจดจำผ่านการเล่นจริง</p></div>
+      <div class="feat-card"><div class="emoji">⚡</div><h3>เห็นผลใน 3 สัปดาห์</h3><p>ทดสอบแล้วกับนักเรียนหลายร้อยคน</p></div>
+      <div class="feat-card"><div class="emoji">🛡️</div><h3>ทนทาน ปลอดภัยสำหรับเด็ก</h3><p>วัสดุคุณภาพสูง ผ่านมาตรฐานความปลอดภัยเฉพาะเด็ก</p></div>
+      <div class="feat-card"><div class="emoji">🏠</div><h3>เรียนที่บ้านได้</h3><p>ไม่ต้องพาไปเรียนพิเศษ เด็กเรียนได้เองที่บ้าน</p></div>
+      <div class="feat-card"><div class="emoji">🎮</div><h3>สนุกเหมือนเกม</h3><p>เด็กไม่รู้สึกว่ากำลัง "เรียน"</p></div>
+      <div class="feat-card"><div class="emoji">🤖</div><h3>ทักษะแห่งอนาคต</h3><p>ในยุค AI ดนตรีคือสิ่งที่แทนไม่ได้</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stats-grid">
+    <div><div class="stat-num">16+</div><div class="stat-label">ปีในวงการดนตรีศึกษา</div></div>
+    <div><div class="stat-num">1,000+</div><div class="stat-label">นักเรียนที่ผ่านมา</div></div>
+    <div><div class="stat-num">3 สัปดาห์</div><div class="stat-label">อ่านโน้ตได้ครั้งแรก</div></div>
+    <div><div class="stat-num">990฿</div><div class="stat-label">ราคาพิเศษวันนี้</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">พ่อแม่พูดว่าอะไร</h2>
+  <p class="section-sub">รีวิวจริงจากผู้ซื้อจริง</p>
+  <div class="reviews-grid">
+    <div class="review-card"><div class="stars">★★★★★</div><p>"ลูกสาวเล่นได้มาสักพัก แต่ไม่เคยรู้จักโน้ตเลย พอลองใช้ชุดนี้ เธอยิ้มและบอก 'หนูรู้แล้วว่ามันคืออะไร!' ดีใจมากค่ะ"</p><div class="reviewer">คุณแม่น้องแพร — กรุงเทพฯ</div></div>
+    <div class="review-card"><div class="stars">★★★★★</div><p>"ซื้อให้หลานวันเกิด คิดว่าจะเหมือนของเล่นทั่วไป แต่นี่มันสอนจริงๆ ครับ หลานนั่งเล่นนานมาก แม่หลานโทรมาขอบคุณเลย"</p><div class="reviewer">คุณลุงมนัส — เชียงใหม่</div></div>
+    <div class="review-card">
+      <div class="stars">★★★★★</div>
+      <div style="background:#222;border-radius:10px;aspect-ratio:9/16;max-height:260px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;border:1px solid rgba(255,107,0,0.3)">
+        <div style="text-align:center;color:var(--orange)">
+          <div style="font-size:40px;margin-bottom:8px">▶</div>
+          <div style="font-size:13px;opacity:.8">คลิปรีวิว 15 วินาที</div>
+        </div>
+      </div>
+      <p>"ดูแล้วจะรู้เลยว่าทำไมลูกถึงชอบ"</p>
+      <div class="reviewer">รีวิวจากผู้ปกครองจริง</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="pricing">
+  <h2 class="section-title">สั่งซื้อได้เลยตอนนี้</h2>
+  <p class="section-sub">จำนวนจำกัด — ราคาพิเศษเฉพาะช่วงนี้เท่านั้น</p>
+  <div class="pricing-box">
+    <div class="tag">🔥 LIMITED OFFER — ฉลอง 15 ปี</div>
+    <h2>Echo Note Starter Kit</h2>
+    <div class="old-price">ราคาปกติ 2,400 บาท</div>
+    <div class="new-price"><span>฿</span>990</div>
+    <div class="save-badge">ประหยัด 1,410 บาท (59% OFF)</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:4px">ราคาเดียว · ไม่มีรายเดือน</div>
+    <div class="includes">
+      <div class="inc-item"><span class="check">✅</span><span>คีย์บอร์ด Echo Note — ทนทาน ปลอดภัย เฉพาะเด็ก</span></div>
+      <div class="inc-item"><span class="check">✅</span><span>สมุดโน้ตดนตรีสำหรับเด็ก (Early Bird Edition)</span></div>
+      <div class="inc-item"><span class="check">✅</span><span>Flashcard โน้ตดนตรี ใช้งานได้ทันที</span></div>
+      <div class="inc-item"><span class="check">✅</span><span>QR Code วิดีโอสอนโดยครูจาก Echo Program</span></div>
+      <div class="inc-item"><span class="check">✅</span><span>คู่มือภาษาไทย เข้าใจง่าย</span></div>
+      <div class="inc-item"><span class="check">✅</span><span>ส่งฟรีทุกจังหวัด (Kerry / Flash)</span></div>
+    </div>
+    <div class="guarantee-badge">
+      <div class="icon">🛡️</div>
+      <p><strong>รับประกันผล 3 สัปดาห์</strong><br>ถ้าลูกยังอ่านโน้ตไม่ได้ ยินดีคืนเงินเต็มจำนวน ดูเงื่อนไขด้านล่าง</p>
+    </div>
+    <a href="#payment" class="btn-order">🛒 สั่งซื้อเลย — ส่งฟรี!</a>
+    <div class="trust-badges"><span>🔒 ปลอดภัย</span><span>📦 จัดส่ง 1–2 วัน</span><span>💬 ซัพพอร์ตตลอด</span></div>
+  </div>
+
+  <div class="payment-section" id="payment">
+    <h3>💳 ชำระเงินด้วย QR Code</h3>
+    <p>สแกน QR แล้วโอน 990 บาท จากนั้นส่งสลิปมาที่ Line พร้อมที่อยู่จัดส่ง</p>
+    <div class="qr-box"><img src="IMG_5984.png" alt="QR Payment สยามสกลการดนตรี"></div>
+    <div class="bank-info">
+      <strong>ธนาคารกรุงเทพ (Bangkok Bank)</strong><br>
+      บัญชี: <strong>โรงเรียนสยามสกลการดนตรี</strong><br>
+      รหัสร้านค้า: <strong>1011095272</strong>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><span>สแกน QR หรือโอนผ่าน PromptPay</span></div>
+      <div class="step"><div class="step-num">2</div><span>ส่งสลิป + ชื่อ + ที่อยู่จัดส่งทาง Line</span></div>
+      <div class="step"><div class="step-num">3</div><span>รับสินค้าภายใน 1–3 วันทำการ ✈️</span></div>
+    </div>
+    <a href="https://lin.ee/w1HBKOn" target="_blank" style="display:block;background:#06c755;color:#fff;padding:16px;border-radius:6px;font-size:16px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif;margin-top:16px;">💬 ส่งสลิปทาง Line ได้เลย</a>
+  </div>
+</div>
+
+<div class="refund-section">
+  <div class="refund-box">
+    <h3>🛡️ เงื่อนไขการรับประกันและคืนเงิน</h3>
+    <div class="refund-list">
+      <div class="refund-item"><div class="refund-num">1</div><span>ผลิตภัณฑ์ต้องอยู่ในสภาพเดิมทุกประการ ไม่มีรอยขีดข่วน สกปรก หรือชำรุดจากการใช้งาน พร้อมบรรจุภัณฑ์ที่ทางร้านจัดส่งให้ครบถ้วน รวมถึงอุปกรณ์ส่วนควบทั้งหมด ได้แก่ สมุดโน้ต Flashcard คู่มือ และสายชาร์จ (ถ้ามี)</span></div>
+      <div class="refund-item"><div class="refund-num">2</div><span>ต้องแจ้งขอคืนสินค้าภายใน 21 วันนับจากวันที่ได้รับสินค้า พร้อมแสดงหลักฐานการซื้อ (สลิปการโอนเงิน)</span></div>
+      <div class="refund-item"><div class="refund-num">3</div><span>ลูกค้าต้องแสดงหลักฐานว่าได้ใช้งานผลิตภัณฑ์ตามคู่มือครบถ้วนแล้ว เช่น ภาพถ่ายหรือวิดีโอระหว่างการใช้งาน</span></div>
+      <div class="refund-item"><div class="refund-num">4</div><span>ค่าจัดส่งสินค้าคืนเป็นความรับผิดชอบของลูกค้า ยกเว้นกรณีที่สินค้าชำรุดจากการผลิตหรือการจัดส่ง</span></div>
+      <div class="refund-item"><div class="refund-num">5</div><span>หลังจากทีมงานตรวจสอบสินค้าที่ส่งคืนแล้ว จะดำเนินการคืนเงินภายใน 3–5 วันทำการ</span></div>
+    </div>
+    <div class="refund-note">📌 ติดต่อขอคืนสินค้าได้ทาง Line: <a href="https://lin.ee/w1HBKOn" target="_blank" style="color:var(--orange-dark);font-weight:600">lin.ee/w1HBKOn</a></div>
+  </div>
+</div>
+
+<div class="line-section">
+  <h2>มีคำถาม? คุยกับเราได้เลย</h2>
+  <p>ทีมงาน Echo Program พร้อมตอบทุกคำถาม ทุกวัน</p>
+  <a href="https://lin.ee/w1HBKOn" target="_blank" class="btn-line-big"><span style="font-size:20px">💬</span> Add Line — Echo Program</a>
+</div>
+
+<div class="section">
+  <h2 class="section-title">คำถามที่ถามบ่อย</h2>
+  <div style="max-width:560px;margin:0 auto">
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">เหมาะกับเด็กอายุเท่าไหร่? <span class="arrow">▼</span></div><div class="faq-a">เหมาะสำหรับเด็กอายุ 5–15 ปี โดยเฉพาะผู้ที่ยังไม่เคยเรียนโน้ตดนตรีมาก่อน</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">ต้องมีพื้นฐานดนตรีก่อนไหม? <span class="arrow">▼</span></div><div class="faq-a">ไม่จำเป็นเลยครับ/ค่ะ ออกแบบสำหรับผู้เริ่มต้นตั้งแต่ศูนย์</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">คีย์บอร์ดปลอดภัยสำหรับเด็กไหม? <span class="arrow">▼</span></div><div class="faq-a">ปลอดภัยครับ/ค่ะ ออกแบบเฉพาะสำหรับเด็ก วัสดุทนทาน ไม่มีขอบคม ผ่านมาตรฐานความปลอดภัยสำหรับเด็ก</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">ส่งต่างจังหวัดได้ไหม? <span class="arrow">▼</span></div><div class="faq-a">ส่งได้ทั่วประเทศครับ/ค่ะ 1–3 วันทำการ ส่งฟรีทุกออเดอร์</div></div>
+    <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q">ถ้าลูกอ่านโน้ตไม่ได้ใน 3 สัปดาห์ ทำอย่างไร? <span class="arrow">▼</span></div><div class="faq-a">ยินดีคืนเงินเต็มจำนวนครับ/ค่ะ ดูเงื่อนไขด้านบน หรือติดต่อทีมงานทาง Line ได้เลย</div></div>
+  </div>
+</div>
+
+<div style="background:var(--black);padding:56px 20px;text-align:center;border-top:4px solid var(--orange)">
+  <h2 style="font-family:'Mitr',sans-serif;font-size:28px;margin-bottom:12px;color:#fff">วันนี้คือวันที่ลูกจะอ่านโน้ตได้</h2>
+  <p style="color:rgba(255,255,255,0.5);margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto">อย่าให้ลูกเล่นดนตรีโดยไม่รู้ความหมาย — ให้ Echo Note Starter Kit เป็นกุญแจที่เปิดโลกดนตรีให้เขา</p>
+  <a href="#pricing" class="btn-primary" style="font-size:18px">🎵 สั่งซื้อ Echo Note — 990 บาท</a>
+</div>
+
+<footer>
+  <div class="motto">ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+  Echo Program · Siamskol Music · Early Music Education
+  <p>© 2025 Echo Program · 16 ปีแห่งความไว้วางใจ</p>
+</footer>
+
+<div class="sticky-cta">
+  <a href="#payment" class="sticky-buy">🛒 สั่งซื้อ 990 ฿</a>
+  <a href="https://lin.ee/w1HBKOn" target="_blank" class="sticky-line">💬 Line สอบถาม</a>
+</div>
+<div style="height:64px"></div>
+
 <script>
-  // Sticky bar
-  const bar = document.getElementById('stickyBar');
-  window.addEventListener('scroll', () => {
-    bar.classList.toggle('show', window.scrollY > 600);
-  });
-
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  reveals.forEach(r => observer.observe(r));
-
-  // FAQ toggle
-  function toggleFaq(el) {
-    const answer = el.nextElementSibling;
-    const chevron = el.querySelector('.faq-chevron');
-    const isOpen = answer.classList.contains('open');
-
-    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
-    document.querySelectorAll('.faq-chevron').forEach(c => c.classList.remove('open'));
-
-    if (!isOpen) {
-      answer.classList.add('open');
-      chevron.classList.add('open');
-    }
-  }
+const end = new Date(Date.now()+3*24*60*60*1000);
+function updateCd(){
+  const d=end-Date.now();
+  if(d<=0)return;
+  document.getElementById('cd-d').textContent=String(Math.floor(d/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(Math.floor((d%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((d%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor((d%60000)/1000)).padStart(2,'0');
+}
+updateCd();setInterval(updateCd,1000);
+function toggleFaq(el){el.classList.toggle('open')}
 </script>
 </body>
 </html>
