@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Echo Note — ระบบก้อนเสียง Beginner</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#ddd}
+
+/* ========= PAGE ========= */
+.page{
+  width:210mm;height:297mm;background:#fff;
+  margin:10mm auto;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+
+/* ========= HEADER STRIP ========= */
+.header-strip{
+  background:#0D0D0D;
+  padding:4mm 8mm;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.header-strip h1{
+  font-family:'Mitr',sans-serif;font-size:12pt;color:#FF6B00;
+  letter-spacing:2px;
+}
+.header-strip p{font-size:7pt;color:rgba(255,255,255,0.4)}
+.part-badge{
+  background:#FF6B00;color:#fff;
+  font-family:'Mitr',sans-serif;font-size:9pt;
+  padding:1.5mm 5mm;border-radius:10mm;
+  letter-spacing:1px;
+}
+
+/* ========= INSTRUCTION ROW ========= */
+.instruction{
+  background:#FFF3E8;
+  padding:3mm 8mm;
+  border-bottom:2px solid #FF6B00;
+  font-size:8pt;color:#333;
+  display:flex;align-items:center;gap:3mm;
+  flex-shrink:0;
+}
+.instruction strong{color:#FF6B00;font-family:'Mitr',sans-serif}
+
+/* ========= MAIN GRID AREA ========= */
+.main-area{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:4mm 6mm;
+  gap:3mm;
+}
+
+/* ========= SECTION LABEL ========= */
+.section-label{
+  font-family:'Mitr',sans-serif;font-size:9pt;
+  color:#888;letter-spacing:2px;
+  display:flex;align-items:center;gap:3mm;
+}
+.section-line{flex:1;height:1px;background:#eee}
+
+/* ========= GROUP ROW ========= */
+.group-row{
+  display:flex;gap:3mm;align-items:stretch;
+}
+
+/* ========= GROUP CARD ========= */
+.group-card{
+  flex:1;
+  border-radius:4mm;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  border:1.5px solid;
+  min-height:52mm;
+  position:relative;
+}
+.group-card.placeholder{
+  border:1.5px dashed #ddd;
+  background:#fafafa;
+  display:flex;align-items:center;justify-content:center;
+}
+
+.card-header{
+  padding:2mm 3mm;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.card-header .glabel{
+  font-family:'Mitr',sans-serif;font-size:8pt;color:#fff;
+  letter-spacing:1px;
+}
+.card-header .beats{
+  font-size:6.5pt;color:rgba(255,255,255,0.6);
+  font-family:'Mitr',sans-serif;
+}
+
+.card-body{
+  flex:1;background:#fff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:2mm;gap:1.5mm;
+}
+
+/* Note SVG display */
+.notes-row{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:2mm;width:100%;
+}
+.note-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:0.5mm;
+}
+.note-label{
+  font-size:5.5pt;
+  font-family:'Mitr',sans-serif;
+  color:#bbb;
+  text-align:center;
+}
+.note-label.orange{color:#FF6B00;opacity:0.8}
+
+/* Pattern text */
+.pattern-text{
+  font-size:6pt;color:#ccc;
+  font-family:'Mitr',sans-serif;
+  text-align:center;letter-spacing:1px;
+}
+
+/* Cut line */
+.cut-line{
+  border-top:1px dashed #FF6B00;
+  margin:2mm 0;
+  position:relative;
+}
+.cut-label{
+  position:absolute;top:-5pt;left:50%;
+  transform:translateX(-50%);
+  background:#fff;padding:0 2mm;
+  font-size:6pt;color:#FF6B00;
+  font-family:'Mitr',sans-serif;
+}
+
+/* Part II cards — slightly different style */
+.part2-card{
+  border-style:dashed;
+  background:repeating-linear-gradient(
+    45deg,#fff,#fff 3mm,#fffaf5 3mm,#fffaf5 4mm
+  );
+}
+.part2-card .card-body{background:transparent}
+
+/* Scissors icon */
+.scissors{
+  position:absolute;left:-3mm;top:50%;
+  transform:translateY(-50%);
+  font-size:10pt;
+}
+
+/* Footer */
+.page-footer{
+  background:#0D0D0D;padding:2.5mm 8mm;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.page-footer span{font-size:6pt;color:#FF6B00;font-family:'Mitr',sans-serif}
+
+@media print{
+  body{background:#fff}
+  .page{margin:0}
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header-strip">
+    <div>
+      <h1>ระบบก้อนเสียง</h1>
+      <p>Echo Note Starter Kit · Siamskol Music</p>
+    </div>
+    <div class="part-badge">BEGINNER</div>
+  </div>
+
+  <!-- INSTRUCTION -->
+  <div class="instruction">
+    <span>🎹</span>
+    <span><strong>วิธีใช้:</strong> เริ่มจาก Part I ก่อนเสมอ · เมื่อคล่องแล้วนำกลุ่มจาก Part II มาแทนที่กลุ่มใดก็ได้ใน Part I เพื่อสร้างก้อนเสียงใหม่</span>
+  </div>
+
+  <div class="main-area">
+
+    <!-- ===== PART I ===== -->
+    <div class="section-label">
+      <div class="section-line"></div>
+      <span style="background:#0D0D0D;color:#FF6B00;padding:1mm 4mm;border-radius:10mm;font-size:8pt">PART I — ก้อนเสียงหลัก</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="group-row">
+
+      <!-- GROUP A -->
+      <div class="group-card" style="border-color:#FF6B00">
+        <div class="card-header" style="background:#FF6B00">
+          <span class="glabel">กลุ่ม A</span>
+          <span class="beats">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <!-- Quarter note -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <!-- Quarter note -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <!-- Half note -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 35 55" width="22" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">ยาว</div>
+            </div>
+          </div>
+          <div class="pattern-text">♩ ♩ 𝅗𝅥 · 1+1+2</div>
+        </div>
+      </div>
+
+      <!-- GROUP A (repeat) -->
+      <div class="group-card" style="border-color:#E65C00">
+        <div class="card-header" style="background:#E65C00">
+          <span class="glabel">กลุ่ม A</span>
+          <span class="beats">ซ้ำ</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 35 55" width="22" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">ยาว</div>
+            </div>
+          </div>
+          <div class="pattern-text">♩ ♩ 𝅗𝅥 · 1+1+2</div>
+        </div>
+      </div>
+
+      <!-- GROUP B -->
+      <div class="group-card" style="border-color:#CC5200">
+        <div class="card-header" style="background:#CC5200">
+          <span class="glabel">กลุ่ม B</span>
+          <span class="beats">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+          </div>
+          <div class="pattern-text">♩ ♩ ♩ ♩ · 1+1+1+1</div>
+        </div>
+      </div>
+
+      <!-- GROUP C -->
+      <div class="group-card" style="border-color:#FF8C42">
+        <div class="card-header" style="background:#FF8C42">
+          <span class="glabel">กลุ่ม C</span>
+          <span class="beats">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <div class="note-wrap">
+              <svg viewBox="0 0 50 55" width="36" height="35">
+                <ellipse cx="18" cy="44" rx="14" ry="9" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-10,18,44)"/>
+              </svg>
+              <div class="note-label orange">ยาวมาก</div>
+            </div>
+          </div>
+          <div class="pattern-text">𝅝 · 4</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CUT LINE -->
+    <div style="position:relative;margin:2mm 0">
+      <div class="cut-line"><span class="cut-label">✂ ตัดตรงนี้เพื่อแยก Part II</span></div>
+    </div>
+
+    <!-- ===== PART II ===== -->
+    <div class="section-label">
+      <div class="section-line"></div>
+      <span style="background:#FFF3E8;color:#FF6B00;border:1px solid #FF6B00;padding:1mm 4mm;border-radius:10mm;font-size:8pt">PART II — กลุ่มเสริม (เลือกแทนที่ได้)</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div style="font-size:7pt;color:#aaa;text-align:center;margin:-1mm 0 1mm;font-family:'Mitr',sans-serif">
+      ตัดแยกเป็นการ์ด · นำมาวางแทนที่กลุ่มใดก็ได้ใน Part I
+    </div>
+
+    <div class="group-row">
+
+      <!-- PART II — ยาว ยาว -->
+      <div class="group-card part2-card" style="border-color:#FF6B00">
+        <div class="card-header" style="background:rgba(255,107,0,0.15);border-bottom:1px dashed #FF6B00">
+          <span class="glabel" style="color:#FF6B00">II-1</span>
+          <span class="beats" style="color:#FF6B00">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <div class="note-wrap">
+              <svg viewBox="0 0 35 55" width="22" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">ยาว</div>
+            </div>
+            <div class="note-wrap">
+              <svg viewBox="0 0 35 55" width="22" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">ยาว</div>
+            </div>
+          </div>
+          <div class="pattern-text">𝅗𝅥 𝅗𝅥 · 2+2</div>
+        </div>
+      </div>
+
+      <!-- PART II — dotted half + quarter -->
+      <div class="group-card part2-card" style="border-color:#E65C00">
+        <div class="card-header" style="background:rgba(230,92,0,0.15);border-bottom:1px dashed #E65C00">
+          <span class="glabel" style="color:#E65C00">II-2</span>
+          <span class="beats" style="color:#E65C00">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <!-- Dotted half -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 45 55" width="28" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+                <circle cx="32" cy="40" r="3" fill="#0D0D0D"/>
+              </svg>
+              <div class="note-label orange">ยาวปานกลาง</div>
+            </div>
+            <!-- Quarter -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+          </div>
+          <div class="pattern-text">𝅗𝅥. ♩ · 3+1</div>
+        </div>
+      </div>
+
+      <!-- PART II — quarter + dotted half -->
+      <div class="group-card part2-card" style="border-color:#CC5200">
+        <div class="card-header" style="background:rgba(204,82,0,0.15);border-bottom:1px dashed #CC5200">
+          <span class="glabel" style="color:#CC5200">II-3</span>
+          <span class="beats" style="color:#CC5200">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <!-- Quarter -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="18" height="35">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <!-- Dotted half -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 45 55" width="28" height="35">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+                <circle cx="32" cy="40" r="3" fill="#0D0D0D"/>
+              </svg>
+              <div class="note-label orange">ยาวปานกลาง</div>
+            </div>
+          </div>
+          <div class="pattern-text">♩ 𝅗𝅥. · 1+3</div>
+        </div>
+      </div>
+
+      <!-- PART II — quarter + half + quarter (with rest) -->
+      <div class="group-card part2-card" style="border-color:#FF8C42">
+        <div class="card-header" style="background:rgba(255,140,66,0.15);border-bottom:1px dashed #FF8C42">
+          <span class="glabel" style="color:#FF8C42">II-4</span>
+          <span class="beats" style="color:#FF8C42">4/4</span>
+        </div>
+        <div class="card-body">
+          <div class="notes-row">
+            <!-- Quarter -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <!-- Half -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 35 55" width="19" height="32">
+                <ellipse cx="14" cy="44" rx="11" ry="7.5" fill="none" stroke="#0D0D0D" stroke-width="2.5" transform="rotate(-15,14,44)"/>
+                <line x1="25" y1="40" x2="25" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">ยาว</div>
+            </div>
+            <!-- Quarter -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <ellipse cx="13" cy="44" rx="10" ry="7" fill="#0D0D0D" transform="rotate(-15,13,44)"/>
+                <line x1="23" y1="40" x2="23" y2="5" stroke="#0D0D0D" stroke-width="2.5"/>
+              </svg>
+              <div class="note-label orange">สั้น</div>
+            </div>
+            <!-- Rest (ผ่านตา) -->
+            <div class="note-wrap">
+              <svg viewBox="0 0 30 55" width="15" height="32">
+                <rect x="5" y="35" width="18" height="8" fill="#999" rx="1"/>
+                <line x1="2" y1="43" x2="26" y2="43" stroke="#999" stroke-width="1.5"/>
+              </svg>
+              <div class="note-label" style="color:transparent">—</div>
+            </div>
+          </div>
+          <div class="pattern-text">♩ 𝅗𝅥 ♩ 𝄽 · 1+2+1</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM NOTE -->
+    <div style="text-align:center;font-size:7pt;color:#bbb;font-family:'Mitr',sans-serif;margin-top:1mm">
+      ✂ ตัด Part II ออกแล้วนำการ์ดมาวางสลับกับ Part I เพื่อสร้างก้อนเสียงใหม่ของตัวเอง
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer">
+    <span>Echo Note Starter Kit · ระบบก้อนเสียง Beginner</span>
+    <span>ดนตรี กตัญญู ผู้ผลิต มิตร AI · Echo Program</span>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:8mm;color:#888;font-family:'Sarabun',sans-serif;font-size:9pt">
+  วิธีพิมพ์: Cmd+P → A4 → No margins · พิมพ์แล้วตัดตามเส้นประ
+</div>
+
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Echo Note — ก้อนเสียง Sound Block</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#ddd}
+
+.sheet{
+  width:210mm;height:297mm;
+  background:#fff;
+  margin:10mm auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  position:relative;
+}
+
+/* Fold lines */
+.fold-h{
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:0;
+  border-top:2px dashed #ccc;
+  z-index:10;
+}
+.fold-v{
+  position:absolute;
+  left:50%;top:0;bottom:0;
+  width:0;
+  border-left:2px dashed #ccc;
+  z-index:10;
+}
+.fold-label-h{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  padding:1mm 3mm;
+  font-size:7pt;
+  color:#aaa;
+  z-index:11;
+  border-radius:2mm;
+}
+
+/* Each quadrant */
+.quad{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:8mm;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Quadrant labels (for printing guide) */
+.quad-label{
+  position:absolute;
+  top:3mm;
+  font-size:7pt;
+  color:#ddd;
+  font-family:'Mitr',sans-serif;
+  letter-spacing:1px;
+}
+.quad-label.left{left:4mm}
+.quad-label.right{right:4mm}
+
+/* ===== QUADRANT A (top-left) — ก้อนเสียงหลัก ===== */
+.quad-a{background:#0D0D0D}
+
+.sound-block-title{
+  font-family:'Mitr',sans-serif;
+  font-size:9pt;
+  color:rgba(255,255,255,0.5);
+  letter-spacing:3px;
+  margin-bottom:4mm;
+  text-transform:uppercase;
+}
+
+/* The big 1×4 note grid */
+.note-strip{
+  display:flex;
+  gap:3mm;
+  margin:4mm 0;
+}
+.note-cell{
+  width:20mm;height:20mm;
+  border-radius:3mm;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;
+}
+.note-cell .n{
+  font-family:'Mitr',sans-serif;
+  font-size:22pt;
+  font-weight:600;
+  line-height:1;
+}
+.note-cell .t{
+  font-size:8pt;
+  margin-top:1mm;
+}
+
+/* Pitch visual — vertical bar chart */
+.pitch-visual{
+  display:flex;
+  align-items:flex-end;
+  gap:2mm;
+  height:24mm;
+  padding:0 2mm;
+  margin:3mm 0;
+}
+.pitch-bar-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1mm;
+}
+.pitch-bar{
+  width:8mm;
+  border-radius:1.5mm 1.5mm 0 0;
+  transition:height 0.3s;
+}
+.pitch-num{
+  font-family:'Mitr',sans-serif;
+  font-size:10pt;
+  font-weight:600;
+}
+.pitch-name{
+  font-size:6.5pt;
+}
+
+/* Arrow showing direction */
+.pitch-arrow{
+  font-size:9pt;
+  color:rgba(255,255,255,0.3);
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  position:absolute;
+  left:2mm;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+/* ===== QUADRANT B (top-right) — วิธีฟัง ===== */
+.quad-b{background:#FF6B00}
+
+.listen-title{
+  font-family:'Mitr',sans-serif;
+  font-size:16pt;
+  color:#fff;
+  margin-bottom:3mm;
+}
+.listen-sub{
+  font-size:9pt;
+  color:rgba(255,255,255,0.8);
+  margin-bottom:5mm;
+  text-align:center;
+}
+
+.listen-steps{
+  display:flex;
+  flex-direction:column;
+  gap:3mm;
+  width:100%;
+}
+.listen-step{
+  display:flex;
+  align-items:center;
+  gap:3mm;
+  background:rgba(255,255,255,0.15);
+  border-radius:3mm;
+  padding:3mm 4mm;
+}
+.listen-step-num{
+  width:8mm;height:8mm;
+  border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Mitr',sans-serif;
+  font-size:10pt;
+  color:#fff;
+  font-weight:600;
+  flex-shrink:0;
+}
+.listen-step p{
+  font-size:9pt;
+  color:#fff;
+  line-height:1.4;
+}
+
+/* Ear icon area */
+.ear-icon{
+  font-size:36pt;
+  margin-bottom:2mm;
+  opacity:0.9;
+}
+
+/* ===== QUADRANT C (bottom-left) — ก้อนเสียงว่าง (practice grid) ===== */
+.quad-c{background:#F5F5F5}
+
+.practice-title{
+  font-family:'Mitr',sans-serif;
+  font-size:13pt;
+  color:#0D0D0D;
+  margin-bottom:2mm;
+}
+.practice-sub{
+  font-size:8pt;
+  color:#888;
+  margin-bottom:5mm;
+  text-align:center;
+}
+
+/* Empty practice cells */
+.practice-strip{
+  display:flex;
+  gap:3mm;
+  margin:3mm 0;
+}
+.practice-cell{
+  width:20mm;height:20mm;
+  border-radius:3mm;
+  border:2px dashed #ccc;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:#fff;
+}
+.practice-cell .dot{
+  width:6mm;height:6mm;
+  border-radius:50%;
+  background:#eee;
+}
+
+/* Mini pitch visual empty */
+.mini-pitch{
+  display:flex;
+  align-items:flex-end;
+  gap:2mm;
+  height:16mm;
+  margin:2mm 0;
+}
+.mini-bar-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:1mm;
+}
+.mini-bar{
+  width:8mm;
+  border-radius:1.5mm 1.5mm 0 0;
+  background:#e0e0e0;
+}
+.mini-num{
+  font-family:'Mitr',sans-serif;
+  font-size:9pt;
+  color:#bbb;
+}
+
+.practice-note{
+  font-size:7.5pt;
+  color:#aaa;
+  text-align:center;
+  margin-top:3mm;
+  line-height:1.5;
+}
+
+/* ===== QUADRANT D (bottom-right) — คำแนะนำพ่อแม่ ===== */
+.quad-d{background:#fff;border:3mm solid #0D0D0D}
+
+.parent-badge{
+  background:#0D0D0D;
+  color:#FF6B00;
+  font-family:'Mitr',sans-serif;
+  font-size:8pt;
+  padding:2mm 5mm;
+  border-radius:10mm;
+  margin-bottom:4mm;
+  letter-spacing:1px;
+}
+
+.parent-belief{
+  background:#FFF3E8;
+  border-left:3mm solid #FF6B00;
+  padding:3mm 4mm;
+  border-radius:0 3mm 3mm 0;
+  margin-bottom:4mm;
+  width:100%;
+}
+.parent-belief p{
+  font-size:9pt;
+  color:#333;
+  line-height:1.6;
+}
+.parent-belief strong{
+  color:#FF6B00;
+  font-family:'Mitr',sans-serif;
+}
+
+.parent-say{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:2mm;
+}
+.say-row{
+  display:flex;
+  gap:2mm;
+  align-items:flex-start;
+}
+.say-mark{
+  font-family:'Mitr',sans-serif;
+  font-size:11pt;
+  font-weight:700;
+  flex-shrink:0;
+  margin-top:-1mm;
+}
+.say-row p{
+  font-size:8.5pt;
+  color:#444;
+  line-height:1.5;
+}
+
+.echo-mini{
+  margin-top:4mm;
+  font-family:'Mitr',sans-serif;
+  font-size:7pt;
+  color:#ccc;
+  text-align:center;
+}
+
+/* Print fold guide at bottom */
+.print-guide{
+  position:absolute;
+  bottom:2mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:6.5pt;
+  color:#ccc;
+  white-space:nowrap;
+  z-index:20;
+}
+
+@media print{
+  body{background:#fff}
+  .sheet{margin:0;box-shadow:none}
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- FOLD LINES -->
+  <div class="fold-h"></div>
+  <div class="fold-v"></div>
+  <div class="fold-label-h">← พับตรงนี้ →</div>
+  <div class="print-guide">วิธีพิมพ์: Cmd+P → A4 → No margins | พับตามเส้นประ 2 ครั้ง</div>
+
+  <!-- ===== A: TOP-LEFT — ก้อนเสียง (Pitch Visual) ===== -->
+  <div class="quad quad-a">
+    <div class="quad-label left" style="color:rgba(255,255,255,0.15)">A</div>
+
+    <div class="sound-block-title" style="color:rgba(255,255,255,0.4)">ก้อนเสียง · Sound Block</div>
+
+    <!-- Pitch bar chart — 7 notes ascending -->
+    <div style="position:relative;width:100%;display:flex;flex-direction:column;align-items:center">
+      <div style="font-size:7.5pt;color:rgba(255,255,255,0.3);margin-bottom:2mm;letter-spacing:2px">ระดับเสียง สูง ↑</div>
+      <div class="pitch-visual">
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:4mm;background:#FF6B00;opacity:0.5"></div>
+          <div class="pitch-num" style="color:#FF6B00">1</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">โด</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:6mm;background:#FF7A1A;opacity:0.6"></div>
+          <div class="pitch-num" style="color:#FF7A1A">2</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">เร</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:9mm;background:#FF8C42;opacity:0.7"></div>
+          <div class="pitch-num" style="color:#FF8C42">3</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">มี</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:12mm;background:#FFA06B;opacity:0.75"></div>
+          <div class="pitch-num" style="color:#FFA06B">4</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">ฟา</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:15mm;background:#FFB38F;opacity:0.8"></div>
+          <div class="pitch-num" style="color:#FFB38F">5</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">ซอล</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:19mm;background:#FFC4A8;opacity:0.9"></div>
+          <div class="pitch-num" style="color:#FFC4A8">6</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">ลา</div>
+        </div>
+        <div class="pitch-bar-wrap">
+          <div class="pitch-bar" style="height:24mm;background:#FFD6C4"></div>
+          <div class="pitch-num" style="color:#FFD6C4">7</div>
+          <div class="pitch-name" style="color:rgba(255,255,255,0.5)">ที</div>
+        </div>
+      </div>
+      <div style="font-size:7.5pt;color:rgba(255,255,255,0.3);margin-top:2mm;letter-spacing:2px">ระดับเสียง ต่ำ ↓</div>
+    </div>
+
+    <!-- 4-cell note strip -->
+    <div style="margin-top:5mm;font-size:7.5pt;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:2mm">ก้อนเสียง 1 กลุ่ม = 4 ช่อง</div>
+    <div class="note-strip">
+      <div class="note-cell" style="background:#FF6B00">
+        <div class="n" style="color:#fff">1</div>
+        <div class="t" style="color:rgba(255,255,255,0.8)">โด</div>
+      </div>
+      <div class="note-cell" style="background:#E65C00">
+        <div class="n" style="color:#fff">2</div>
+        <div class="t" style="color:rgba(255,255,255,0.8)">เร</div>
+      </div>
+      <div class="note-cell" style="background:#CC5200">
+        <div class="n" style="color:#fff">3</div>
+        <div class="t" style="color:rgba(255,255,255,0.8)">มี</div>
+      </div>
+      <div class="note-cell" style="background:#FF8C42">
+        <div class="n" style="color:#fff">4</div>
+        <div class="t" style="color:rgba(255,255,255,0.8)">ฟา</div>
+      </div>
+    </div>
+    <div style="font-size:7.5pt;color:rgba(255,255,255,0.25);text-align:center;line-height:1.6;margin-top:2mm">
+      แต่ละช่องคือ 1 ก้อนเสียง<br>เรียงจากต่ำ → สูง ตามแถบสี
+    </div>
+  </div>
+
+  <!-- ===== B: TOP-RIGHT — วิธีฟัง ===== -->
+  <div class="quad quad-b">
+    <div class="quad-label right" style="color:rgba(255,255,255,0.2)">B</div>
+    <div class="ear-icon">👂</div>
+    <div class="listen-title">วิธีฟังก้อนเสียง</div>
+    <div class="listen-sub">ทำตามขั้นตอนนี้ทุกครั้ง</div>
+    <div class="listen-steps">
+      <div class="listen-step">
+        <div class="listen-step-num">1</div>
+        <p><strong style="color:#fff">ดู</strong> ตัวเลขในก้อนเสียง<br>จำว่าเสียงนี้คือ "หมายเลข" อะไร</p>
+      </div>
+      <div class="listen-step">
+        <div class="listen-step-num">2</div>
+        <p><strong style="color:#fff">กด</strong> คีย์ที่ตรงกัน<br>แล้วฟังเสียงที่ออกมา 3 วินาที</p>
+      </div>
+      <div class="listen-step">
+        <div class="listen-step-num">3</div>
+        <p><strong style="color:#fff">ร้อง</strong> ชื่อเสียงตามพร้อมกัน<br>โด เร มี ฟา ซอล ลา ที</p>
+      </div>
+      <div class="listen-step">
+        <div class="listen-step-num">4</div>
+        <p><strong style="color:#fff">จำ</strong> ภาพแถบสีในหัว<br>เสียงสูง = แถบยาว / เสียงต่ำ = แถบสั้น</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C: BOTTOM-LEFT — ฝึกเขียนก้อนเสียง ===== -->
+  <div class="quad quad-c">
+    <div class="quad-label left" style="color:#ddd">C</div>
+    <div class="practice-title">ฝึกเรียงก้อนเสียงเอง</div>
+    <div class="practice-sub">เขียนตัวเลขโน้ตลงในช่องว่าง แล้วกดเล่นตาม</div>
+
+    <!-- Empty practice cells -->
+    <div class="practice-strip">
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+    </div>
+
+    <!-- Mini empty pitch chart -->
+    <div style="font-size:7pt;color:#bbb;margin:3mm 0 1mm;letter-spacing:1px">วาดระดับเสียงของคุณ</div>
+    <div class="mini-pitch">
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">1</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">2</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">3</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">4</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">5</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">6</div>
+      </div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar" style="height:3mm"></div>
+        <div class="mini-num">7</div>
+      </div>
+    </div>
+
+    <!-- Second empty strip for practice -->
+    <div style="font-size:7pt;color:#bbb;margin:3mm 0 1mm;letter-spacing:1px">ก้อนเสียงที่ 2</div>
+    <div class="practice-strip">
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+      <div class="practice-cell"><div class="dot"></div></div>
+    </div>
+
+    <div class="practice-note">
+      ✏️ เขียนตัวเลข 1–7 ลงในช่อง<br>
+      🎹 กดคีย์บอร์ดตามที่เขียน<br>
+      🎵 ฟังว่าเสียงขึ้นหรือลง
+    </div>
+  </div>
+
+  <!-- ===== D: BOTTOM-RIGHT — พ่อแม่ ===== -->
+  <div class="quad quad-d">
+    <div class="quad-label right" style="color:#eee">D</div>
+    <div class="parent-badge">สำหรับพ่อแม่</div>
+
+    <div class="parent-belief">
+      <p><strong>ความเชื่อสำคัญ:</strong><br>
+      ลูกมีหูดนตรีเท่ากับพ่อแม่<br>
+      สิ่งที่ต่างคือ <strong>วิธีการ</strong> เท่านั้น</p>
+    </div>
+
+    <div class="parent-say">
+      <div class="say-row">
+        <div class="say-mark" style="color:#2E7D32">✓</div>
+        <p>"หนูได้ยินเสียงนั้นไหม? มันสูงขึ้นหรือต่ำลง?"</p>
+      </div>
+      <div class="say-row">
+        <div class="say-mark" style="color:#2E7D32">✓</div>
+        <p>"เก่งมาก! พ่อ/แม่ก็ลองฟังด้วยนะ"</p>
+      </div>
+      <div class="say-row">
+        <div class="say-mark" style="color:#2E7D32">✓</div>
+        <p>"ลองกดช้าๆ แล้วฟังให้นานขึ้น"</p>
+      </div>
+      <div class="say-row">
+        <div class="say-mark" style="color:#C62828">✗</div>
+        <p>"ผิดแล้ว" — ให้บอกว่า "ลองอีกทีนะ"</p>
+      </div>
+    </div>
+
+    <div class="echo-mini">
+      Echo Program · Siamskol Music · ดนตรี กตัญญู ผู้ผลิต มิตร AI
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

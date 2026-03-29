@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Program — Team Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF6B00;--black:#0D0D0D;--white:#fff;--gray:#1A1A1A;--muted:#666}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#0D0D0D;color:#fff;min-height:100vh}
+
+/* HEADER */
+.header{background:#0D0D0D;border-bottom:3px solid var(--orange);padding:24px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-left h1{font-family:'Mitr',sans-serif;font-size:20px;color:#fff}
+.header-left p{font-size:11px;color:var(--muted);margin-top:2px}
+.header-badge{background:rgba(255,107,0,0.15);border:1px solid rgba(255,107,0,0.3);color:var(--orange);font-family:'Mitr',sans-serif;font-size:10px;padding:4px 12px;border-radius:20px;letter-spacing:1px}
+
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:24px 16px}
+
+/* SECTION */
+.section{margin-bottom:32px}
+.section-label{font-family:'Mitr',sans-serif;font-size:12px;color:var(--orange);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,107,0,0.2)}
+
+/* CARDS GRID */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+
+.card{background:#1A1A1A;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);text-decoration:none;display:flex;flex-direction:column;transition:all 0.2s}
+.card:hover{border-color:var(--orange);transform:translateY(-2px)}
+.card-top{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-info h3{font-family:'Mitr',sans-serif;font-size:13px;color:#fff;margin-bottom:3px}
+.card-info p{font-size:11px;color:var(--muted);line-height:1.5}
+.card-footer{padding:8px 16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between}
+.card-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-family:'Mitr',sans-serif}
+.card-arrow{font-size:12px;color:var(--orange)}
+
+/* TAGS */
+.tag-public{background:rgba(6,199,85,0.15);color:#06C755}
+.tag-internal{background:rgba(255,107,0,0.15);color:var(--orange)}
+.tag-teaching{background:rgba(24,119,242,0.15);color:#4A9EFF}
+.tag-marketing{background:rgba(255,0,0,0.15);color:#FF6666}
+
+/* MOTTO */
+.motto{background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.15);border-radius:12px;padding:16px 20px;text-align:center;margin-bottom:24px}
+.motto p{font-family:'Mitr',sans-serif;font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:2px}
+.motto strong{color:var(--orange)}
+
+/* QUICK LINKS */
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.quick-btn{background:#1A1A1A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);font-size:11px;padding:6px 14px;border-radius:20px;text-decoration:none;font-family:'Mitr',sans-serif;transition:all 0.2s}
+.quick-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* CONTACTS */
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.contact-card{background:#1A1A1A;border-radius:10px;padding:12px 14px;border:1px solid rgba(255,255,255,0.06)}
+.contact-card .label{font-size:10px;color:var(--muted);margin-bottom:4px;font-family:'Mitr',sans-serif;letter-spacing:1px}
+.contact-card .value{font-size:13px;color:#fff;font-family:'Mitr',sans-serif}
+.contact-card .sub{font-size:10px;color:var(--orange);margin-top:2px}
+
+footer{text-align:center;padding:20px;font-size:10px;color:rgba(255,255,255,0.15);font-family:'Mitr',sans-serif;border-top:1px solid rgba(255,255,255,0.05);margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Echo Program — Team Hub</h1>
+    <p>ศูนย์รวมเอกสารและสื่อสำหรับทีมงานภายในครับ</p>
+  </div>
+  <div class="header-badge">INTERNAL · v1.0</div>
+</div>
+
+<div class="main">
+
+  <!-- MOTTO -->
+  <div class="motto">
+    <p><strong>ดนตรี</strong> · กตัญญู · ผู้ผลิต · <strong>มิตร AI</strong></p>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="quick">
+    <a href="index.html" class="quick-btn">🌐 Landing Page</a>
+    <a href="echo_content_calendar.html" class="quick-btn">📅 Content Calendar</a>
+    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="quick-btn">💬 LINE OA</a>
+    <a href="https://www.facebook.com/siamskol" target="_blank" class="quick-btn">📘 Facebook</a>
+    <a href="https://www.youtube.com/@MusicGratitude" target="_blank" class="quick-btn">▶️ YouTube</a>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="section">
+    <div class="section-label">การตลาด & ขาย</div>
+    <div class="cards">
+
+      <a href="index.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(255,107,0,0.15)">🌐</div>
+          <div class="card-info">
+            <h3>Landing Page</h3>
+            <p>Echo Note Starter Kit 990 บาท หน้าขายสินค้าหลักครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-public">Public</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="echo_content_calendar.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(24,119,242,0.15)">📅</div>
+          <div class="card-info">
+            <h3>Content Calendar</h3>
+            <p>ตารางโพสต์รายวัน เริ่ม 6 เม.ย. 2569 ทุก platform ครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-internal">Internal</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- TEACHING -->
+  <div class="section">
+    <div class="section-label">สื่อการสอน</div>
+    <div class="cards">
+
+      <a href="echo_note_manual.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(24,119,242,0.15)">📖</div>
+          <div class="card-info">
+            <h3>คู่มือ Echo Note A4</h3>
+            <p>4 หน้า ปก + 7 โน้ต + วิธีใช้ + คู่มือพ่อแม่ครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-teaching">สื่อการสอน</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="echo_sound_system.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(255,107,0,0.15)">🎵</div>
+          <div class="card-info">
+            <h3>ระบบก้อนเสียง Beginner</h3>
+            <p>Part I + Part II A4 พับ 2 ครั้ง 4 กลุ่ม AABC ครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-teaching">สื่อการสอน</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="echo_part3a.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(255,107,0,0.15)">⚡</div>
+          <div class="card-info">
+            <h3>Part III-A · 120 BPM</h3>
+            <p>Eighth note เขบ็ตชั้นเดียว subdivision ครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-teaching">สื่อการสอน</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="echo_part3b.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(204,82,0,0.15)">🔥</div>
+          <div class="card-info">
+            <h3>Part III-B · 240 BPM</h3>
+            <p>Sixteenth note เขบ็ตสองชั้น 1 กลุ่ม = ก้อนเดิม ครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-teaching">สื่อการสอน</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="echo_sound_block.html" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(105,201,208,0.15)">🎹</div>
+          <div class="card-info">
+            <h3>Sound Block A4</h3>
+            <p>แผ่นฝึก 4 quadrant ก้อนเสียง สั้น ยาว ยาวมากครับ</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="card-tag tag-teaching">สื่อการสอน</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div class="section">
+    <div class="section-label">ช่องทางติดต่อ</div>
+    <div class="contacts">
+      <div class="contact-card">
+        <div class="label">LINE OA</div>
+        <div class="value">@musicsupport</div>
+        <div class="sub">ช่องทางหลักรับออเดอร์ครับ</div>
+      </div>
+      <div class="contact-card">
+        <div class="label">Landing Page</div>
+        <div class="value">echoparuay-cell</div>
+        <div class="sub">.github.io/echo-note/</div>
+      </div>
+      <div class="contact-card">
+        <div class="label">สินค้า</div>
+        <div class="value">990 บาท</div>
+        <div class="sub">Echo Note Starter Kit · 38 ชิ้น</div>
+      </div>
+      <div class="contact-card">
+        <div class="label">โรงเรียน</div>
+        <div class="value">Siamskol Music</div>
+        <div class="sub">สกลนคร · 16 ปีครับ</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Echo Program · Team Hub · Internal Use Only · ดนตรี กตัญญู ผู้ผลิต มิตร AI</footer>
+
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Program — ตารางโพสต์รายวัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FF6B00;--black:#0D0D0D;--white:#fff;
+  --gray:#F5F5F5;--muted:#888;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#0D0D0D;color:#fff;min-height:100vh;padding:20px}
+
+/* HEADER */
+.header{text-align:center;padding:32px 20px 24px;border-bottom:1px solid rgba(255,107,0,0.2);margin-bottom:28px}
+.header .badge{display:inline-block;background:rgba(255,107,0,0.15);color:var(--orange);border:1px solid rgba(255,107,0,0.3);font-family:'Mitr',sans-serif;font-size:11px;padding:4px 14px;border-radius:20px;letter-spacing:2px;margin-bottom:12px}
+.header h1{font-family:'Mitr',sans-serif;font-size:clamp(22px,4vw,32px);color:#fff;margin-bottom:6px}
+.header p{font-size:13px;color:var(--muted)}
+
+/* PLATFORM LEGEND */
+.legend{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.6)}
+.leg-dot{width:10px;height:10px;border-radius:50%}
+
+/* WEEK GRID */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:32px}
+@media(max-width:600px){.week{grid-template-columns:1fr}}
+
+.day-card{background:#1A1A1A;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);transition:transform 0.2s}
+.day-card:hover{transform:translateY(-2px)}
+.day-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.day-name{font-family:'Mitr',sans-serif;font-size:13px;color:#fff}
+.day-num{font-size:10px;color:var(--muted)}
+.day-body{padding:8px 12px 12px;display:flex;flex-direction:column;gap:6px}
+
+/* POST ITEM */
+.post-item{border-radius:8px;padding:8px 10px;position:relative}
+.post-platform{font-size:9px;letter-spacing:1px;font-family:'Mitr',sans-serif;margin-bottom:3px;opacity:0.8}
+.post-content{font-size:11px;color:rgba(255,255,255,0.8);line-height:1.5}
+.post-type{display:inline-block;font-size:9px;padding:2px 6px;border-radius:10px;margin-top:4px;font-family:'Mitr',sans-serif}
+
+/* Platform colors */
+.yt{background:rgba(255,0,0,0.12);border-left:2px solid #FF0000}
+.yt .post-platform{color:#FF4444}
+.yt .post-type{background:rgba(255,0,0,0.2);color:#FF6666}
+
+.fb{background:rgba(24,119,242,0.12);border-left:2px solid #1877F2}
+.fb .post-platform{color:#4A9EFF}
+.fb .post-type{background:rgba(24,119,242,0.2);color:#6AB3FF}
+
+.tt{background:rgba(0,0,0,0.3);border-left:2px solid #69C9D0}
+.tt .post-platform{color:#69C9D0}
+.tt .post-type{background:rgba(105,201,208,0.2);color:#69C9D0}
+
+.line{background:rgba(6,199,85,0.12);border-left:2px solid #06C755}
+.line .post-platform{color:#06C755}
+.line .post-type{background:rgba(6,199,85,0.2);color:#06C755}
+
+/* CONTENT BANK */
+.section-title{font-family:'Mitr',sans-serif;font-size:16px;color:var(--orange);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,107,0,0.2)}
+
+.content-bank{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:32px}
+.content-card{background:#1A1A1A;border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.06)}
+.content-card h3{font-family:'Mitr',sans-serif;font-size:13px;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.content-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.content-list li{font-size:12px;color:rgba(255,255,255,0.7);padding-left:14px;position:relative;line-height:1.5}
+.content-list li::before{content:'▸';position:absolute;left:0;color:var(--orange);font-size:10px}
+
+/* RULES */
+.rules{background:#1A1A1A;border-radius:12px;padding:20px;border:1px solid rgba(255,107,0,0.2);margin-bottom:32px}
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.rule-item{display:flex;gap:10px;align-items:flex-start}
+.rule-num{width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-family:'Mitr',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rule-text{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6}
+
+/* CTA */
+.cta-box{background:rgba(255,107,0,0.08);border:1px solid rgba(255,107,0,0.3);border-radius:12px;padding:16px 20px;text-align:center}
+.cta-box p{font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px}
+
+footer{text-align:center;margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);font-family:'Mitr',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">ECHO PROGRAM · CONTENT CALENDAR</div>
+  <h1>ตารางโพสต์รายวัน</h1>
+  <p>เพจละ 1 โพสต์ขั้นต่ำ · ทุกวัน · ไม่หยุด · เริ่ม 6 เม.ย. 2569</p>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#FF0000"></div>YouTube</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#1877F2"></div>Facebook</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#69C9D0"></div>TikTok</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#06C755"></div>LINE OA</div>
+</div>
+
+<!-- WEEK GRID -->
+<div class="week">
+
+  <!-- จันทร์ -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,107,0,0.1)">
+      <div class="day-name">จันทร์ <span style="color:var(--orange);font-size:11px">6 เม.ย.</span></div>
+      <div class="day-num">MON</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">ถามก้อนเสียง — ทายว่าดังยังไง?</div>
+        <div class="post-type">คำถาม</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">Teaser คำถาม → ลิงก์ YouTube</div>
+        <div class="post-type">Teaser</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">คลิปสั้น Hook ก้อนเสียง 15 วิ</div>
+        <div class="post-type">Hook</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">Broadcast ลิงก์คลิปใหม่</div>
+        <div class="post-type">Broadcast</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- อังคาร -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,0,0,0.1)">
+      <div class="day-name">อังคาร <span style="color:var(--orange);font-size:11px">7 เม.ย.</span></div>
+      <div class="day-num">TUE</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">เฉลยก้อนเสียง + CTA Echo Note</div>
+        <div class="post-type">เฉลย</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">เฉลยแล้ว! + Lead Form</div>
+        <div class="post-type">Lead Form</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">คลิปเฉลย + ปักตะกร้า</div>
+        <div class="post-type">CTA</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">ส่งลิงก์คลิปเฉลย</div>
+        <div class="post-type">Broadcast</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- พุธ -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,107,0,0.1)">
+      <div class="day-name">พุธ <span style="color:var(--orange);font-size:11px">8 เม.ย.</span></div>
+      <div class="day-num">WED</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">Effort Paradox — ยิ่งออกแรงน้อย</div>
+        <div class="post-type">Concept</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">Infographic Effort Paradox</div>
+        <div class="post-type">Education</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">ทำไมออกแรงน้อยยิ่งได้ผล?</div>
+        <div class="post-type">Hook</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">เคล็ดลับดนตรีสำหรับพ่อแม่</div>
+        <div class="post-type">Value</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- พฤหัส -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(24,119,242,0.1)">
+      <div class="day-name">พฤหัส <span style="color:var(--orange);font-size:11px">9 เม.ย.</span></div>
+      <div class="day-num">THU</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">กับดัก Melody — ทำไมเรียน 2 ปียังไม่ได้</div>
+        <div class="post-type">Concept</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">Teaser กับดัก Melody → YouTube</div>
+        <div class="post-type">Teaser</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">กับดักที่พ่อแม่ไม่รู้</div>
+        <div class="post-type">Hook</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">ลิงก์คลิปกับดัก Melody</div>
+        <div class="post-type">Broadcast</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ศุกร์ -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,107,0,0.1)">
+      <div class="day-name">ศุกร์ <span style="color:var(--orange);font-size:11px">10 เม.ย.</span></div>
+      <div class="day-num">FRI</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">Social Proof — นักเรียน IYMMC 2026</div>
+        <div class="post-type">Proof</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">Success Story + Lead Form</div>
+        <div class="post-type">Lead Form</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">เด็ก 7 ขวบปรบมือตามได้ทันที</div>
+        <div class="post-type">Proof</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">รีวิวจากผู้ปกครอง</div>
+        <div class="post-type">Social Proof</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- เสาร์ -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(105,201,208,0.1)">
+      <div class="day-name">เสาร์ <span style="color:var(--orange);font-size:11px">11 เม.ย.</span></div>
+      <div class="day-num">SAT</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">ก้อนเสียงใหม่ — ถามก้อนถัดไป</div>
+        <div class="post-type">Series</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">Weekend Special — ลด friction ซื้อ</div>
+        <div class="post-type">CTA</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">คลิปสาธิต Echo Note ในบ้าน</div>
+        <div class="post-type">Demo</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">Weekend Offer — จำนวนจำกัด</div>
+        <div class="post-type">Offer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- อาทิตย์ -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,0,0,0.1)">
+      <div class="day-name">อาทิตย์ <span style="color:var(--orange);font-size:11px">12 เม.ย.</span></div>
+      <div class="day-num">SUN</div>
+    </div>
+    <div class="day-body">
+      <div class="post-item yt">
+        <div class="post-platform">YouTube</div>
+        <div class="post-content">Review สัปดาห์ — สรุป Insight</div>
+        <div class="post-type">Review</div>
+      </div>
+      <div class="post-item fb">
+        <div class="post-platform">Facebook</div>
+        <div class="post-content">แชร์เข้ากลุ่มพ่อแม่</div>
+        <div class="post-type">Group Share</div>
+      </div>
+      <div class="post-item tt">
+        <div class="post-platform">TikTok</div>
+        <div class="post-content">Behind the Scene Echo Program</div>
+        <div class="post-type">BTS</div>
+      </div>
+      <div class="post-item line">
+        <div class="post-platform">LINE OA</div>
+        <div class="post-content">สรุปสัปดาห์ + ตัวอย่างสัปดาห์หน้า</div>
+        <div class="post-type">Preview</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTENT BANK -->
+<div class="section-title">🎯 คลังเนื้อหา — ใช้หมุนเวียนครับ</div>
+<div class="content-bank">
+
+  <div class="content-card">
+    <h3>🎵 Series ถาม-เฉลย</h3>
+    <ul class="content-list">
+      <li>ก้อนเสียงใหม่ทุกสัปดาห์</li>
+      <li>ถามจันทร์ — เฉลยอังคาร</li>
+      <li>3 เครื่องดนตรี กีตาร์ ไวโอลิน เปียโน</li>
+      <li>ใส่ CTA ทุกคลิปเฉลย</li>
+    </ul>
+  </div>
+
+  <div class="content-card">
+    <h3>💡 Concept Series</h3>
+    <ul class="content-list">
+      <li>Effort Paradox — ยิ่งออกแรงน้อยยิ่งได้ผล</li>
+      <li>Melody Trap — กับดักที่ทุกคนตกใจ</li>
+      <li>ก้อน กลุ่ม เม็ด — ระบบที่ต่างจากทุกที่</li>
+      <li>Version 1 จากใหญ่ลงเล็ก / Version 2 จากเล็กขึ้นใหญ่</li>
+    </ul>
+  </div>
+
+  <div class="content-card">
+    <h3>👨‍👩‍👧 Parent Series</h3>
+    <ul class="content-list">
+      <li>คำถาม 3 ข้อทดสอบหูลูก</li>
+      <li>ประโยคที่พ่อแม่ควร/ไม่ควรพูด</li>
+      <li>ลูกคุณฟังถูกแต่เชื่อผิดได้</li>
+      <li>ยุคนี้ค่าครองชีพแพง โอกาสลูกไม่ควรแพงด้วย</li>
+    </ul>
+  </div>
+
+  <div class="content-card">
+    <h3>🏆 Social Proof</h3>
+    <ul class="content-list">
+      <li>IYMMC 2026 Vienna อันดับ 2</li>
+      <li>เด็ก 7 ขวบปรบมือตามได้ทันที</li>
+      <li>16 ปี Echo Program</li>
+      <li>รีวิวจากผู้ปกครอง</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- RULES -->
+<div class="rules">
+  <div class="section-title" style="margin-bottom:0">📌 กฎของตารางนี้ครับ</div>
+  <div class="rule-grid">
+    <div class="rule-item">
+      <div class="rule-num">1</div>
+      <div class="rule-text">โพสต์ขั้นต่ำ 1 ครั้ง/วัน/เพจ ไม่มีวันหยุดครับ</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">2</div>
+      <div class="rule-text">YouTube เป็น Hub หลัก — platform อื่นชี้เข้า YouTube ครับ</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">3</div>
+      <div class="rule-text">ทุกโพสต์มี CTA — LINE @musicsupport หรือ Lead Form ครับ</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">4</div>
+      <div class="rule-text">ดูตัวเลขทุก 48 ชั่วโมง — Boost ตัวที่ชนะครับ</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">5</div>
+      <div class="rule-text">Series ถาม-เฉลย ทำต่อเนื่องทุกสัปดาห์ไม่ขาดครับ</div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">6</div>
+      <div class="rule-text">PIN Comment ทุกวิดีโอ YouTube ทันทีที่อัปโหลดครับ</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <div style="font-family:'Mitr',sans-serif;font-size:15px;color:var(--orange)">Content คือ Budget ใหม่ของ Echo Program ครับ</div>
+  <p>Organic ที่ดีวันนี้ = Warm Audience ที่พร้อมซื้อพรุ่งนี้ครับ</p>
+</div>
+
+<footer>Echo Program · ดนตรี กตัญญู ผู้ผลิต มิตร AI · @musicsupport</footer>
+
+</body>
+</html>

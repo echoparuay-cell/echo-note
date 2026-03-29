@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Echo Note Manual — คู่มือภาพจำเสียง</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--orange:#FF6B00;--black:#0D0D0D;--gray:#F5F5F5;--dark:#333}
+body{font-family:'Sarabun',sans-serif;background:#ccc}
+
+.page{
+  width:210mm;height:297mm;background:#fff;
+  margin:10mm auto;position:relative;overflow:hidden;
+  page-break-after:always;
+}
+
+/* ============ PAGE 1 — COVER ============ */
+.p1-top{background:var(--black);height:148mm;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6mm}
+.p1-orange-bar{height:4mm;background:var(--orange);width:100%}
+.p1-bottom{height:145mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5mm;padding:10mm}
+.p1-badge{background:var(--orange);color:#fff;font-family:'Mitr',sans-serif;font-size:10pt;padding:3mm 8mm;border-radius:20mm;letter-spacing:1px}
+.p1-title-th{font-family:'Mitr',sans-serif;font-size:28pt;color:#fff;text-align:center}
+.p1-title-en{font-family:'Mitr',sans-serif;font-size:11pt;color:rgba(255,255,255,0.6);text-align:center}
+.p1-nums{font-family:'Mitr',sans-serif;font-size:72pt;color:var(--orange);letter-spacing:6mm;line-height:1}
+.p1-sub{font-family:'Mitr',sans-serif;font-size:16pt;color:var(--black);text-align:center}
+.p1-desc{font-size:10pt;color:#666;text-align:center}
+.p1-qr{width:40mm;height:40mm;background:var(--gray);border:2px solid var(--orange);border-radius:4mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2mm}
+.p1-qr-label{font-size:8pt;color:var(--orange);font-family:'Mitr',sans-serif}
+.p1-qr-sub{font-size:7pt;color:#999}
+.p1-footer{position:absolute;bottom:0;left:0;right:0;background:var(--black);height:10mm;display:flex;align-items:center;justify-content:center}
+.p1-footer span{font-size:7pt;color:var(--orange);font-family:'Mitr',sans-serif}
+
+/* ============ PAGE 2 — NOTES GRID ============ */
+.p2-header{background:var(--black);padding:5mm 10mm;border-bottom:3mm solid var(--orange)}
+.p2-header h2{font-family:'Mitr',sans-serif;font-size:16pt;color:#fff}
+.p2-header p{font-size:8pt;color:#aaa}
+.notes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;padding:6mm;flex:1}
+.note-card{border-radius:4mm;overflow:hidden;border:1.5px solid;display:flex;flex-direction:column}
+.note-card-top{padding:3mm;display:flex;align-items:center;justify-content:center}
+.note-num{font-family:'Mitr',sans-serif;font-size:28pt;color:#fff;line-height:1}
+.keys-row{display:flex;gap:0.5mm;justify-content:center;padding:2mm 3mm}
+.key{width:5mm;height:12mm;border-radius:0.5mm;border:0.5px solid #ccc}
+.note-card-bottom{padding:2mm 3mm;text-align:center;background:#fff}
+.note-thai{font-family:'Mitr',sans-serif;font-size:13pt;color:var(--black)}
+.note-sol{font-family:'Mitr',sans-serif;font-size:9pt}
+.note-western{font-size:7pt;color:#888}
+.notes-row2{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;padding:0 6mm 6mm}
+
+/* ============ PAGE 3 — HOW TO ============ */
+.p3-header{background:var(--orange);padding:5mm 10mm}
+.p3-header h2{font-family:'Mitr',sans-serif;font-size:16pt;color:#fff}
+.p3-header p{font-size:8pt;color:rgba(255,255,255,0.8)}
+.steps{padding:6mm;display:flex;flex-direction:column;gap:4mm}
+.step-card{display:flex;align-items:flex-start;gap:5mm;padding:5mm;border-radius:4mm;background:var(--gray)}
+.step-card:nth-child(even){background:#fff;border:1px solid #eee}
+.step-num{width:12mm;height:12mm;border-radius:50%;background:var(--orange);color:#fff;font-family:'Mitr',sans-serif;font-size:14pt;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-content h3{font-family:'Mitr',sans-serif;font-size:13pt;color:var(--black);margin-bottom:1mm}
+.step-content p{font-size:10pt;color:#555;line-height:1.6}
+.tip-box{margin:0 6mm;padding:4mm 6mm;background:#FFF3E8;border-left:4mm solid var(--orange);border-radius:2mm}
+.tip-box h4{font-family:'Mitr',sans-serif;font-size:11pt;color:var(--orange);margin-bottom:2mm}
+.tip-box p{font-size:9pt;color:#555;line-height:1.6}
+
+/* ============ PAGE 4 — PARENTS ============ */
+.p4-header{background:var(--black);padding:6mm 10mm;border-bottom:3mm solid var(--orange)}
+.p4-header .label{font-family:'Mitr',sans-serif;font-size:9pt;color:var(--orange)}
+.p4-header h2{font-family:'Mitr',sans-serif;font-size:18pt;color:#fff}
+.p4-header p{font-size:8pt;color:#888}
+.belief-box{margin:5mm 8mm;padding:5mm 8mm;background:#FFF3E8;border:2px solid var(--orange);border-radius:4mm;text-align:center}
+.belief-box h3{font-family:'Mitr',sans-serif;font-size:12pt;color:var(--orange);margin-bottom:2mm}
+.belief-box p{font-size:10pt;color:#444;line-height:1.7}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin:4mm 8mm}
+.role-card{border-radius:4mm;overflow:hidden;border:1.5px solid}
+.role-top{padding:3mm;text-align:center}
+.role-top h3{font-family:'Mitr',sans-serif;font-size:11pt;color:#fff}
+.role-body{padding:4mm;background:#fff}
+.role-body p{font-size:8.5pt;color:#555;line-height:1.6}
+.say-box{margin:4mm 8mm;padding:4mm 6mm;background:var(--gray);border-radius:4mm}
+.say-box h3{font-family:'Mitr',sans-serif;font-size:11pt;color:var(--black);margin-bottom:3mm}
+.say-item{display:flex;gap:3mm;align-items:flex-start;margin-bottom:2.5mm}
+.say-mark{font-family:'Mitr',sans-serif;font-size:12pt;font-weight:700;flex-shrink:0;margin-top:-1mm}
+.say-item p{font-size:9pt;color:#444}
+.echo-badge{margin:4mm 8mm;padding:4mm 8mm;background:var(--black);border-radius:4mm;text-align:center}
+.echo-badge h4{font-family:'Mitr',sans-serif;font-size:10pt;color:var(--orange)}
+.echo-badge p{font-size:7.5pt;color:#888;margin-top:1mm}
+
+/* Footer common */
+.page-footer{position:absolute;bottom:0;left:0;right:0;background:var(--black);height:8mm;display:flex;align-items:center;justify-content:center}
+.page-footer span{font-size:7pt;color:var(--orange);font-family:'Mitr',sans-serif}
+
+@media print{
+  body{background:#fff}
+  .page{margin:0;box-shadow:none}
+  @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page">
+  <div class="p1-top">
+    <div class="p1-badge">ECHO NOTE STARTER KIT</div>
+    <div class="p1-title-th">คู่มือภาพจำเสียง</div>
+    <div class="p1-title-en">Sound Memory Guide</div>
+    <div class="p1-nums">1 2 3</div>
+  </div>
+  <div class="p1-orange-bar"></div>
+  <div class="p1-bottom">
+    <div class="p1-sub">สร้างภาพจำเสียงดนตรี</div>
+    <div class="p1-desc">ใช้คู่กับคีย์บอร์ด Echo Note + วิดีโอสอน</div>
+    <div class="p1-qr">
+      <div style="font-size:28pt">📱</div>
+      <div class="p1-qr-label">สแกน QR ดูวิดีโอสอน</div>
+      <div class="p1-qr-sub">[ ใส่ QR Code วิดีโอ ]</div>
+    </div>
+  </div>
+  <div class="p1-footer"><span>Echo Program · Siamskol Music · ดนตรี กตัญญู ผู้ผลิต มิตร AI</span></div>
+</div>
+
+<!-- PAGE 2: 7 NOTES -->
+<div class="page" style="display:flex;flex-direction:column">
+  <div class="p2-header">
+    <h2>7 เสียงพื้นฐาน — ภาพจำของเสียง</h2>
+    <p>The 7 Foundation Sounds · ใช้ร่วมกับคีย์บอร์ด Echo Note</p>
+  </div>
+
+  <div class="notes-grid">
+    <!-- Note 1 โด -->
+    <div class="note-card" style="border-color:#FF6B00">
+      <div class="note-card-top" style="background:#FF6B00">
+        <div class="note-num">1</div>
+      </div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#FF6B00"></div>
+        <div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom">
+        <div class="note-thai">โด</div>
+        <div class="note-sol" style="color:#FF6B00">Do</div>
+        <div class="note-western">คีย์ C</div>
+      </div>
+    </div>
+    <!-- Note 2 เร -->
+    <div class="note-card" style="border-color:#E65C00">
+      <div class="note-card-top" style="background:#E65C00"><div class="note-num">2</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#E65C00"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">เร</div><div class="note-sol" style="color:#E65C00">Re</div><div class="note-western">คีย์ D</div></div>
+    </div>
+    <!-- Note 3 มี -->
+    <div class="note-card" style="border-color:#CC5200">
+      <div class="note-card-top" style="background:#CC5200"><div class="note-num">3</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#CC5200"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">มี</div><div class="note-sol" style="color:#CC5200">Mi</div><div class="note-western">คีย์ E</div></div>
+    </div>
+    <!-- Note 4 ฟา -->
+    <div class="note-card" style="border-color:#FF8C42">
+      <div class="note-card-top" style="background:#FF8C42"><div class="note-num">4</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#FF8C42"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">ฟา</div><div class="note-sol" style="color:#FF8C42">Fa</div><div class="note-western">คีย์ F</div></div>
+    </div>
+  </div>
+
+  <div class="notes-row2">
+    <!-- Note 5 ซอล -->
+    <div class="note-card" style="border-color:#FF6B00">
+      <div class="note-card-top" style="background:#FF6B00"><div class="note-num">5</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#FF6B00"></div><div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">ซอล</div><div class="note-sol" style="color:#FF6B00">Sol</div><div class="note-western">คีย์ G</div></div>
+    </div>
+    <!-- Note 6 ลา -->
+    <div class="note-card" style="border-color:#E65C00">
+      <div class="note-card-top" style="background:#E65C00"><div class="note-num">6</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#E65C00"></div><div class="key" style="background:#eee"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">ลา</div><div class="note-sol" style="color:#E65C00">La</div><div class="note-western">คีย์ A</div></div>
+    </div>
+    <!-- Note 7 ที -->
+    <div class="note-card" style="border-color:#CC5200">
+      <div class="note-card-top" style="background:#CC5200"><div class="note-num">7</div></div>
+      <div class="keys-row" style="background:#f9f9f9">
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div>
+        <div class="key" style="background:#eee"></div><div class="key" style="background:#eee"></div><div class="key" style="background:#CC5200"></div>
+      </div>
+      <div class="note-card-bottom"><div class="note-thai">ที</div><div class="note-sol" style="color:#CC5200">Ti</div><div class="note-western">คีย์ B</div></div>
+    </div>
+  </div>
+
+  <div class="page-footer"><span>Echo Note Starter Kit · หน้า 2 · echoparuay-cell.github.io/echo-note/</span></div>
+</div>
+
+<!-- PAGE 3: HOW TO -->
+<div class="page" style="display:flex;flex-direction:column">
+  <div class="p3-header">
+    <h2>วิธีใช้ภาพจำเสียง</h2>
+    <p>How to Build Sound Memory · ทำตามขั้นตอนเพื่อผลลัพธ์ที่ดีที่สุด</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>ดูตัวเลข 👀</h3>
+        <p>มองตัวเลข 1–7 บนคีย์บอร์ด Echo Note จำว่าแต่ละตัวอยู่ตรงไหน<br>ทำซ้ำจนจำตำแหน่งได้โดยไม่ต้องมอง</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>ฟังเสียง 👂</h3>
+        <p>กดคีย์แล้วฟังเสียงอย่างตั้งใจ ทำซ้ำ 3 ครั้งต่อโน้ต<br>อย่ารีบ — ให้สมองจดจำเสียงก่อนที่จะกดครั้งต่อไป</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>ร้องตาม 🎵</h3>
+        <p>ร้องเสียง โด เร มี ฟา ซอล ลา ที พร้อมกับกดคีย์<br>เสียงที่ออกมาจากปากช่วยให้สมองจดจำได้เร็วขึ้น</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>จำภาพ 💡</h3>
+        <p>ปิดตา มองภาพในหัว — เห็นตัวเลข เห็นตำแหน่งคีย์<br>แล้วลองกดตามความจำโดยไม่ดูคีย์บอร์ด</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <h4>💡 เคล็ดลับสำคัญ</h4>
+    <p>ฝึกวันละ 10 นาที สม่ำเสมอ ดีกว่าฝึกนาน 1 ชั่วโมงนานๆ ครั้ง<br>
+    สแกน QR ในหน้าปกเพื่อดูวิดีโอประกอบการฝึกจากครู Echo Program</p>
+  </div>
+
+  <div class="page-footer"><span>Echo Note Starter Kit · หน้า 3</span></div>
+</div>
+
+<!-- PAGE 4: PARENTS -->
+<div class="page" style="display:flex;flex-direction:column">
+  <div class="p4-header">
+    <div class="label">สำหรับคุณพ่อคุณแม่ — Parent Guide</div>
+    <h2>กุญแจสู่ความสำเร็จของลูก</h2>
+    <p>The Key to Your Child's Success</p>
+  </div>
+
+  <div class="belief-box">
+    <h3>ความเชื่อที่สำคัญที่สุด</h3>
+    <p>ลูกของคุณมีหูดนตรีเท่ากับคุณพ่อคุณแม่ทุกคน<br>
+    สิ่งที่ต่างกันคือ <strong>โอกาส</strong> และ <strong>วิธีการที่ถูกต้อง</strong> เท่านั้น<br>
+    พ่อแม่คือคนที่จะ activate ความสามารถนั้นได้ — ไม่ใช่ครูคนเดียว</p>
+  </div>
+
+  <div class="roles">
+    <div class="role-card" style="border-color:#FF6B00">
+      <div class="role-top" style="background:#FF6B00"><h3>เชื่อมั่น</h3></div>
+      <div class="role-body">
+        <p>บอกลูกว่า "หนูทำได้แน่นอน" หลีกเลี่ยงคำว่า "ยาก" หรือ "ไม่เป็นไร ค่อยๆ ทำ"</p>
+      </div>
+    </div>
+    <div class="role-card" style="border-color:#E65C00">
+      <div class="role-top" style="background:#E65C00"><h3>สังเกต</h3></div>
+      <div class="role-body">
+        <p>นั่งอยู่ใกล้ๆ ระหว่างฝึก ชมเมื่อลูกพยายาม ไม่ใช่แค่เมื่อทำได้สำเร็จ</p>
+      </div>
+    </div>
+    <div class="role-card" style="border-color:#CC5200">
+      <div class="role-top" style="background:#CC5200"><h3>สม่ำเสมอ</h3></div>
+      <div class="role-body">
+        <p>ช่วยลูกฝึกทุกวัน วันละ 10 นาที ติดต่อกัน 3 สัปดาห์ คือกุญแจสู่ความสำเร็จ</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="say-box">
+    <h3>ประโยคที่พ่อแม่ควรพูดระหว่างฝึก</h3>
+    <div class="say-item">
+      <div class="say-mark" style="color:#2E7D32">✓</div>
+      <p>"หนูเก่งมากเลย พยายามได้ดีมาก ลองอีกทีนะ"</p>
+    </div>
+    <div class="say-item">
+      <div class="say-mark" style="color:#2E7D32">✓</div>
+      <p>"เสียงนี้คือเสียงอะไรนะ? ลองฟังดูสิ แล้วบอกพ่อ/แม่ได้เลย"</p>
+    </div>
+    <div class="say-item">
+      <div class="say-mark" style="color:#2E7D32">✓</div>
+      <p>"เราลองด้วยกันนะ พ่อ/แม่ก็อยากรู้เหมือนกัน"</p>
+    </div>
+    <div class="say-item">
+      <div class="say-mark" style="color:#C62828">✗</div>
+      <p>"ไม่ใช่ ผิดแล้ว" — หลีกเลี่ยงคำพูดที่ทำให้ลูกกลัวการผิดพลาด</p>
+    </div>
+  </div>
+
+  <div class="echo-badge">
+    <h4>Echo Program · 16 ปีแห่งประสบการณ์ · Siamskol Music</h4>
+    <p>ดนตรี กตัญญู ผู้ผลิต มิตร AI · echoparuay-cell.github.io/echo-note/</p>
+  </div>
+
+  <div class="page-footer"><span>Echo Note Starter Kit · หน้า 4 · สงวนลิขสิทธิ์ © Echo Program 2025</span></div>
+</div>
+
+<div style="text-align:center;padding:10mm;color:#666;font-family:'Sarabun',sans-serif;font-size:10pt">
+  วิธีพิมพ์: กด <strong>Ctrl+P</strong> (หรือ Cmd+P บน Mac) → เลือก <strong>Save as PDF</strong> → ขนาด <strong>A4</strong> → <strong>No margins</strong>
+</div>
+
+</body>
+</html>
