@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Program — Weekly Brand Rotation</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FF6B00;--black:#0D0D0D;
+  --echo:#FF6B00;
+  --com:#8B5CF6;
+  --orbit:#0EA5E9;
+  --diy:#10B981;
+  --plate:#F59E0B;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#0D0D0D;color:#fff;min-height:100vh;padding:20px}
+
+.header{text-align:center;padding:28px 20px 20px;border-bottom:1px solid rgba(255,107,0,0.2);margin-bottom:24px}
+.header .badge{display:inline-block;background:rgba(255,107,0,0.15);color:var(--orange);border:1px solid rgba(255,107,0,0.3);font-family:'Mitr',sans-serif;font-size:11px;padding:4px 14px;border-radius:20px;letter-spacing:2px;margin-bottom:10px}
+.header h1{font-family:'Mitr',sans-serif;font-size:clamp(20px,4vw,28px);color:#fff;margin-bottom:6px}
+.header p{font-size:12px;color:#666}
+
+/* BRAND LEGEND */
+.brand-legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.brand-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-family:'Mitr',sans-serif;border:1px solid}
+.b-echo{background:rgba(255,107,0,0.12);border-color:rgba(255,107,0,0.3);color:#FF6B00}
+.b-com{background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.3);color:#A78BFA}
+.b-orbit{background:rgba(14,165,233,0.12);border-color:rgba(14,165,233,0.3);color:#38BDF8}
+.b-diy{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:#34D399}
+.b-plate{background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.3);color:#FCD34D}
+
+/* WEEK GRID */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:32px}
+@media(max-width:700px){.week{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.week{grid-template-columns:1fr}}
+
+.day-card{background:#1A1A1A;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.day-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.day-name{font-family:'Mitr',sans-serif;font-size:12px;color:#fff}
+.day-date{font-size:9px;color:#555}
+.day-body{padding:8px 10px 12px;display:flex;flex-direction:column;gap:6px}
+
+.brand-block{border-radius:8px;padding:9px 10px}
+.brand-name{font-family:'Mitr',sans-serif;font-size:11px;margin-bottom:5px}
+.platform-row{display:flex;gap:4px;flex-wrap:wrap}
+.plt{font-size:9px;padding:2px 6px;border-radius:8px;opacity:0.8}
+
+/* Brand colors */
+.echo-block{background:rgba(255,107,0,0.1);border-left:2px solid #FF6B00}
+.echo-block .brand-name{color:#FF6B00}
+.echo-block .plt{background:rgba(255,107,0,0.2);color:#FF9A4D}
+
+.com-block{background:rgba(139,92,246,0.1);border-left:2px solid #8B5CF6}
+.com-block .brand-name{color:#A78BFA}
+.com-block .plt{background:rgba(139,92,246,0.2);color:#C4B5FD}
+
+.orbit-block{background:rgba(14,165,233,0.1);border-left:2px solid #0EA5E9}
+.orbit-block .brand-name{color:#38BDF8}
+.orbit-block .plt{background:rgba(14,165,233,0.2);color:#7DD3FC}
+
+.diy-block{background:rgba(16,185,129,0.1);border-left:2px solid #10B981}
+.diy-block .brand-name{color:#34D399}
+.diy-block .plt{background:rgba(16,185,129,0.2);color:#6EE7B7}
+
+.plate-block{background:rgba(245,158,11,0.1);border-left:2px solid #F59E0B}
+.plate-block .brand-name{color:#FCD34D}
+.plate-block .plt{background:rgba(245,158,11,0.2);color:#FDE68A}
+
+/* CONTENT IDEAS */
+.ideas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:32px}
+.idea-card{background:#1A1A1A;border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.06)}
+.idea-card h3{font-family:'Mitr',sans-serif;font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.idea-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.idea-list li{font-size:11px;color:rgba(255,255,255,0.65);padding-left:12px;position:relative;line-height:1.5}
+.idea-list li::before{content:'▸';position:absolute;left:0;font-size:9px;top:1px}
+
+.section-title{font-family:'Mitr',sans-serif;font-size:13px;color:var(--orange);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,107,0,0.15)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:28px}
+.stat{background:#1A1A1A;border-radius:10px;padding:12px 14px;text-align:center;border:1px solid rgba(255,255,255,0.06)}
+.stat-num{font-family:'Mitr',sans-serif;font-size:22px;color:var(--orange)}
+.stat-label{font-size:10px;color:#555;margin-top:2px}
+
+footer{text-align:center;padding:16px;font-size:10px;color:rgba(255,255,255,0.15);font-family:'Mitr',sans-serif;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">WEEKLY BRAND ROTATION · 5 BRANDS</div>
+  <h1>ตารางหมุนแบรนด์รายสัปดาห์</h1>
+  <p>5 แบรนด์ · 4 Platform · หมุนครบทุกสัปดาห์ครับ · เริ่ม 6 เม.ย. 2569</p>
+</div>
+
+<!-- BRAND LEGEND -->
+<div class="brand-legend">
+  <div class="brand-pill b-echo">🎹 Echo Note</div>
+  <div class="brand-pill b-com">🎵 Comchanote</div>
+  <div class="brand-pill b-orbit">🎒 The Orbit Bag</div>
+  <div class="brand-pill b-diy">🎸 DIY Guitar</div>
+  <div class="brand-pill b-plate">🙏 Gratitude Plate</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">แบรนด์</div></div>
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Platform</div></div>
+  <div class="stat"><div class="stat-num">20+</div><div class="stat-label">โพสต์/สัปดาห์</div></div>
+  <div class="stat"><div class="stat-num">7</div><div class="stat-label">วัน/สัปดาห์</div></div>
+</div>
+
+<!-- WEEK GRID -->
+<div class="section-title">สัปดาห์ที่ 1 · 6–12 เม.ย. 2569</div>
+<div class="week">
+
+  <!-- จันทร์ - Echo Note -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,107,0,0.08)">
+      <div class="day-name">จันทร์</div>
+      <div class="day-date">6 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block echo-block">
+        <div class="brand-name">🎹 Echo Note</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- อังคาร - Comchanote -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(139,92,246,0.08)">
+      <div class="day-name">อังคาร</div>
+      <div class="day-date">7 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block com-block">
+        <div class="brand-name">🎵 Comchanote</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- พุธ - The Orbit Bag -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(14,165,233,0.08)">
+      <div class="day-name">พุธ</div>
+      <div class="day-date">8 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block orbit-block">
+        <div class="brand-name">🎒 The Orbit Bag</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- พฤหัส - DIY Guitar -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(16,185,129,0.08)">
+      <div class="day-name">พฤหัส</div>
+      <div class="day-date">9 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block diy-block">
+        <div class="brand-name">🎸 DIY Guitar</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ศุกร์ - Gratitude Plate -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(245,158,11,0.08)">
+      <div class="day-name">ศุกร์</div>
+      <div class="day-date">10 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block plate-block">
+        <div class="brand-name">🙏 Gratitude Plate</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- เสาร์ - Echo Note + Review -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(255,107,0,0.08)">
+      <div class="day-name">เสาร์</div>
+      <div class="day-date">11 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block echo-block">
+        <div class="brand-name">🎹 Echo Note</div>
+        <div class="platform-row">
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+        </div>
+      </div>
+      <div class="brand-block diy-block">
+        <div class="brand-name">🎸 DIY Guitar</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- อาทิตย์ - Review Week -->
+  <div class="day-card">
+    <div class="day-header" style="background:rgba(139,92,246,0.08)">
+      <div class="day-name">อาทิตย์</div>
+      <div class="day-date">12 เม.ย.</div>
+    </div>
+    <div class="day-body">
+      <div class="brand-block com-block">
+        <div class="brand-name">🎵 Comchanote</div>
+        <div class="platform-row">
+          <span class="plt">FB</span>
+          <span class="plt">TT</span>
+        </div>
+      </div>
+      <div class="brand-block orbit-block">
+        <div class="brand-name">🎒 The Orbit</div>
+        <div class="platform-row">
+          <span class="plt">YT</span>
+          <span class="plt">LINE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTENT IDEAS PER BRAND -->
+<div class="section-title">ไอเดีย Content แต่ละแบรนด์ครับ</div>
+<div class="ideas">
+
+  <div class="idea-card">
+    <h3 style="color:#FF6B00">🎹 Echo Note</h3>
+    <ul class="idea-list">
+      <li>Series ถาม-เฉลย ก้อนเสียง</li>
+      <li>Effort Paradox — ยิ่งออกแรงน้อยยิ่งได้ผล</li>
+      <li>กับดัก Melody</li>
+      <li>เด็กปรบมือตามได้ทันที</li>
+      <li>ก้อน กลุ่ม เม็ด อธิบาย</li>
+    </ul>
+  </div>
+
+  <div class="idea-card">
+    <h3 style="color:#A78BFA">🎵 Comchanote</h3>
+    <ul class="idea-list">
+      <li>สาธิตการใช้งาน</li>
+      <li>รีวิวจากผู้ใช้จริง</li>
+      <li>เปรียบเทียบกับวิธีเก่า</li>
+      <li>ก้อนเสียงใน Comchanote</li>
+      <li>ครูใช้ Comchanote ยังไง</li>
+    </ul>
+  </div>
+
+  <div class="idea-card">
+    <h3 style="color:#38BDF8">🎒 The Orbit Bag</h3>
+    <ul class="idea-list">
+      <li>ใส่เครื่องดนตรีอะไรได้บ้าง</li>
+      <li>รีวิว unboxing</li>
+      <li>ไปซ้อมดนตรีกับ Orbit</li>
+      <li>นักดนตรีใช้ในชีวิตประจำวัน</li>
+      <li>ทนทานแค่ไหน ทดสอบจริง</li>
+    </ul>
+  </div>
+
+  <div class="idea-card">
+    <h3 style="color:#34D399">🎸 DIY Guitar</h3>
+    <ul class="idea-list">
+      <li>Process ประกอบกีตาร์ step by step</li>
+      <li>ทำไมต้องประกอบเอง?</li>
+      <li>เสียงกีตาร์ที่ประกอบเสร็จ</li>
+      <li>Maker mindset — ผู้ผลิตไม่ใช่ผู้บริโภค</li>
+      <li>Before & After กีตาร์ DIY</li>
+    </ul>
+  </div>
+
+  <div class="idea-card">
+    <h3 style="color:#FCD34D">🙏 Gratitude Plate</h3>
+    <ul class="idea-list">
+      <li>ความหมายของกตัญญูในดนตรี</li>
+      <li>เด็กเล่นดนตรีให้พ่อแม่ฟัง</li>
+      <li>ดนตรีคือการขอบคุณ</li>
+      <li>Fast Charge Gratitude 6 Port</li>
+      <li>ดนตรี กตัญญู ผู้ผลิต มิตร AI</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>Echo Program · Weekly Brand Rotation · 5 Brands · 4 Platforms · ดนตรี กตัญญู ผู้ผลิต มิตร AI</footer>
+
+</body>
+</html>
