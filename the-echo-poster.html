@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ECHO — Band Profile Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Righteous&family=Libre+Baskerville:ital@1&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Special Elite', serif;
+  }
+
+  .poster {
+    width: 600px;
+    min-height: 900px;
+    position: relative;
+    overflow: hidden;
+    background: #08000f;
+    border: 3px solid #ff6b00;
+    box-shadow:
+      0 0 40px #ff6b0088,
+      0 0 80px #8b00ff44,
+      inset 0 0 60px #1a0030;
+  }
+
+  /* Psychedelic swirl background */
+  .bg-swirl {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, #8b00ff33 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, #ff6b0033 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, #00ffcc11 0%, transparent 70%);
+    animation: swirlPulse 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes swirlPulse {
+    0% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+    100% { opacity: 1; transform: scale(1.05) rotate(2deg); }
+  }
+
+  /* Concentric wave lines */
+  .waves {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-radial-gradient(
+        circle at 50% 40%,
+        transparent 0px,
+        transparent 18px,
+        #ff6b0015 19px,
+        transparent 20px
+      );
+    animation: wavePulse 4s ease-in-out infinite;
+  }
+
+  @keyframes wavePulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+
+  /* Grain texture */
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 28px;
+  }
+
+  /* Top ornament */
+  .top-ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ornament-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ff6b00, transparent);
+  }
+
+  .ornament-diamond {
+    width: 10px;
+    height: 10px;
+    background: #ff6b00;
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px #ff6b00;
+  }
+
+  .label-top {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: #ff6b00;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+    opacity: 0.9;
+  }
+
+  /* Main title */
+  .title-wrap {
+    position: relative;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .title-the {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-size: 28px;
+    color: #cc8800;
+    letter-spacing: 12px;
+    display: block;
+    text-shadow: 0 0 20px #ff6b00;
+  }
+
+  .title-echo {
+    font-family: 'Righteous', cursive;
+    font-size: 110px;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 2px #ff6b00;
+    text-stroke: 2px #ff6b00;
+    display: block;
+    letter-spacing: 8px;
+    text-shadow:
+      0 0 30px #ff6b0088,
+      0 0 60px #8b00ff66,
+      4px 4px 0 #8b00ff44;
+    animation: glowPulse 3s ease-in-out infinite;
+    position: relative;
+  }
+
+  .title-echo::after {
+    content: 'ECHO';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff6b0022;
+    -webkit-text-stroke: 0;
+    font-size: 110px;
+    letter-spacing: 8px;
+    filter: blur(8px);
+    z-index: -1;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { text-shadow: 0 0 30px #ff6b0088, 0 0 60px #8b00ff66, 4px 4px 0 #8b00ff44; }
+    50% { text-shadow: 0 0 50px #ff6b00cc, 0 0 100px #8b00ffaa, 4px 4px 0 #8b00ff88; }
+  }
+
+  /* Tagline Thai */
+  .tagline {
+    font-family: 'Special Elite', serif;
+    font-size: 13px;
+    color: #00ffcc;
+    letter-spacing: 3px;
+    text-align: center;
+    margin: 10px 0 20px;
+    text-shadow: 0 0 12px #00ffcc88;
+    opacity: 0.9;
+  }
+
+  /* Divider */
+  .psycho-divider {
+    width: 100%;
+    height: 24px;
+    position: relative;
+    margin: 8px 0 20px;
+    overflow: hidden;
+  }
+
+  .psycho-divider svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Band photo area */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .member-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    border: 2px solid;
+    clip-path: polygon(0 8%, 8% 0, 92% 0, 100% 8%, 100% 92%, 92% 100%, 8% 100%, 0 92%);
+  }
+
+  .member-card:nth-child(1) {
+    border-color: #ff6b00;
+    box-shadow: 0 0 20px #ff6b0066;
+  }
+  .member-card:nth-child(2) {
+    border-color: #8b00ff;
+    box-shadow: 0 0 20px #8b00ff66;
+    transform: translateY(-8px);
+  }
+  .member-card:nth-child(3) {
+    border-color: #00ffcc;
+    box-shadow: 0 0 20px #00ffcc66;
+  }
+
+  .member-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: contrast(1.2) saturate(0.7) sepia(0.2);
+    mix-blend-mode: normal;
+    transition: filter 0.3s;
+  }
+
+  .member-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, #08000fdd 100%);
+  }
+
+  .member-card:nth-child(1) .member-overlay {
+    background: linear-gradient(to bottom, #ff6b0011 0%, transparent 40%, #08000fdd 100%);
+  }
+  .member-card:nth-child(2) .member-overlay {
+    background: linear-gradient(to bottom, #8b00ff11 0%, transparent 40%, #08000fdd 100%);
+  }
+  .member-card:nth-child(3) .member-overlay {
+    background: linear-gradient(to bottom, #00ffcc11 0%, transparent 40%, #08000fdd 100%);
+  }
+
+  .member-role {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .member-card:nth-child(1) .member-role { color: #ff6b00; }
+  .member-card:nth-child(2) .member-role { color: #8b00ff; text-shadow: 0 0 8px #8b00ff; }
+  .member-card:nth-child(3) .member-role { color: #00ffcc; }
+
+  /* Color tint overlays per member */
+  .tint {
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: color;
+    opacity: 0.3;
+  }
+
+  .member-card:nth-child(1) .tint { background: #ff6b00; }
+  .member-card:nth-child(2) .tint { background: #8b00ff; }
+  .member-card:nth-child(3) .tint { background: #00ffcc; }
+
+  /* Song titles */
+  .songs-section {
+    width: 100%;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .songs-label {
+    font-family: 'Special Elite', serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: #8b00ff;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px #8b00ff;
+  }
+
+  .songs-list {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .song-pill {
+    padding: 4px 14px;
+    border: 1px solid #ff6b0066;
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: #ffcc66;
+    background: #ff6b0011;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    letter-spacing: 1px;
+  }
+
+  /* Concept text */
+  .concept-box {
+    width: 100%;
+    border: 1px solid #ff6b0044;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    position: relative;
+    background: #ff6b0008;
+  }
+
+  .concept-box::before {
+    content: '❝';
+    position: absolute;
+    top: -14px;
+    left: 16px;
+    font-size: 28px;
+    color: #ff6b00;
+    line-height: 1;
+  }
+
+  .concept-text {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #ffeecc;
+    line-height: 1.7;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .concept-text span {
+    color: #00ffcc;
+    font-style: normal;
+  }
+
+  /* Bottom info */
+  .bottom-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 16px;
+    border-top: 1px solid #ff6b0033;
+  }
+
+  .location {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    color: #ff6b00aa;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .date-badge {
+    background: #ff6b00;
+    color: #08000f;
+    font-family: 'Righteous', cursive;
+    font-size: 13px;
+    padding: 6px 14px;
+    letter-spacing: 2px;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+
+  .social {
+    font-family: 'Special Elite', serif;
+    font-size: 11px;
+    color: #8b00ffaa;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Corner decorations */
+  .corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    z-index: 20;
+  }
+  .corner.tl { top: 8px; left: 8px; border-top: 2px solid #ff6b00; border-left: 2px solid #ff6b00; }
+  .corner.tr { top: 8px; right: 8px; border-top: 2px solid #ff6b00; border-right: 2px solid #ff6b00; }
+  .corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid #ff6b00; border-left: 2px solid #ff6b00; }
+  .corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid #ff6b00; border-right: 2px solid #ff6b00; }
+
+  /* Floating orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    animation: orbFloat 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .orb1 { width: 200px; height: 200px; background: #8b00ff33; top: -50px; right: -50px; animation-delay: 0s; }
+  .orb2 { width: 150px; height: 150px; background: #ff6b0022; bottom: 100px; left: -30px; animation-delay: 3s; }
+  .orb3 { width: 100px; height: 100px; background: #00ffcc22; top: 40%; right: 20px; animation-delay: 5s; }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-20px) scale(1.1); }
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <!-- Corner decorations -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- Background layers -->
+  <div class="bg-swirl"></div>
+  <div class="waves"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grain"></div>
+
+  <div class="content">
+    <!-- Top label -->
+    <div class="top-ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line"></div>
+    </div>
+    <div class="label-top">สกลนคร · ประเทศไทย · ๒๕๖๙</div>
+
+    <!-- Title -->
+    <div class="title-wrap">
+      <span class="title-the">the</span>
+      <span class="title-echo">ECHO</span>
+    </div>
+
+    <div class="tagline">เสียงที่สะท้อนกลับสู่ผู้สร้าง</div>
+
+    <!-- Psychedelic divider -->
+    <div class="psycho-divider">
+      <svg viewBox="0 0 600 24" preserveAspectRatio="none">
+        <path d="M0,12 Q75,2 150,12 Q225,22 300,12 Q375,2 450,12 Q525,22 600,12"
+              fill="none" stroke="#ff6b00" stroke-width="1.5" opacity="0.8"/>
+        <path d="M0,12 Q75,22 150,12 Q225,2 300,12 Q375,22 450,12 Q525,2 600,12"
+              fill="none" stroke="#8b00ff" stroke-width="1" opacity="0.6"/>
+        <circle cx="150" cy="12" r="3" fill="#ff6b00" opacity="0.8"/>
+        <circle cx="300" cy="12" r="3" fill="#8b00ff" opacity="0.8"/>
+        <circle cx="450" cy="12" r="3" fill="#00ffcc" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <!-- Member photos -->
+    <div class="photo-grid">
+      <!-- Drummer -->
+      <div class="member-card">
+        <img src="/mnt/user-data/uploads/IMG_6166.jpeg" alt="Drummer" class="member-img" style="object-position: center 20%;">
+        <div class="tint"></div>
+        <div class="member-overlay"></div>
+        <div class="member-role">Drums</div>
+      </div>
+
+      <!-- Guitarist / Echo -->
+      <div class="member-card">
+        <img src="/mnt/user-data/uploads/IMG_6049.jpeg" alt="Echo - Guitar" class="member-img" style="object-position: center 15%;">
+        <div class="tint"></div>
+        <div class="member-overlay"></div>
+        <div class="member-role">Guitar · Vocals</div>
+      </div>
+
+      <!-- Bassist -->
+      <div class="member-card">
+        <img src="/mnt/user-data/uploads/IMG_6167.jpeg" alt="Bassist" class="member-img" style="object-position: center 20%;">
+        <div class="tint"></div>
+        <div class="member-overlay"></div>
+        <div class="member-role">Bass</div>
+      </div>
+    </div>
+
+    <!-- Original songs -->
+    <div class="songs-section">
+      <div class="songs-label">Original Songs</div>
+      <div class="songs-list">
+        <div class="song-pill">ชีวกตัญญู</div>
+        <div class="song-pill">ใจเอา-เอาใจ</div>
+      </div>
+    </div>
+
+    <!-- Concept quote -->
+    <div class="concept-box">
+      <div class="concept-text">
+        ดนตรีที่พูดถึงสิ่งที่มนุษย์<span>ต้องส่งต่อ</span><br>
+        กฎผู้สร้างและผู้ถูกสร้าง<br>
+        <span>Rock</span> วงเดียวในโลกที่เล่นเพลงนี้
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-info">
+      <div class="location">Siam Sakon<br>Music School</div>
+      <div class="date-badge">13 APR 2026</div>
+      <div class="social">Soft<br>Launch</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
