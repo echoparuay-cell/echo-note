@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effort Paradox Thumbnail</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:#111;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  min-height:100vh;
+  gap:48px;padding:48px 20px;
+}
+
+/* ===== THUMBNAIL 1: 16:9 YouTube ===== */
+.t1{
+  width:640px;height:360px;
+  position:relative;overflow:hidden;
+  border-radius:12px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.8);
+}
+
+/* Split background */
+.t1-left{
+  position:absolute;
+  left:0;top:0;bottom:0;width:50%;
+  background:linear-gradient(135deg,#1a0a00,#2d1200);
+}
+.t1-right{
+  position:absolute;
+  right:0;top:0;bottom:0;width:50%;
+  background:linear-gradient(135deg,#0a1a00,#0d2600);
+}
+
+/* Diagonal slash divider */
+.t1-slash{
+  position:absolute;
+  left:50%;top:0;bottom:0;
+  width:4px;
+  background:linear-gradient(180deg,transparent,#FF6B00,#FF6B00,transparent);
+  transform:translateX(-50%) skewX(-8deg);
+  z-index:10;
+  box-shadow:0 0 20px rgba(255,107,0,0.8);
+}
+
+/* Left side — HARD EFFORT */
+.t1-left-content{
+  position:absolute;
+  left:0;top:0;bottom:0;width:50%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;padding:20px;
+}
+
+.effort-bars{
+  display:flex;align-items:flex-end;gap:5px;height:80px;
+}
+.bar{
+  width:14px;border-radius:3px 3px 0 0;
+  animation:growBar 1.5s ease-out forwards;
+}
+@keyframes growBar{from{height:0}to{height:var(--h)}}
+
+.t1-label-top{
+  font-family:'Mitr',sans-serif;
+  font-size:11px;letter-spacing:2px;
+  color:rgba(255,255,255,0.4);
+}
+.t1-label-main{
+  font-family:'Mitr',sans-serif;
+  font-size:22px;color:#fff;
+  text-align:center;line-height:1.2;
+}
+.t1-label-main em{color:#FF4444;font-style:normal}
+.t1-label-sub{
+  font-size:10px;color:rgba(255,255,255,0.3);
+  text-align:center;
+}
+.t1-arrow-down{
+  font-size:20px;color:#FF4444;
+  animation:bounce 1s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* Right side — EASY EFFORT */
+.t1-right-content{
+  position:absolute;
+  right:0;top:0;bottom:0;width:50%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;padding:20px;
+}
+
+.feather-wrap{
+  position:relative;width:60px;height:80px;display:flex;align-items:center;justify-content:center;
+}
+.feather{font-size:48px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+.glow-ring{
+  position:absolute;
+  width:70px;height:70px;
+  border-radius:50%;
+  border:1px solid rgba(80,255,80,0.3);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.2);opacity:1}}
+
+.t1-label-main2{
+  font-family:'Mitr',sans-serif;
+  font-size:22px;color:#fff;
+  text-align:center;line-height:1.2;
+}
+.t1-label-main2 em{color:#50FF50;font-style:normal}
+.t1-arrow-up{
+  font-size:20px;color:#50FF50;
+  animation:bounceUp 1s ease-in-out infinite;
+}
+@keyframes bounceUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* Center title */
+.t1-center{
+  position:absolute;
+  top:16px;left:50%;
+  transform:translateX(-50%);
+  z-index:20;
+  text-align:center;
+  white-space:nowrap;
+}
+.t1-center-title{
+  font-family:'Mitr',sans-serif;
+  font-size:13px;
+  color:rgba(255,255,255,0.5);
+  letter-spacing:3px;
+  background:rgba(0,0,0,0.6);
+  padding:4px 14px;
+  border-radius:20px;
+  border:1px solid rgba(255,107,0,0.3);
+}
+
+/* Bottom banner */
+.t1-bottom{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(4px);
+  padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:2px solid #FF6B00;
+  z-index:20;
+}
+.t1-bottom-text{
+  font-family:'Mitr',sans-serif;
+  font-size:15px;color:#fff;
+}
+.t1-bottom-text span{color:#FF6B00}
+.t1-bottom-brand{
+  font-family:'Mitr',sans-serif;
+  font-size:10px;color:rgba(255,255,255,0.4);
+  letter-spacing:1px;
+}
+
+/* ===== THUMBNAIL 2: Square 1:1 ===== */
+.t2{
+  width:400px;height:400px;
+  position:relative;overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.8);
+  background:#0D0D0D;
+}
+
+/* Background texture */
+.t2::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%, rgba(255,68,68,0.15) 0%, transparent 60%),
+             radial-gradient(ellipse at 70% 50%, rgba(80,255,80,0.1) 0%, transparent 60%);
+}
+
+.t2-content{
+  position:relative;z-index:2;
+  height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:28px;gap:0;
+}
+
+.t2-badge{
+  font-family:'Mitr',sans-serif;font-size:10px;
+  color:rgba(255,255,255,0.4);letter-spacing:3px;
+  margin-bottom:16px;
+}
+
+/* Big contrast visual */
+.t2-compare{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:20px;
+}
+.t2-side{text-align:center}
+.t2-force{
+  font-family:'Mitr',sans-serif;
+  font-size:42px;
+  line-height:1;
+  margin-bottom:4px;
+}
+.t2-result{
+  font-family:'Mitr',sans-serif;
+  font-size:13px;
+}
+.t2-vs{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.t2-neq{
+  font-family:'Mitr',sans-serif;
+  font-size:36px;color:#FF6B00;
+  text-shadow:0 0 20px rgba(255,107,0,0.6);
+}
+.t2-world{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:1px}
+.t2-music{font-size:10px;color:#FF6B00;letter-spacing:1px}
+
+/* Main headline */
+.t2-headline{
+  font-family:'Mitr',sans-serif;
+  font-size:20px;color:#fff;
+  text-align:center;line-height:1.4;
+  margin-bottom:16px;
+}
+.t2-headline em{color:#FF6B00;font-style:normal}
+
+/* Divider */
+.t2-divider{
+  width:40px;height:2px;
+  background:linear-gradient(90deg,transparent,#FF6B00,transparent);
+  margin-bottom:14px;
+}
+
+.t2-sub{
+  font-size:11px;color:rgba(255,255,255,0.4);
+  text-align:center;line-height:1.6;
+}
+.t2-brand{
+  position:absolute;bottom:14px;
+  font-family:'Mitr',sans-serif;
+  font-size:9px;color:rgba(255,255,255,0.2);
+  letter-spacing:2px;
+}
+
+/* ===== THUMBNAIL 3: Vertical 9:16 TikTok ===== */
+.t3{
+  width:260px;height:462px;
+  position:relative;overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.8);
+  background:#0D0D0D;
+}
+
+.t3::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,68,68,0.12),transparent);
+}
+.t3::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;height:50%;
+  background:linear-gradient(0deg,rgba(80,255,80,0.1),transparent);
+}
+
+.t3-content{
+  position:relative;z-index:2;
+  height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:24px 20px;
+}
+
+.t3-tag{
+  font-family:'Mitr',sans-serif;font-size:9px;
+  color:rgba(255,255,255,0.4);letter-spacing:2px;
+  background:rgba(255,255,255,0.06);
+  padding:4px 12px;border-radius:20px;
+  margin-bottom:20px;
+}
+
+/* Top — hard effort */
+.t3-top-block{
+  width:100%;background:rgba(255,68,68,0.08);
+  border:1px solid rgba(255,68,68,0.2);
+  border-radius:12px;padding:14px;
+  text-align:center;margin-bottom:8px;
+}
+.t3-force-label{font-size:9px;color:rgba(255,68,68,0.7);letter-spacing:1px;font-family:'Mitr',sans-serif;margin-bottom:4px}
+.t3-force-num{font-family:'Mitr',sans-serif;font-size:32px;color:#FF4444;line-height:1}
+.t3-force-sub{font-size:9px;color:rgba(255,255,255,0.3)}
+
+/* Middle paradox */
+.t3-middle{
+  display:flex;align-items:center;gap:10px;
+  margin:6px 0;
+}
+.t3-line{flex:1;height:1px;background:rgba(255,107,0,0.3)}
+.t3-paradox{
+  font-family:'Mitr',sans-serif;font-size:11px;
+  color:#FF6B00;letter-spacing:1px;
+  background:rgba(255,107,0,0.1);
+  border:1px solid rgba(255,107,0,0.3);
+  padding:4px 10px;border-radius:20px;
+}
+
+/* Bottom — easy effort */
+.t3-bottom-block{
+  width:100%;background:rgba(80,255,80,0.06);
+  border:1px solid rgba(80,255,80,0.15);
+  border-radius:12px;padding:14px;
+  text-align:center;margin-bottom:16px;
+}
+.t3-easy-label{font-size:9px;color:rgba(80,255,80,0.7);letter-spacing:1px;font-family:'Mitr',sans-serif;margin-bottom:4px}
+.t3-easy-num{font-family:'Mitr',sans-serif;font-size:32px;color:#50FF50;line-height:1}
+.t3-easy-sub{font-size:9px;color:rgba(255,255,255,0.3)}
+
+/* Headline */
+.t3-headline{
+  font-family:'Mitr',sans-serif;font-size:17px;
+  color:#fff;text-align:center;line-height:1.4;
+  margin-bottom:12px;
+}
+.t3-headline em{color:#FF6B00;font-style:normal}
+
+.t3-cta{
+  font-family:'Mitr',sans-serif;font-size:11px;
+  color:#FF6B00;
+  background:rgba(255,107,0,0.1);
+  border:1px solid rgba(255,107,0,0.3);
+  padding:8px 20px;border-radius:20px;
+}
+
+.t3-brand{
+  position:absolute;bottom:12px;
+  font-family:'Mitr',sans-serif;font-size:8px;
+  color:rgba(255,255,255,0.15);letter-spacing:1px;
+}
+
+/* Labels */
+.ver-label{
+  font-family:'Mitr',sans-serif;font-size:10px;
+  color:rgba(255,255,255,0.25);letter-spacing:2px;
+  text-align:center;
+}
+</style>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Echo Program · Siamskol Music School">
+  <meta property="og:title" content="Effort Paradox — ยิ่งออกแรงน้อย ยิ่งได้ผลมาก">
+  <meta property="og:description" content="ทำไมดนตรีถึงต่างจากทุกอย่างในชีวิต Echo Program อธิบายครับ">
+  <meta property="og:url" content="https://echoparuay-cell.github.io/echo-note/echo_paradox_thumbnail.html">
+  <meta property="og:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Effort Paradox — ยิ่งออกแรงน้อย ยิ่งได้ผลมาก">
+  <meta name="twitter:description" content="ทำไมดนตรีถึงต่างจากทุกอย่างในชีวิต Echo Program อธิบายครับ">
+  <meta name="twitter:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+</head>
+<body>
+
+<!-- VERSION 1: YouTube 16:9 -->
+<div class="ver-label">YOUTUBE · 16:9</div>
+<div class="t1">
+  <div class="t1-left"></div>
+  <div class="t1-right"></div>
+  <div class="t1-slash"></div>
+
+  <!-- Left: Hard -->
+  <div class="t1-left-content">
+    <div class="t1-label-top">โลกปกติ</div>
+    <div class="effort-bars">
+      <div class="bar" style="--h:30px;background:#FF4444;opacity:0.5"></div>
+      <div class="bar" style="--h:50px;background:#FF4444;opacity:0.6"></div>
+      <div class="bar" style="--h:70px;background:#FF4444;opacity:0.7"></div>
+      <div class="bar" style="--h:55px;background:#FF4444;opacity:0.8"></div>
+      <div class="bar" style="--h:80px;background:#FF4444"></div>
+    </div>
+    <div class="t1-label-main">ยิ่งออกแรง<br><em>มาก</em></div>
+    <div class="t1-arrow-down">↑</div>
+    <div class="t1-label-sub">ยิ่งได้ผลมาก</div>
+  </div>
+
+  <!-- Right: Easy -->
+  <div class="t1-right-content">
+    <div class="t1-label-top">ดนตรี</div>
+    <div class="feather-wrap">
+      <div class="glow-ring"></div>
+      <div class="feather">🪶</div>
+    </div>
+    <div class="t1-label-main2">ยิ่งออกแรง<br><em>น้อย</em></div>
+    <div class="t1-arrow-up">↑</div>
+    <div class="t1-label-sub">ยิ่งได้ผลมาก</div>
+  </div>
+
+  <!-- Center label -->
+  <div class="t1-center">
+    <div class="t1-center-title">EFFORT PARADOX</div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="t1-bottom">
+    <div class="t1-bottom-text">ทำไมดนตรี<span>ต่างจากทุกอย่าง</span>ในชีวิต?</div>
+    <div class="t1-bottom-brand">ECHO PROGRAM</div>
+  </div>
+</div>
+
+<!-- VERSION 2: Square -->
+<div class="ver-label">SQUARE · 1:1</div>
+<div class="t2">
+  <div class="t2-content">
+    <div class="t2-badge">EFFORT PARADOX · ECHO PROGRAM</div>
+
+    <div class="t2-compare">
+      <div class="t2-side">
+        <div class="t2-force" style="color:#FF4444">💪</div>
+        <div class="t2-result" style="color:#FF4444">ออกแรงมาก</div>
+      </div>
+      <div class="t2-vs">
+        <div class="t2-world" style="margin-bottom:2px">โลกปกติ ↑</div>
+        <div class="t2-neq">≠</div>
+        <div class="t2-music">ดนตรี ↑</div>
+      </div>
+      <div class="t2-side">
+        <div class="t2-force" style="color:#50FF50">🪶</div>
+        <div class="t2-result" style="color:#50FF50">ออกแรงน้อย</div>
+      </div>
+    </div>
+
+    <div class="t2-headline">
+      ในดนตรี<br>
+      <em>ยิ่งออกแรงน้อย</em><br>
+      ยิ่งได้ผลมาก
+    </div>
+
+    <div class="t2-divider"></div>
+
+    <div class="t2-sub">
+      ตรงกันข้ามกับทุกอย่างที่คุณเคยรู้<br>
+      Echo Program สอนสิ่งนี้ตั้งแต่วันแรก
+    </div>
+  </div>
+  <div class="t2-brand">ECHO PROGRAM · SIAMSKOL MUSIC</div>
+</div>
+
+<!-- VERSION 3: TikTok Vertical -->
+<div class="ver-label">TIKTOK · 9:16</div>
+<div class="t3">
+  <div class="t3-content">
+    <div class="t3-tag">EFFORT PARADOX</div>
+
+    <div class="t3-top-block">
+      <div class="t3-force-label">โลกปกติ</div>
+      <div class="t3-force-num">💪</div>
+      <div style="font-family:'Mitr',sans-serif;font-size:13px;color:#FF4444;margin:4px 0">ออกแรงมาก = ได้ผลมาก</div>
+      <div class="t3-force-sub">ทุกอย่างในชีวิต</div>
+    </div>
+
+    <div class="t3-middle">
+      <div class="t3-line"></div>
+      <div class="t3-paradox">แต่ดนตรี...</div>
+      <div class="t3-line"></div>
+    </div>
+
+    <div class="t3-bottom-block">
+      <div class="t3-easy-label">ดนตรี</div>
+      <div class="t3-easy-num">🪶</div>
+      <div style="font-family:'Mitr',sans-serif;font-size:13px;color:#50FF50;margin:4px 0">ออกแรงน้อย = ได้ผลมาก</div>
+      <div class="t3-easy-sub">ตรงกันข้ามกับทุกอย่าง</div>
+    </div>
+
+    <div class="t3-headline">
+      ทำไมดนตรี<br>
+      <em>ต่างจากทุกอย่าง</em><br>
+      ในชีวิต?
+    </div>
+
+    <div class="t3-cta">ดูคำตอบได้เลยครับ 👇</div>
+  </div>
+  <div class="t3-brand">ECHO PROGRAM · @musicsupport</div>
+</div>
+
+</body>
+</html>

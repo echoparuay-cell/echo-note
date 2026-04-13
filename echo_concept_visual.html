@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ก้อน กลุ่ม เม็ด — Echo Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FF6B00;
+  --green:#10B981;
+  --blue:#3B82F6;
+  --yellow:#F59E0B;
+  --black:#0D0D0D;
+  --white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:#0D0D0D;
+  color:#fff;
+  min-height:100vh;
+  padding:32px 16px;
+}
+
+/* HEADER */
+.header{
+  text-align:center;
+  margin-bottom:36px;
+}
+.header .tag{
+  display:inline-block;
+  background:rgba(255,107,0,0.15);
+  border:1px solid rgba(255,107,0,0.3);
+  color:var(--orange);
+  font-family:'Mitr',sans-serif;
+  font-size:10px;letter-spacing:3px;
+  padding:4px 14px;border-radius:20px;
+  margin-bottom:12px;
+}
+.header h1{
+  font-family:'Mitr',sans-serif;
+  font-size:clamp(24px,5vw,40px);
+  color:#fff;margin-bottom:6px;
+}
+.header h1 span{color:var(--orange)}
+.header p{
+  font-size:13px;color:rgba(255,255,255,0.4);
+}
+
+/* MAIN VISUAL — 3 LEVELS */
+.levels{
+  max-width:700px;margin:0 auto 40px;
+  display:flex;flex-direction:column;gap:0;
+}
+
+/* LEVEL CARD */
+.level{
+  position:relative;
+  padding:24px 24px 24px 80px;
+  border-radius:0;
+  border-left:4px solid;
+  margin-bottom:0;
+  transition:transform 0.2s;
+}
+.level:first-child{border-radius:16px 16px 0 0}
+.level:last-child{border-radius:0 0 16px 16px}
+.level:hover{transform:translateX(4px)}
+
+.level-gon{background:rgba(255,107,0,0.08);border-color:var(--orange)}
+.level-glum{background:rgba(59,130,246,0.08);border-color:var(--blue)}
+.level-met{background:rgba(16,185,129,0.08);border-color:var(--green)}
+
+/* Number badge */
+.level-num{
+  position:absolute;
+  left:20px;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Mitr',sans-serif;font-size:20px;font-weight:700;
+}
+.level-gon .level-num{background:rgba(255,107,0,0.2);color:var(--orange)}
+.level-glum .level-num{background:rgba(59,130,246,0.2);color:var(--blue)}
+.level-met .level-num{background:rgba(16,185,129,0.2);color:var(--green)}
+
+.level-body{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.level-text{}
+.level-name{
+  font-family:'Mitr',sans-serif;
+  font-size:22px;color:#fff;
+  margin-bottom:3px;
+}
+.level-eq{
+  font-size:13px;
+  display:flex;align-items:center;gap:6px;
+}
+.level-eq .eq-num{
+  font-family:'Mitr',sans-serif;
+  font-size:18px;font-weight:700;
+}
+.level-gon .level-eq .eq-num{color:var(--orange)}
+.level-glum .level-eq .eq-num{color:var(--blue)}
+.level-met .level-eq .eq-num{color:var(--green)}
+.level-eq .eq-label{color:rgba(255,255,255,0.5);font-size:12px}
+
+/* Visual blocks */
+.visual-blocks{display:flex;gap:6px;align-items:center;margin-left:auto}
+
+/* GON: 4 groups together */
+.gon-visual{
+  display:flex;gap:3px;
+  background:rgba(255,107,0,0.08);
+  border:1px solid rgba(255,107,0,0.3);
+  border-radius:8px;padding:6px;
+}
+.gon-group{
+  width:28px;height:28px;
+  background:rgba(255,107,0,0.3);
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+}
+.gon-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
+
+/* GLUM: 1 group */
+.glum-visual{
+  background:rgba(59,130,246,0.08);
+  border:1px solid rgba(59,130,246,0.3);
+  border-radius:8px;padding:8px 12px;
+  display:flex;align-items:center;gap:4px;
+}
+.glum-dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+
+/* MET: single sound */
+.met-visual{
+  width:40px;height:40px;
+  background:rgba(16,185,129,0.15);
+  border:2px solid var(--green);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+
+/* CONNECTOR ARROWS */
+.connector{
+  display:flex;align-items:center;justify-content:center;
+  height:24px;
+  color:rgba(255,255,255,0.15);
+  font-size:18px;
+  position:relative;
+  z-index:2;
+}
+
+/* ANALOGY SECTION */
+.analogy{
+  max-width:700px;margin:0 auto 40px;
+  background:#1A1A1A;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.analogy-header{
+  padding:14px 20px;
+  background:rgba(255,107,0,0.08);
+  border-bottom:1px solid rgba(255,107,0,0.15);
+  font-family:'Mitr',sans-serif;
+  font-size:12px;color:var(--orange);
+  letter-spacing:2px;
+}
+.analogy-grid{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:0;
+}
+.ana-col{padding:18px 20px}
+.ana-title{
+  font-family:'Mitr',sans-serif;
+  font-size:11px;letter-spacing:2px;
+  margin-bottom:12px;
+}
+.ana-col:first-child .ana-title{color:var(--blue)}
+.ana-col:last-child .ana-title{color:var(--orange)}
+
+.ana-item{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:10px;
+}
+.ana-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.ana-text{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.4}
+.ana-text strong{color:#fff;font-family:'Mitr',sans-serif}
+
+.ana-divider{
+  width:1px;
+  background:rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:rgba(255,255,255,0.15);
+  padding:20px 0;
+}
+
+/* NOT A CHEAT */
+.not-cheat{
+  max-width:700px;margin:0 auto 40px;
+  background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.03));
+  border:1px solid rgba(255,107,0,0.2);
+  border-radius:16px;
+  padding:24px;
+  text-align:center;
+}
+.not-cheat .cross{
+  font-size:32px;margin-bottom:10px;
+  filter:grayscale(0.3);
+}
+.not-cheat h2{
+  font-family:'Mitr',sans-serif;
+  font-size:20px;color:#fff;
+  margin-bottom:8px;
+  line-height:1.4;
+}
+.not-cheat h2 em{color:var(--orange);font-style:normal}
+.not-cheat p{
+  font-size:13px;color:rgba(255,255,255,0.5);
+  line-height:1.8;max-width:480px;margin:0 auto;
+}
+
+/* SUBDIVISION CONNECTION */
+.subdivision{
+  max-width:700px;margin:0 auto 40px;
+}
+.sub-title{
+  font-family:'Mitr',sans-serif;font-size:13px;
+  color:rgba(255,255,255,0.3);letter-spacing:2px;
+  margin-bottom:14px;text-align:center;
+}
+.sub-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:8px;
+}
+.sub-card{
+  background:#1A1A1A;
+  border-radius:12px;padding:14px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+  position:relative;overflow:hidden;
+}
+.sub-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.sub-card.s1::before{background:var(--green)}
+.sub-card.s2::before{background:var(--blue)}
+.sub-card.s3::before{background:var(--orange)}
+.sub-card.s4::before{background:var(--yellow)}
+
+.sub-level{
+  font-family:'Mitr',sans-serif;font-size:10px;
+  letter-spacing:1px;margin-bottom:6px;
+}
+.sub-card.s1 .sub-level{color:var(--green)}
+.sub-card.s2 .sub-level{color:var(--blue)}
+.sub-card.s3 .sub-level{color:var(--orange)}
+.sub-card.s4 .sub-level{color:var(--yellow)}
+
+.sub-name{font-family:'Mitr',sans-serif;font-size:13px;color:#fff;margin-bottom:4px}
+.sub-desc{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.4}
+
+/* VISUAL RHYTHM LINE */
+.rhythm-line{
+  max-width:700px;margin:0 auto 32px;
+  background:#1A1A1A;border-radius:14px;
+  padding:20px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.rhythm-label{
+  font-family:'Mitr',sans-serif;font-size:11px;
+  color:rgba(255,255,255,0.3);letter-spacing:2px;
+  margin-bottom:14px;text-align:center;
+}
+.rhythm-row{display:flex;align-items:center;gap:3px;justify-content:center;flex-wrap:wrap}
+.r-box{
+  height:32px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Mitr',sans-serif;font-size:9px;color:#fff;
+}
+.r-short{width:32px;background:rgba(255,107,0,0.4)}
+.r-long{width:64px;background:rgba(59,130,246,0.4)}
+.r-longer{width:96px;background:rgba(16,185,129,0.4)}
+.r-longest{width:128px;background:rgba(245,158,11,0.4)}
+.r-sep{width:2px;height:24px;background:rgba(255,255,255,0.1)}
+
+.rhythm-legend{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  margin-top:10px;
+}
+.r-leg{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.5)}
+.r-dot{width:10px;height:10px;border-radius:2px}
+
+/* FOOTER */
+.footer-note{
+  max-width:700px;margin:0 auto;
+  text-align:center;
+  font-size:11px;color:rgba(255,255,255,0.2);
+  font-family:'Mitr',sans-serif;letter-spacing:1px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.level{animation:fadeUp 0.5s ease-out forwards;opacity:0}
+.level:nth-child(1){animation-delay:0.1s}
+.level:nth-child(2){animation-delay:0.3s}
+.level:nth-child(3){animation-delay:0.5s}
+</style>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Echo Program · Siamskol Music School">
+  <meta property="og:title" content="ก้อน กลุ่ม เม็ด — ระบบก้อนเสียง Echo Program">
+  <meta property="og:description" content="นี่ไม่ใช่สูตรโกง มันคือโครงสร้างที่ดนตรีมีอยู่แล้วตั้งแต่ต้นครับ">
+  <meta property="og:url" content="https://echoparuay-cell.github.io/echo-note/echo_concept_visual.html">
+  <meta property="og:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ก้อน กลุ่ม เม็ด — ระบบก้อนเสียง Echo Program">
+  <meta name="twitter:description" content="นี่ไม่ใช่สูตรโกง มันคือโครงสร้างที่ดนตรีมีอยู่แล้วตั้งแต่ต้นครับ">
+  <meta name="twitter:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="tag">ECHO PROGRAM · ระบบก้อนเสียง</div>
+  <h1>ก้อน · กลุ่ม · <span>เม็ด</span></h1>
+  <p>นี่ไม่ใช่สูตรโกง — มันคือโครงสร้างที่ดนตรีมีอยู่แล้วตั้งแต่ต้น</p>
+</div>
+
+<!-- 3 LEVELS -->
+<div class="levels">
+
+  <div class="level level-gon">
+    <div class="level-num">1</div>
+    <div class="level-body">
+      <div class="level-text">
+        <div class="level-name">ก้อน</div>
+        <div class="level-eq">
+          <span class="eq-num">= 4</span>
+          <span class="eq-label">ห้อง · เหมือนหนึ่งประโยคครับ</span>
+        </div>
+      </div>
+      <div class="visual-blocks">
+        <div class="gon-visual">
+          <div class="gon-group"><div class="gon-dot"></div></div>
+          <div class="gon-group"><div class="gon-dot"></div></div>
+          <div class="gon-group"><div class="gon-dot"></div></div>
+          <div class="gon-group"><div class="gon-dot"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level level-glum">
+    <div class="level-num">2</div>
+    <div class="level-body">
+      <div class="level-text">
+        <div class="level-name">กลุ่ม</div>
+        <div class="level-eq">
+          <span class="eq-num">= 1</span>
+          <span class="eq-label">ห้อง · เหมือนหนึ่งคำครับ</span>
+        </div>
+      </div>
+      <div class="visual-blocks">
+        <div class="glum-visual">
+          <div class="glum-dot"></div>
+          <div class="glum-dot"></div>
+          <div class="glum-dot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level level-met">
+    <div class="level-num">3</div>
+    <div class="level-body">
+      <div class="level-text">
+        <div class="level-name">เม็ด</div>
+        <div class="level-eq">
+          <span class="eq-num">= 1</span>
+          <span class="eq-label">เสียง · เหมือนหนึ่งตัวอักษรครับ</span>
+        </div>
+      </div>
+      <div class="visual-blocks">
+        <div class="met-visual">
+          <svg width="20" height="36" viewBox="0 0 20 36" fill="none">
+            <ellipse cx="8" cy="30" rx="7" ry="5" transform="rotate(-20 8 30)" fill="#10B981"/>
+            <line x1="14" y1="28" x2="14" y2="4" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ANALOGY: ภาษาไทย vs ดนตรี -->
+<div class="analogy">
+  <div class="analogy-header">เปรียบกับภาษาไทยครับ</div>
+  <div class="analogy-grid">
+    <div class="ana-col">
+      <div class="ana-title">📝 ภาษาไทย</div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(59,130,246,0.15)">📄</div>
+        <div class="ana-text"><strong>ประโยค</strong><br>รวมหลายคำเข้าด้วยกัน</div>
+      </div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(59,130,246,0.15)">💬</div>
+        <div class="ana-text"><strong>คำ</strong><br>รวมหลายตัวอักษร</div>
+      </div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(59,130,246,0.15)">🔤</div>
+        <div class="ana-text"><strong>ตัวอักษร</strong><br>หน่วยเล็กที่สุด</div>
+      </div>
+    </div>
+
+    <div class="ana-divider">≡</div>
+
+    <div class="ana-col">
+      <div class="ana-title">🎵 ดนตรี</div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(255,107,0,0.15)">🎼</div>
+        <div class="ana-text"><strong>ก้อน</strong><br>= 4 ห้องรวมกัน</div>
+      </div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(255,107,0,0.15)">📦</div>
+        <div class="ana-text"><strong>กลุ่ม</strong><br>= 1 ห้อง</div>
+      </div>
+      <div class="ana-item">
+        <div class="ana-icon" style="background:rgba(255,107,0,0.15)">🎵</div>
+        <div class="ana-text"><strong>เม็ด</strong><br>= 1 เสียง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RHYTHM VISUAL -->
+<div class="rhythm-line">
+  <div class="rhythm-label">รูปร่างของเม็ดเสียง — ความยาวต่างกันครับ</div>
+  <div class="rhythm-row">
+    <div class="r-box r-short">สั้น</div>
+    <div class="r-box r-long">ยาว</div>
+    <div class="r-box r-short">สั้น</div>
+    <div class="r-box r-short">สั้น</div>
+    <div class="r-sep"></div>
+    <div class="r-box r-longer">ยาวปาน</div>
+    <div class="r-box r-short">สั้น</div>
+    <div class="r-box r-long">ยาว</div>
+    <div class="r-sep"></div>
+    <div class="r-box r-longest">ยาวมาก</div>
+    <div class="r-box r-short">สั้น</div>
+    <div class="r-sep"></div>
+    <div class="r-box r-long">ยาว</div>
+    <div class="r-box r-long">ยาว</div>
+  </div>
+  <div class="rhythm-legend">
+    <div class="r-leg"><div class="r-dot" style="background:rgba(255,107,0,0.7)"></div>สั้น (♩)</div>
+    <div class="r-leg"><div class="r-dot" style="background:rgba(59,130,246,0.7)"></div>ยาว (𝅗𝅥)</div>
+    <div class="r-leg"><div class="r-dot" style="background:rgba(16,185,129,0.7)"></div>ยาวปานกลาง (𝅗𝅥.)</div>
+    <div class="r-leg"><div class="r-dot" style="background:rgba(245,158,11,0.7)"></div>ยาวมาก (𝅝)</div>
+  </div>
+</div>
+
+<!-- SUBDIVISION CONNECTION -->
+<div class="subdivision">
+  <div class="sub-title">เส้นทางการเรียนรู้ครับ</div>
+  <div class="sub-grid">
+
+    <div class="sub-card s1">
+      <div class="sub-level">BEGINNER</div>
+      <div class="sub-name">ก้อน กลุ่ม เม็ด</div>
+      <div class="sub-desc">
+        เม็ดพื้นฐาน 4 แบบ<br>
+        ก้อน AABC<br>
+        <span style="color:rgba(16,185,129,0.6);font-size:9px">จุดเริ่มต้นครับ</span>
+      </div>
+    </div>
+
+    <div class="sub-card s2">
+      <div class="sub-level">AFTER-NER</div>
+      <div class="sub-name">Subdivision</div>
+      <div class="sub-desc">
+        Syncopation<br>
+        Triple time<br>
+        <span style="color:rgba(59,130,246,0.6);font-size:9px">เม็ดละเอียดขึ้นครับ</span>
+      </div>
+    </div>
+
+    <div class="sub-card s3">
+      <div class="sub-level">PRE-PROFESSIONAL</div>
+      <div class="sub-name">Advanced</div>
+      <div class="sub-desc">
+        Ornament<br>
+        Complex rhythm<br>
+        <span style="color:rgba(255,107,0,0.6);font-size:9px">ระดับสูงสุดครับ</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- NOT A CHEAT -->
+<div class="not-cheat">
+  <div class="cross">🚫</div>
+  <h2>นี่ไม่ใช่<em>สูตรโกง</em>ครับ</h2>
+  <p>
+    มันคือโครงสร้างที่ดนตรีมีอยู่แล้วตั้งแต่ต้น<br>
+    แต่ไม่มีใครเคยบอกตรงๆ ครับ<br><br>
+    เมื่อเข้าใจก้อน กลุ่ม เม็ด<br>
+    โน้ตทุกตัวในโลกจะอ่านออกครับ
+  </p>
+</div>
+
+<div class="footer-note">Echo Program · Siamskol Music School · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+
+</body>
+</html>

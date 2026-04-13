@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Note Starter Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:#e8e8e8;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:40px 20px;
+}
+
+.card{
+  width:480px;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,0.2);
+}
+
+/* HEADER */
+.header{
+  background:#0D0D0D;
+  padding:24px 28px 20px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+}
+.header-left h2{
+  font-family:'Mitr',sans-serif;
+  font-size:26px;color:#fff;
+  line-height:1.2;margin-bottom:6px;
+}
+.header-left h2 em{color:#FF6B00;font-style:normal}
+.header-left p{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:2px}
+
+.price-tag{
+  background:#FF6B00;
+  color:#fff;
+  font-family:'Mitr',sans-serif;
+  border-radius:12px;
+  padding:8px 16px;
+  text-align:right;
+  flex-shrink:0;
+}
+.price-tag .old{font-size:11px;opacity:0.7;text-decoration:line-through;display:block}
+.price-tag .new{font-size:28px;line-height:1}
+.price-tag .new span{font-size:14px}
+
+/* ORANGE STRIPE */
+.stripe{height:5px;background:linear-gradient(90deg,#FF6B00,#FFAD6B,#FF6B00)}
+
+/* ITEMS GRID */
+.items{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  background:#F7F7F7;
+}
+.item{
+  background:#fff;
+  border-radius:12px;
+  padding:16px 8px 12px;
+  text-align:center;
+  border:1px solid #EFEFEF;
+  transition:transform 0.2s;
+}
+.item:hover{transform:translateY(-2px)}
+.item .icon{font-size:28px;margin-bottom:7px;display:block}
+.item .name{font-family:'Mitr',sans-serif;font-size:11px;color:#222;line-height:1.4;margin-bottom:3px}
+.item .desc{font-size:9px;color:#999;line-height:1.4}
+
+/* FEATURES */
+.features{
+  padding:16px 20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  border-top:1px solid #F0F0F0;
+  border-bottom:1px solid #F0F0F0;
+  background:#fff;
+}
+.feat{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;color:#444;
+}
+.feat-check{
+  width:18px;height:18px;
+  border-radius:50%;
+  background:#FF6B00;
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;
+  flex-shrink:0;
+}
+
+/* PROOF BAR */
+.proof{
+  background:#FFF3E8;
+  padding:12px 20px;
+  display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid #FFE0C8;
+}
+.proof-stat{text-align:center;flex:1}
+.proof-stat .num{font-family:'Mitr',sans-serif;font-size:18px;color:#FF6B00}
+.proof-stat .lbl{font-size:9px;color:#888;margin-top:1px}
+.proof-divider{width:1px;height:32px;background:#FFD0A8}
+
+/* FOOTER */
+.footer{
+  background:#0D0D0D;
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer .brand{
+  font-family:'Mitr',sans-serif;
+  font-size:10px;color:rgba(255,255,255,0.35);
+  letter-spacing:1px;
+}
+.footer .line-id{
+  display:flex;align-items:center;gap:6px;
+}
+.footer .line-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#06C755;
+}
+.footer .line-text{
+  font-family:'Mitr',sans-serif;
+  font-size:12px;color:#06C755;
+}
+</style>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Echo Program · Siamskol Music School">
+  <meta property="og:title" content="Echo Note Starter Kit — Package 990 บาท">
+  <meta property="og:description" content="คีย์บอร์ด + Flashcard + Sticker + QR วิดีโอสอน ส่งฟรีทั่วประเทศครับ">
+  <meta property="og:url" content="https://echoparuay-cell.github.io/echo-note/echo_package_v2.html">
+  <meta property="og:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Echo Note Starter Kit — Package 990 บาท">
+  <meta name="twitter:description" content="คีย์บอร์ด + Flashcard + Sticker + QR วิดีโอสอน ส่งฟรีทั่วประเทศครับ">
+  <meta name="twitter:image" content="https://echoparuay-cell.github.io/echo-note/og_image.png">
+</head>
+<body>
+
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h2>Echo Note<br><em>Starter Kit</em></h2>
+      <p>ECHO PROGRAM · SIAMSKOL MUSIC</p>
+    </div>
+    <div class="price-tag">
+      <span class="old">฿2,400</span>
+      <span class="new">990<span>฿</span></span>
+    </div>
+  </div>
+
+  <!-- STRIPE -->
+  <div class="stripe"></div>
+
+  <!-- ITEMS -->
+  <div class="items">
+    <div class="item">
+      <span class="icon">🎹</span>
+      <div class="name">คีย์บอร์ด<br>Little Pianist</div>
+      <div class="desc">37 คีย์ · ปลอดภัย</div>
+    </div>
+    <div class="item">
+      <span class="icon">🃏</span>
+      <div class="name">Flashcard<br>โน้ต</div>
+      <div class="desc">ระบบก้อนเสียง</div>
+    </div>
+    <div class="item">
+      <span class="icon">🏷️</span>
+      <div class="name">Sticker<br>ติดคีย์</div>
+      <div class="desc">Echo Project</div>
+    </div>
+    <div class="item">
+      <span class="icon">📱</span>
+      <div class="name">QR วิดีโอ<br>สอน</div>
+      <div class="desc">Exclusive</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feat"><div class="feat-check">✓</div>อ่านโน้ตได้ใน 90 นาที</div>
+    <div class="feat"><div class="feat-check">✓</div>ส่งฟรีทั่วประเทศ</div>
+    <div class="feat"><div class="feat-check">✓</div>รับประกัน 3 สัปดาห์</div>
+    <div class="feat"><div class="feat-check">✓</div>⚠️ จำนวนจำกัดต่อรอบ</div>
+  </div>
+
+  <!-- PROOF -->
+  <div class="proof">
+    <div class="proof-stat">
+      <div class="num">16+</div>
+      <div class="lbl">ปีประสบการณ์</div>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <div class="num">1,000+</div>
+      <div class="lbl">นักเรียน</div>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <div class="num">90</div>
+      <div class="lbl">นาทีรู้ผล</div>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <div class="num">38</div>
+      <div class="lbl">ชิ้นคงเหลือ</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">SIAMSKOL MUSIC · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+    <div class="line-id">
+      <div class="line-dot"></div>
+      <div class="line-text">@musicsupport</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
