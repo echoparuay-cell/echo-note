@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --or:#FF6B00;--or2:#FF9A4D;--ord:rgba(255,107,0,0.1);
+  --bk:#060606;--dk:#0E0E0E;--dk2:#141414;--dk3:#1A1A1A;
+  --wh:#FFFFFF;--tx:#DEDEDE;--mt:#555;--bd:rgba(255,255,255,0.06);
+  --gn:#00D46A;--gnd:rgba(0,212,106,0.1);
+  --bl:#00AAFF;--bld:rgba(0,170,255,0.1);
+  --yw:#FFD600;--ywd:rgba(255,214,0,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun',sans-serif;background:var(--bk);color:var(--tx);min-height:100vh;overflow-x:hidden}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+
+/* ══════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════ */
+#login-screen{
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  background:var(--bk);
+}
+.login-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%,rgba(255,107,0,0.08),transparent),
+    radial-gradient(ellipse 40% 60% at 80% 30%,rgba(0,170,255,0.05),transparent);
+}
+.grid-lines{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,107,0,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,107,0,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.login-card{
+  position:relative;z-index:2;
+  width:100%;max-width:420px;
+  padding:0 20px;
+}
+.login-logo{text-align:center;margin-bottom:40px}
+.ll-icon{
+  width:64px;height:64px;border-radius:16px;
+  background:linear-gradient(135deg,var(--or),rgba(255,107,0,0.5));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin:0 auto 14px;
+  box-shadow:0 0 40px rgba(255,107,0,0.3);
+}
+.ll-title{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:24px;font-weight:700;color:var(--wh);
+  margin-bottom:4px;
+}
+.ll-sub{font-size:12px;color:var(--mt);letter-spacing:1px}
+
+.login-form{
+  background:var(--dk2);
+  border:1px solid var(--bd);
+  border-radius:12px;
+  padding:28px;
+}
+.lf-title{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:12px;letter-spacing:3px;
+  color:var(--or);margin-bottom:20px;
+}
+.lf-group{margin-bottom:14px}
+.lf-group label{
+  display:block;font-size:11px;
+  color:var(--mt);margin-bottom:5px;
+  font-family:'Chakra Petch',sans-serif;letter-spacing:1px;
+}
+.lf-group input{
+  width:100%;background:var(--dk3);
+  border:1px solid var(--bd);color:var(--tx);
+  font-family:'Sarabun',sans-serif;font-size:14px;
+  padding:10px 12px;border-radius:6px;outline:none;
+  transition:border .2s;
+}
+.lf-group input:focus{border-color:var(--or)}
+.lf-error{font-size:11px;color:#FF4444;margin-top:16px;display:none;text-align:center}
+.lf-btn{
+  width:100%;margin-top:16px;
+  background:var(--or);color:#fff;
+  font-family:'Mitr',sans-serif;font-size:14px;
+  padding:12px;border-radius:6px;border:none;
+  cursor:pointer;transition:all .2s;
+}
+.lf-btn:hover{background:var(--or2);transform:translateY(-1px)}
+.lf-note{font-size:11px;color:var(--mt);text-align:center;margin-top:14px;line-height:1.6}
+
+/* ══════════════════════════════
+   PORTAL SCREEN
+══════════════════════════════ */
+#portal-screen{flex-direction:column;background:var(--bk)}
+
+/* TOPBAR */
+.topbar{
+  height:54px;background:rgba(6,6,6,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--bd);
+  padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.tb-left{display:flex;align-items:center;gap:10px}
+.tb-logo{font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;color:var(--wh)}
+.tb-logo span{color:var(--or)}
+.tb-tier{font-family:'Chakra Petch',sans-serif;font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:2px}
+.tier-s{background:var(--bld);color:var(--bl)}
+.tier-m{background:var(--ord);color:var(--or)}
+.tier-p{background:var(--ywd);color:var(--yw)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-name{font-size:12px;color:var(--mt)}
+.tb-logout{font-size:11px;color:var(--mt);background:none;border:1px solid var(--bd);padding:4px 10px;border-radius:3px;cursor:pointer;font-family:'Chakra Petch',sans-serif;transition:all .2s}
+.tb-logout:hover{border-color:var(--or);color:var(--or)}
+
+/* NAV TABS */
+.nav-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--bd);
+  padding:0 20px;
+  background:var(--dk);
+  overflow-x:auto;
+}
+.nav-tab{
+  padding:12px 18px;
+  font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:1px;
+  color:var(--mt);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.nav-tab:hover{color:var(--tx)}
+.nav-tab.active{color:var(--or);border-color:var(--or)}
+
+/* MAIN CONTENT */
+.portal-main{flex:1;padding:24px 20px;max-width:900px;margin:0 auto;width:100%}
+
+/* PAGE */
+.portal-page{display:none}
+.portal-page.active{display:block}
+
+/* ── DASHBOARD PAGE ── */
+.welcome-banner{
+  background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,107,0,0.03));
+  border:1px solid rgba(255,107,0,0.15);
+  border-radius:12px;padding:24px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;margin-bottom:20px;
+}
+.wb-text h2{font-family:'Chakra Petch',sans-serif;font-size:clamp(16px,3vw,22px);color:var(--wh);margin-bottom:4px}
+.wb-text p{font-size:13px;color:var(--mt);line-height:1.6}
+.wb-progress{text-align:right}
+.wp-label{font-family:'Chakra Petch',sans-serif;font-size:10px;color:var(--mt);letter-spacing:1px;margin-bottom:4px}
+.wp-num{font-family:'Chakra Petch',sans-serif;font-size:28px;font-weight:700;color:var(--or)}
+.wp-sub{font-size:10px;color:var(--mt)}
+
+/* Progress bar */
+.prog-bar-wrap{margin-bottom:20px}
+.pb-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.pb-label span{font-size:11px;color:var(--mt);font-family:'Chakra Petch',sans-serif}
+.pb-track{height:4px;background:var(--dk3);border-radius:2px;overflow:hidden}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:2px;transition:width .8s ease}
+
+/* Stat cards */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:14px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.sc-or::before{background:var(--or)}.sc-gn::before{background:var(--gn)}.sc-bl::before{background:var(--bl)}
+.sc-num{font-family:'Chakra Petch',sans-serif;font-size:24px;font-weight:700;line-height:1;margin-bottom:4px}
+.sc-or .sc-num{color:var(--or)}.sc-gn .sc-num{color:var(--gn)}.sc-bl .sc-num{color:var(--bl)}
+.sc-label{font-size:11px;color:var(--mt)}
+
+/* Next session */
+.next-session{
+  background:var(--gnd);border:1px solid rgba(0,212,106,0.2);
+  border-radius:8px;padding:14px 16px;
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+}
+.ns-icon{font-size:20px;flex-shrink:0}
+.ns-text p:first-child{font-family:'Mitr',sans-serif;font-size:13px;color:var(--wh)}
+.ns-text p:last-child{font-size:11px;color:var(--gn);margin-top:2px}
+
+/* Quick actions */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.quick-actions{grid-template-columns:1fr}}
+.qa-btn{
+  background:var(--dk2);border:1px solid var(--bd);
+  border-radius:8px;padding:14px;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:10px;
+  font-family:'Mitr',sans-serif;font-size:13px;color:var(--tx);
+}
+.qa-btn:hover{border-color:var(--or);background:var(--ord)}
+.qa-icon{font-size:18px;flex-shrink:0}
+
+/* ── LESSONS PAGE ── */
+.lesson-section{margin-bottom:28px}
+.ls-head{font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:3px;color:var(--or);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ls-head::before{content:'';width:16px;height:1px;background:var(--or)}
+.lesson-grid{display:flex;flex-direction:column;gap:6px}
+.lesson-item{
+  background:var(--dk2);border:1px solid var(--bd);border-radius:8px;
+  padding:14px 16px;display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .2s;
+}
+.lesson-item:hover{border-color:rgba(255,107,0,0.3);background:var(--ord)}
+.lesson-item.locked{opacity:0.4;cursor:not-allowed}
+.lesson-item.locked:hover{border-color:var(--bd);background:var(--dk2)}
+.lesson-item.done{border-color:rgba(0,212,106,0.2)}
+.li-num{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;
+}
+.li-num.active{background:var(--ord);color:var(--or)}
+.li-num.done{background:var(--gnd);color:var(--gn)}
+.li-num.locked{background:var(--dk3);color:var(--mt)}
+.li-body{flex:1}
+.li-title{font-family:'Mitr',sans-serif;font-size:13px;color:var(--wh);margin-bottom:3px}
+.lesson-item.locked .li-title{color:var(--mt)}
+.li-desc{font-size:11px;color:var(--mt)}
+.li-badge{font-family:'Chakra Petch',sans-serif;font-size:9px;padding:2px 7px;border-radius:2px;white-space:nowrap;flex-shrink:0}
+.lb-new{background:var(--ord);color:var(--or)}
+.lb-done{background:var(--gnd);color:var(--gn)}
+.lb-lock{background:var(--dk3);color:var(--mt)}
+.lb-live{background:rgba(255,214,0,0.1);color:var(--yw)}
+
+/* Video modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--dk2);border:1px solid var(--bd);border-radius:12px;width:100%;max-width:600px;overflow:hidden}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
+.modal-head h3{font-family:'Mitr',sans-serif;font-size:14px;color:var(--wh)}
+.modal-close{background:none;border:none;color:var(--mt);font-size:18px;cursor:pointer}
+.modal-close:hover{color:var(--or)}
+.modal-body{padding:18px}
+.modal-video{
+  background:var(--dk3);border-radius:8px;
+  height:200px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  margin-bottom:14px;border:1px solid var(--bd);
+}
+.mv-icon{font-size:36px}
+.mv-text{font-size:12px;color:var(--mt)}
+.modal-link{
+  display:flex;align-items:center;gap:8px;
+  background:var(--dk3);border:1px solid var(--bd);
+  border-radius:6px;padding:10px 12px;margin-bottom:14px;
+}
+.ml-label{font-size:11px;color:var(--mt);flex:1}
+.ml-url{font-size:11px;color:var(--or);word-break:break-all}
+.modal-mark{
+  width:100%;background:var(--gn);color:#fff;
+  font-family:'Mitr',sans-serif;font-size:13px;
+  padding:10px;border-radius:6px;border:none;cursor:pointer;
+  transition:all .2s;
+}
+.modal-mark:hover{opacity:0.85}
+.modal-mark.done-btn{background:var(--dk3);color:var(--mt);cursor:default}
+
+/* ── MILESTONE PAGE ── */
+.milestone-intro{
+  background:var(--ord);border:1px solid rgba(255,107,0,0.2);
+  border-radius:8px;padding:16px;margin-bottom:20px;
+}
+.mi-title{font-family:'Chakra Petch',sans-serif;font-size:11px;color:var(--or);letter-spacing:2px;margin-bottom:6px}
+.mi-desc{font-size:13px;color:var(--tx);line-height:1.7}
+.milestone-form{background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:20px}
+.mf-group{margin-bottom:14px}
+.mf-group label{display:block;font-size:11px;color:var(--mt);margin-bottom:5px;font-family:'Chakra Petch',sans-serif;letter-spacing:1px}
+.mf-group select,.mf-group textarea{
+  width:100%;background:var(--dk3);border:1px solid var(--bd);
+  color:var(--tx);font-family:'Sarabun',sans-serif;font-size:13px;
+  padding:9px 11px;border-radius:6px;outline:none;transition:border .2s;
+}
+.mf-group select:focus,.mf-group textarea:focus{border-color:var(--or)}
+.mf-group select option{background:var(--dk3)}
+.mf-group textarea{resize:vertical;min-height:80px}
+.mf-upload{
+  border:2px dashed var(--bd);border-radius:8px;
+  padding:24px;text-align:center;cursor:pointer;
+  transition:border .2s;
+}
+.mf-upload:hover{border-color:var(--or)}
+.mf-upload p{font-size:12px;color:var(--mt);margin-top:6px}
+.mf-btn{
+  width:100%;margin-top:14px;
+  background:var(--or);color:#fff;
+  font-family:'Mitr',sans-serif;font-size:14px;
+  padding:11px;border-radius:6px;border:none;cursor:pointer;
+  transition:all .2s;
+}
+.mf-btn:hover{background:var(--or2)}
+
+/* Milestone history */
+.m-history{margin-top:20px}
+.mh-title{font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:3px;color:var(--mt);margin-bottom:10px}
+.mh-item{
+  background:var(--dk2);border:1px solid var(--bd);
+  border-radius:8px;padding:12px 14px;margin-bottom:6px;
+  display:flex;align-items:center;gap:12px;
+}
+.mhi-status{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.s-pending{background:var(--yw)}.s-approved{background:var(--gn)}.s-review{background:var(--or)}
+.mhi-text{flex:1}
+.mhi-name{font-size:12px;color:var(--tx);font-family:'Mitr',sans-serif}
+.mhi-date{font-size:10px;color:var(--mt);margin-top:2px}
+.mhi-badge{font-family:'Chakra Petch',sans-serif;font-size:9px;padding:2px 7px;border-radius:2px}
+.mb-p{background:var(--ywd);color:var(--yw)}.mb-a{background:var(--gnd);color:var(--gn)}.mb-r{background:var(--ord);color:var(--or)}
+
+/* ── SESSIONS PAGE ── */
+.session-grid{display:flex;flex-direction:column;gap:8px}
+.session-card{
+  background:var(--dk2);border:1px solid var(--bd);
+  border-radius:8px;padding:16px;
+  display:grid;grid-template-columns:auto 1fr auto;
+  gap:14px;align-items:center;
+}
+@media(max-width:500px){.session-card{grid-template-columns:1fr;gap:8px}}
+.sc-num-badge{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;
+}
+.scnb-done{background:var(--gnd);color:var(--gn)}
+.scnb-next{background:var(--ord);color:var(--or);box-shadow:0 0 16px rgba(255,107,0,0.2)}
+.scnb-pending{background:var(--dk3);color:var(--mt)}
+.sc-info h4{font-family:'Mitr',sans-serif;font-size:13px;color:var(--wh);margin-bottom:3px}
+.sc-info p{font-size:11px;color:var(--mt)}
+.sc-action{}
+.sc-join{
+  background:var(--gn);color:#fff;
+  font-family:'Mitr',sans-serif;font-size:12px;
+  padding:7px 14px;border-radius:4px;border:none;cursor:pointer;
+  transition:all .2s;white-space:nowrap;
+}
+.sc-join:hover{opacity:0.85}
+.sc-pending-txt{font-size:11px;color:var(--mt);font-family:'Chakra Petch',sans-serif}
+
+/* Section headers */
+.page-hd{margin-bottom:20px}
+.ph-label{font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:3px;color:var(--or);margin-bottom:5px}
+.ph-title{font-family:'Chakra Petch',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:700;color:var(--wh);margin-bottom:3px}
+.ph-sub{font-size:12px;color:var(--mt)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--dk2);border:1px solid var(--gn);border-radius:8px;
+  padding:10px 18px;font-family:'Mitr',sans-serif;font-size:13px;color:var(--gn);
+  z-index:999;transition:transform .3s ease;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.portal-page.active>*{animation:fadeUp .4s ease both}
+.portal-page.active>*:nth-child(1){animation-delay:.05s}
+.portal-page.active>*:nth-child(2){animation-delay:.1s}
+.portal-page.active>*:nth-child(3){animation-delay:.15s}
+.portal-page.active>*:nth-child(4){animation-delay:.2s}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════ -->
+<div class="screen active" id="login-screen">
+  <div class="login-bg"></div>
+  <div class="grid-lines"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="ll-icon">🎵</div>
+      <div class="ll-title">Echo Student Portal</div>
+      <div class="ll-sub">INTER MUSICIAN PROGRAM</div>
+    </div>
+    <div class="login-form">
+      <div class="lf-title">เข้าสู่ระบบครับ</div>
+      <div class="lf-group">
+        <label>รหัสนักเรียนหรืออีเมลครับ</label>
+        <input type="text" id="login-id" placeholder="student@echo.com">
+      </div>
+      <div class="lf-group">
+        <label>รหัสผ่านครับ</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <div class="lf-error" id="login-error">รหัสไม่ถูกต้องครับ ลองใหม่อีกครั้งครับ</div>
+      <button class="lf-btn" onclick="doLogin()">เข้าสู่ระบบครับ</button>
+      <div class="lf-note">
+        ทดสอบระบบครับ:<br>
+        Starter: <b>starter / 1234</b> · Standard: <b>standard / 1234</b> · Premium: <b>premium / 1234</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PORTAL SCREEN
+══════════════════════════════ -->
+<div class="screen" id="portal-screen">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-logo">Echo <span>Portal</span></div>
+      <div class="tb-tier" id="tier-badge">STARTER</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-name" id="student-name">นักเรียน</div>
+      <button class="tb-logout" onclick="doLogout()">ออกครับ</button>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('dashboard',this)">🏠 Dashboard</div>
+    <div class="nav-tab" onclick="showPage('lessons',this)">📚 บทเรียน</div>
+    <div class="nav-tab" onclick="showPage('milestone',this)">🎯 Milestone</div>
+    <div class="nav-tab" onclick="showPage('sessions',this)">🎙️ Live Sessions</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="portal-main">
+
+    <!-- DASHBOARD -->
+    <div class="portal-page active" id="page-dashboard">
+      <div class="welcome-banner">
+        <div class="wb-text">
+          <h2 id="welcome-msg">สวัสดีครับ 🎵</h2>
+          <p id="welcome-sub">ยินดีต้อนรับสู่ Inter Musician Program ครับ</p>
+        </div>
+        <div class="wb-progress">
+          <div class="wp-label">PROGRESS</div>
+          <div class="wp-num" id="prog-pct">0%</div>
+          <div class="wp-sub">ของหลักสูตรครับ</div>
+        </div>
+      </div>
+
+      <div class="prog-bar-wrap">
+        <div class="pb-label">
+          <span id="prog-label">ความคืบหน้าครับ</span>
+          <span id="prog-detail">0 / 0 บทเรียน</span>
+        </div>
+        <div class="pb-track"><div class="pb-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card sc-or">
+          <div class="sc-num" id="stat-lessons">0</div>
+          <div class="sc-label">บทเรียนที่เรียนแล้ว</div>
+        </div>
+        <div class="stat-card sc-gn">
+          <div class="sc-num" id="stat-milestone">0</div>
+          <div class="sc-label">Milestone ผ่านแล้ว</div>
+        </div>
+        <div class="stat-card sc-bl">
+          <div class="sc-num" id="stat-sessions">0</div>
+          <div class="sc-label">Live Session</div>
+        </div>
+      </div>
+
+      <div class="next-session" id="next-session-box">
+        <div class="ns-icon">📅</div>
+        <div class="ns-text">
+          <p id="next-sess-title">ยังไม่มี Live Session ที่กำหนดครับ</p>
+          <p id="next-sess-sub">ติดต่อครูเพื่อนัดเวลาครับ · LINE @musicsupport</p>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-btn" onclick="showPage('lessons',document.querySelectorAll('.nav-tab')[1])">
+          <div class="qa-icon">📚</div>เรียนต่อครับ
+        </div>
+        <div class="qa-btn" onclick="showPage('milestone',document.querySelectorAll('.nav-tab')[2])">
+          <div class="qa-icon">🎯</div>ส่ง Milestone ครับ
+        </div>
+        <div class="qa-btn" onclick="window.open('https://line.me/R/ti/p/@musicsupport','_blank')">
+          <div class="qa-icon">💬</div>ทัก LINE ครูครับ
+        </div>
+        <div class="qa-btn" onclick="showPage('sessions',document.querySelectorAll('.nav-tab')[3])">
+          <div class="qa-icon">🎙️</div>ดู Live Sessions ครับ
+        </div>
+      </div>
+    </div>
+
+    <!-- LESSONS -->
+    <div class="portal-page" id="page-lessons">
+      <div class="page-hd">
+        <div class="ph-label">COURSE CONTENT</div>
+        <div class="ph-title">บทเรียนครับ</div>
+        <div class="ph-sub" id="lesson-tier-desc">เนื้อหาตาม Tier ของคุณครับ</div>
+      </div>
+      <div id="lesson-content"></div>
+    </div>
+
+    <!-- MILESTONE -->
+    <div class="portal-page" id="page-milestone">
+      <div class="page-hd">
+        <div class="ph-label">MILESTONE ASSESSMENT</div>
+        <div class="ph-title">ส่ง Milestone ครับ</div>
+        <div class="ph-sub">วัดผลด้วยการปฏิบัติจริงครับ ไม่ใช่ข้อสอบครับ</div>
+      </div>
+      <div class="milestone-intro">
+        <div class="mi-title">นิยาม "อ่านโน้ตได้" ในหลักสูตรนี้ครับ</div>
+        <div class="mi-desc">เมื่อเห็นสัญลักษณ์โน้ต สามารถสะกดและปฏิบัติได้อย่างถูกต้อง ภายใน 30 วินาที ต่อ 1 ก้อนเสียงครับ</div>
+      </div>
+      <div class="milestone-form">
+        <div class="mf-group">
+          <label>เลือก Milestone ที่จะส่งครับ</label>
+          <select id="ms-select">
+            <option value="">เลือก Milestone ครับ</option>
+            <option value="1">Milestone 1 — ก้อนเสียง AABC สะท้อนได้ครับ</option>
+            <option value="2">Milestone 2 — อ่านโน้ตแม่ 1 ได้ใน 30 วินาทีครับ</option>
+            <option value="3">Milestone 3 — เล่นตาม Sheet Music ได้ครับ</option>
+          </select>
+        </div>
+        <div class="mf-group">
+          <label>ลิงก์วิดีโอ (YouTube / Google Drive) ครับ</label>
+          <input type="text" id="ms-link" placeholder="https://..." style="width:100%;background:var(--dk3);border:1px solid var(--bd);color:var(--tx);font-family:'Sarabun',sans-serif;font-size:13px;padding:9px 11px;border-radius:6px;outline:none">
+        </div>
+        <div class="mf-group">
+          <label>หมายเหตุถึงครูครับ</label>
+          <textarea id="ms-note" placeholder="บอกครูว่าฝึกมานานแค่ไหน หรือมีปัญหาตรงไหนครับ"></textarea>
+        </div>
+        <button class="mf-btn" onclick="submitMilestone()">ส่ง Milestone ให้ครูตรวจครับ 🎯</button>
+      </div>
+      <div class="m-history">
+        <div class="mh-title">ประวัติการส่งครับ</div>
+        <div id="ms-history"></div>
+      </div>
+    </div>
+
+    <!-- SESSIONS -->
+    <div class="portal-page" id="page-sessions">
+      <div class="page-hd">
+        <div class="ph-label">LIVE SESSIONS</div>
+        <div class="ph-title">Live Sessions ครับ</div>
+        <div class="ph-sub" id="sess-sub">ติดตามความคืบหน้าครับ</div>
+      </div>
+      <div class="session-grid" id="session-content"></div>
+    </div>
+
+  </div><!-- end portal-main -->
+</div><!-- end portal-screen -->
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">บทเรียนครับ</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-video">
+        <div class="mv-icon">▶️</div>
+        <div class="mv-text" id="modal-desc">คลิปสอนครับ</div>
+      </div>
+      <div class="modal-link">
+        <div class="ml-label">🔗 ลิงก์คลิปครับ</div>
+        <div class="ml-url" id="modal-url">-</div>
+      </div>
+      <button class="modal-mark" id="modal-mark-btn" onclick="markDone()">✅ เรียนเสร็จแล้วครับ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ บันทึกแล้วครับ</div>
+
+<script>
+// ── DATA ──
+const USERS = {
+  starter:  {pass:'1234',name:'น้องสตาร์ทเตอร์',tier:'Starter',totalSess:2,color:'tier-s'},
+  standard: {pass:'1234',name:'น้องสแตนดาร์ด',tier:'Standard',totalSess:4,color:'tier-m'},
+  premium:  {pass:'1234',name:'น้องพรีเมียม',tier:'Premium',totalSess:12,color:'tier-p'},
+};
+
+const LESSONS = {
+  Starter:[
+    {id:'s1',title:'ระบบก้อนเสียง — ก้อน กลุ่ม เม็ดครับ',desc:'พื้นฐานที่สุดของระบบครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s2',title:'Card A1–A4 การสะท้อนเสียงครับ',desc:'สะท้อนกลับด้วยตัวเองครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_block.html'},
+    {id:'s3',title:'สูตรคูณเสียง แม่ 1–4 ครับ',desc:'เชื่อมกับสิ่งที่รู้จักอยู่แล้วครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s4',title:'Part I — ก้อน AABC ครับ',desc:'โครงสร้างพื้นฐานครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+  ],
+  Standard:[
+    {id:'s1',title:'ระบบก้อนเสียง — ก้อน กลุ่ม เม็ดครับ',desc:'พื้นฐานที่สุดของระบบครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s2',title:'Card A1–A4 การสะท้อนเสียงครับ',desc:'สะท้อนกลับด้วยตัวเองครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_block.html'},
+    {id:'s3',title:'สูตรคูณเสียง แม่ 1–8 ครับ',desc:'ครบทั้ง 8 แม่ครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s4',title:'Part I + II — ก้อนเสริมครับ',desc:'กลุ่มเสียงเพิ่มเติมครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s5',title:'Effort Paradox Workshop ครับ',desc:'เรื่องที่เคยหนักจะเบาลง 90% ครับ',url:'https://echoparuay-cell.github.io/echo-note/'},
+    {id:'s6',title:'Melody Trap Workshop ครับ',desc:'ทำลายกับดักที่ขวางอยู่ครับ',url:'https://echoparuay-cell.github.io/echo-note/'},
+  ],
+  Premium:[
+    {id:'s1',title:'ระบบก้อนเสียง — ก้อน กลุ่ม เม็ดครับ',desc:'พื้นฐานที่สุดของระบบครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s2',title:'Card A1–A8 ครบชุดครับ',desc:'ทุกก้อนเสียงครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_block.html'},
+    {id:'s3',title:'สูตรคูณเสียง แม่ 1–8 ครับ',desc:'ครบทั้ง 8 แม่ครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_sound_system.html'},
+    {id:'s4',title:'Part I + II + III-A ครับ',desc:'120 BPM ครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_part3a.html'},
+    {id:'s5',title:'Part III-B — 240 BPM ครับ',desc:'Sixteenth note ครับ',url:'https://echoparuay-cell.github.io/echo-note/echo_part3b.html'},
+    {id:'s6',title:'Effort Paradox Workshop ครับ',desc:'เรื่องที่เคยหนักจะเบาลง 90% ครับ',url:'https://echoparuay-cell.github.io/echo-note/'},
+    {id:'s7',title:'Melody Trap Workshop ครับ',desc:'ทำลายกับดักที่ขวางอยู่ครับ',url:'https://echoparuay-cell.github.io/echo-note/'},
+    {id:'s8',title:'Subdivision — ส่วนที่เล็กกว่าเม็ดเสียงครับ',desc:'After-ner Level ครับ',url:'https://echoparuay-cell.github.io/echo-note/'},
+  ],
+};
+
+let currentUser = null;
+let doneLessons = [];
+let milestones = [];
+let currentLesson = null;
+
+// ── STORAGE KEY ──
+function skey(k){return currentUser ? `echo_${currentUser}_${k}` : k}
+
+// ── LOGIN ──
+function doLogin(){
+  const id = document.getElementById('login-id').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const user = USERS[id];
+  if(user && user.pass===pass){
+    currentUser = id;
+    doneLessons = JSON.parse(localStorage.getItem(skey('done'))||'[]');
+    milestones = JSON.parse(localStorage.getItem(skey('ms'))||'[]');
+    document.getElementById('login-error').style.display='none';
+    initPortal(user);
+    document.getElementById('login-screen').classList.remove('active');
+    document.getElementById('portal-screen').classList.add('active');
+  } else {
+    document.getElementById('login-error').style.display='block';
+  }
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+// ── LOGOUT ──
+function doLogout(){
+  currentUser=null;doneLessons=[];milestones=[];
+  document.getElementById('portal-screen').classList.remove('active');
+  document.getElementById('login-screen').classList.add('active');
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pass').value='';
+  showPage('dashboard',document.querySelectorAll('.nav-tab')[0]);
+}
+
+// ── INIT PORTAL ──
+function initPortal(user){
+  document.getElementById('student-name').textContent=user.name;
+  const tb=document.getElementById('tier-badge');
+  tb.textContent=user.tier;tb.className='tb-tier '+user.color;
+  document.getElementById('welcome-msg').textContent='สวัสดีครับ '+user.name+' 🎵';
+  document.getElementById('welcome-sub').textContent=user.tier+' Program · '+user.totalSess+' Live Sessions ครับ';
+  document.getElementById('sess-sub').textContent='ทั้งหมด '+user.totalSess+' ครั้ง · ครั้งละ 45 นาทีครับ';
+  renderDashboard();renderLessons();renderSessions();renderMsHistory();
+}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  const user=USERS[currentUser];
+  const lessons=LESSONS[user.tier];
+  const done=doneLessons.length;
+  const total=lessons.length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-detail').textContent=done+' / '+total+' บทเรียน';
+  document.getElementById('stat-lessons').textContent=done;
+  document.getElementById('stat-milestone').textContent=milestones.filter(m=>m.status==='approved').length;
+  document.getElementById('stat-sessions').textContent='0/'+user.totalSess;
+}
+
+// ── LESSONS ──
+function renderLessons(){
+  const user=USERS[currentUser];
+  const lessons=LESSONS[user.tier];
+  document.getElementById('lesson-tier-desc').textContent=user.tier+' — '+lessons.length+' บทเรียนครับ';
+  const html=`
+    <div class="lesson-section">
+      <div class="ls-head">BEGINNER LEVEL</div>
+      <div class="lesson-grid">
+        ${lessons.map((l,i)=>{
+          const isDone=doneLessons.includes(l.id);
+          const isLocked=i>0&&!doneLessons.includes(lessons[i-1].id);
+          const cls=isDone?'done':isLocked?'locked':'';
+          const numCls=isDone?'done':isLocked?'locked':'active';
+          const badge=isDone?'<span class="li-badge lb-done">✓ เรียนแล้ว</span>':isLocked?'<span class="li-badge lb-lock">🔒 ล็อค</span>':'<span class="li-badge lb-new">NEW</span>';
+          return `<div class="lesson-item ${cls}" onclick="${isLocked?'':'openLesson(\''+l.id+'\')'}">
+            <div class="li-num ${numCls}">${isDone?'✓':(i+1)}</div>
+            <div class="li-body">
+              <div class="li-title">${l.title}</div>
+              <div class="li-desc">${l.desc}</div>
+            </div>
+            ${badge}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  document.getElementById('lesson-content').innerHTML=html;
+}
+
+// ── OPEN LESSON ──
+function openLesson(id){
+  const user=USERS[currentUser];
+  const lesson=LESSONS[user.tier].find(l=>l.id===id);
+  if(!lesson)return;
+  currentLesson=id;
+  document.getElementById('modal-title').textContent=lesson.title;
+  document.getElementById('modal-desc').textContent=lesson.desc;
+  document.getElementById('modal-url').textContent=lesson.url;
+  const isDone=doneLessons.includes(id);
+  const btn=document.getElementById('modal-mark-btn');
+  btn.textContent=isDone?'✅ เรียนแล้วครับ':'✅ เรียนเสร็จแล้วครับ';
+  btn.className='modal-mark'+(isDone?' done-btn':'');
+  btn.onclick=isDone?null:markDone;
+  document.getElementById('lesson-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('lesson-modal').classList.remove('open');currentLesson=null}
+
+// ── MARK DONE ──
+function markDone(){
+  if(!currentLesson||doneLessons.includes(currentLesson))return;
+  doneLessons.push(currentLesson);
+  localStorage.setItem(skey('done'),JSON.stringify(doneLessons));
+  closeModal();renderDashboard();renderLessons();
+  showToast('✅ บันทึกความคืบหน้าแล้วครับ!');
+}
+
+// ── MILESTONE ──
+function submitMilestone(){
+  const sel=document.getElementById('ms-select').value;
+  const link=document.getElementById('ms-link').value.trim();
+  const note=document.getElementById('ms-note').value.trim();
+  if(!sel||!link){alert('กรุณาเลือก Milestone และใส่ลิงก์วิดีโอครับ');return}
+  const ms={id:Date.now(),milestone:sel,link,note,date:new Date().toLocaleDateString('th-TH'),status:'pending'};
+  milestones.push(ms);
+  localStorage.setItem(skey('ms'),JSON.stringify(milestones));
+  document.getElementById('ms-select').value='';
+  document.getElementById('ms-link').value='';
+  document.getElementById('ms-note').value='';
+  renderMsHistory();renderDashboard();
+  showToast('📤 ส่ง Milestone แล้วครับ รอครูตรวจครับ!');
+}
+
+function renderMsHistory(){
+  const div=document.getElementById('ms-history');
+  if(!milestones.length){div.innerHTML='<div style="text-align:center;color:var(--mt);padding:16px;font-size:12px">ยังไม่มีประวัติครับ</div>';return}
+  const labels=['','Milestone 1 — ก้อนเสียง AABC','Milestone 2 — อ่านโน้ตแม่ 1','Milestone 3 — เล่นตาม Sheet'];
+  const sc={pending:'mb-p',approved:'mb-a',review:'mb-r'};
+  const sl={pending:'s-pending',approved:'s-approved',review:'s-review'};
+  const lb={pending:'รอตรวจครับ',approved:'ผ่านแล้วครับ',review:'กำลังตรวจครับ'};
+  div.innerHTML=[...milestones].reverse().map(m=>`
+    <div class="mh-item">
+      <div class="mhi-status ${sl[m.status]}"></div>
+      <div class="mhi-text">
+        <div class="mhi-name">${labels[m.milestone]||m.milestone}</div>
+        <div class="mhi-date">${m.date}</div>
+      </div>
+      <span class="mhi-badge ${sc[m.status]}">${lb[m.status]}</span>
+    </div>
+  `).join('');
+}
+
+// ── SESSIONS ──
+function renderSessions(){
+  const user=USERS[currentUser];
+  const total=user.totalSess;
+  const done=0;
+  let html='';
+  for(let i=1;i<=total;i++){
+    const isDone=i<=done;
+    const isNext=i===done+1;
+    const numCls=isDone?'scnb-done':isNext?'scnb-next':'scnb-pending';
+    const action=isNext?`<button class="sc-join" onclick="window.open('https://line.me/R/ti/p/@musicsupport','_blank')">📅 นัดเวลาครับ</button>`:`<span class="sc-pending-txt">${isDone?'✓ เสร็จแล้ว':'รอถึงคิวครับ'}</span>`;
+    html+=`<div class="session-card">
+      <div class="sc-num-badge ${numCls}">${isDone?'✓':i}</div>
+      <div class="sc-info">
+        <h4>Live Session ครั้งที่ ${i}</h4>
+        <p>${isDone?'เสร็จแล้วครับ':isNext?'Session ถัดไปของคุณครับ · 45 นาทีครับ':'รอ Session ก่อนหน้าก่อนครับ'}</p>
+      </div>
+      <div class="sc-action">${action}</div>
+    </div>`;
+  }
+  document.getElementById('session-content').innerHTML=html;
+}
+
+// ── TAB ──
+function showPage(name,el){
+  document.querySelectorAll('.portal-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
