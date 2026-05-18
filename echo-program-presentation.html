@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHO PROGRAM — ระบบพัฒนาการจดจำผ่านดนตรีสำหรับเด็กปฐมวัย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f0e8;
+    --gold: #c9a227;
+    --gold-light: #e8c547;
+    --red: #c0392b;
+    --ink: #1a1a2e;
+    --paper: #faf6ef;
+    --muted: #8a7f6e;
+    --section-bg: #f0ebe0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--black);
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--black);
+    padding: 14px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #1a1230 0%, #0a0a0a 70%);
+  }
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(201,162,39,0.06) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(201,162,39,0.06) 60px);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.0;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title span { color: var(--gold); }
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: rgba(245,240,232,0.65);
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold-light);
+    font-style: italic;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .hero-scroll::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 100px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .full-width-section {
+    max-width: 100%;
+    padding: 0;
+  }
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--gold);
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+
+  /* WHY NOW */
+  .why-now {
+    background: var(--ink);
+  }
+  .why-now .section-inner { color: var(--white); }
+  .why-now h2 { color: var(--white); }
+  .why-now .section-label { color: var(--gold); }
+
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin: 48px 0;
+  }
+  .challenge-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,162,39,0.15);
+    padding: 32px;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .challenge-item:hover { background: rgba(201,162,39,0.08); }
+  .challenge-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  .challenge-item p {
+    font-size: 1rem;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.6;
+  }
+
+  .big-question {
+    border-left: 3px solid var(--gold);
+    padding: 28px 36px;
+    background: rgba(201,162,39,0.08);
+    margin-top: 48px;
+  }
+  .big-question p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.6;
+  }
+
+  /* METHOD */
+  .method-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-bottom: 64px;
+  }
+  .method-description p {
+    font-size: 1.05rem;
+    color: #3a3530;
+    margin-bottom: 16px;
+  }
+
+  .learning-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .pillar {
+    border-top: 3px solid var(--gold);
+    padding: 28px 0 0;
+  }
+  .pillar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .pillar p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  .outcomes-strip {
+    background: var(--black);
+    padding: 36px 48px;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .outcome-chip {
+    flex: 1;
+    text-align: center;
+    padding: 16px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    color: var(--white);
+  }
+  .outcome-chip:last-child { border-right: none; }
+  .outcome-chip .emoji { font-size: 1.5rem; margin-bottom: 8px; }
+  .outcome-chip span { display: block; font-size: 0.85rem; color: var(--gold); font-weight: 600; }
+
+  /* IMPACT — STEPS */
+  .impact-section {
+    background: var(--section-bg);
+  }
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+  .step-card {
+    background: var(--paper);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .step-card:hover { transform: translateY(-4px); }
+  .step-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .step-card.s1::before { background: var(--gold); }
+  .step-card.s2::before { background: #8e44ad; }
+  .step-card.s3::before { background: var(--red); }
+
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(0,0,0,0.06);
+    margin-bottom: 4px;
+  }
+  .step-tag {
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .step-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+  .kpi-label {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .kpi-list {
+    list-style: none;
+    margin-bottom: 24px;
+  }
+  .kpi-list li {
+    font-size: 0.92rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    color: #3a3530;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .kpi-list li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+  .step-note {
+    background: rgba(201,162,39,0.08);
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: #5a4e3a;
+    line-height: 1.5;
+  }
+
+  /* PHILOSOPHY */
+  .philosophy-section {
+    background: var(--black);
+  }
+  .philosophy-section .section-inner { color: var(--white); }
+  .philosophy-section h2 { color: var(--white); }
+
+  .flow-chain {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 48px 0;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,162,39,0.2);
+  }
+  .flow-node {
+    flex: 1;
+    padding: 36px 28px;
+    text-align: center;
+    border-right: 1px solid rgba(201,162,39,0.15);
+    position: relative;
+  }
+  .flow-node:last-child { border-right: none; }
+  .flow-icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .flow-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .flow-desc { font-size: 0.85rem; color: rgba(245,240,232,0.55); line-height: 1.6; }
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: var(--gold);
+    padding: 0 4px;
+    opacity: 0.5;
+  }
+
+  .philosophy-text {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .philosophy-text p {
+    font-size: 1.05rem;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .philosophy-highlight {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.5;
+    margin: 40px 0;
+  }
+
+  /* VISION */
+  .vision-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .vision-ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .ladder-step {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .ladder-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .ladder-text strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .ladder-text span { font-size: 0.85rem; color: var(--muted); }
+  .ladder-arrow {
+    padding: 4px 0 4px 22px;
+    color: var(--gold);
+    font-size: 1.3rem;
+  }
+
+  .motto-box {
+    background: var(--ink);
+    padding: 48px 40px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .motto-box::before {
+    content: '"';
+    position: absolute;
+    top: -20px; left: 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 12rem;
+    color: rgba(201,162,39,0.08);
+    line-height: 1;
+  }
+  .motto-box p {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .motto-box blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* PILOT */
+  .pilot-section {
+    background: var(--gold);
+  }
+  .pilot-section .section-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .pilot-section h2 { color: var(--black); }
+  .pilot-section .section-label { color: rgba(0,0,0,0.5); }
+  .pilot-section .section-label::before { background: rgba(0,0,0,0.4); }
+  .pilot-left p {
+    font-size: 1.05rem;
+    color: rgba(0,0,0,0.7);
+    margin-bottom: 20px;
+  }
+  .pilot-card {
+    background: var(--black);
+    padding: 48px 40px;
+    color: var(--white);
+  }
+  .pilot-card h3 {
+    color: var(--gold);
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+  }
+  .pilot-card .duration {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 28px;
+  }
+  .pilot-list { list-style: none; }
+  .pilot-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.75);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pilot-list li:last-child { border-bottom: none; }
+  .pilot-list li::before {
+    content: '→';
+    color: var(--gold);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .cta-btn {
+    display: inline-block;
+    margin-top: 32px;
+    padding: 16px 40px;
+    background: var(--black);
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid var(--black);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .cta-btn:hover {
+    background: transparent;
+    color: var(--black);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    text-align: center;
+    padding: 60px 48px;
+    border-top: 2px solid var(--gold);
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 6px;
+    margin-bottom: 12px;
+  }
+  .footer-sub {
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin: 24px 0 40px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollLine {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.3); }
+  }
+
+  /* OBSERVE-BASED REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .section-inner { padding: 64px 24px; }
+    .challenge-grid, .learning-pillars, .steps-container,
+    .method-intro, .vision-cols { grid-template-columns: 1fr; }
+    .flow-chain { flex-direction: column; }
+    .flow-node { border-right: none; border-bottom: 1px solid rgba(201,162,39,0.15); }
+    .pilot-section .section-inner { grid-template-columns: 1fr; }
+    .outcomes-strip { flex-wrap: wrap; }
+  }
+
+  /* PRINT */
+  @media print {
+    nav, .hero-scroll { display: none; }
+    section, .section-inner { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Echo Program</div>
+  <ul class="nav-links">
+    <li><a href="#why">ทำไมต้องตอนนี้</a></li>
+    <li><a href="#method">วิธีการ</a></li>
+    <li><a href="#impact">3 ขั้นตอน</a></li>
+    <li><a href="#philosophy">ปรัชญา</a></li>
+    <li><a href="#vision">วิสัยทัศน์</a></li>
+    <li><a href="#pilot">เริ่มทดลอง</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Echo Program · สยามสกลการดนตรี</div>
+    <h1 class="hero-title">ระบบพัฒนา<span>การจดจำ</span><br>ผ่านดนตรี</h1>
+    <p class="hero-subtitle">สำหรับเด็กปฐมวัย · ออกแบบสำหรับโรงเรียนยุคใหม่</p>
+    <div class="hero-tagline">"ฟังเป็น → ขอบคุณเป็น → สร้างเป็น"</div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</div>
+
+<!-- WHY NOW -->
+<div class="full-width-section why-now" id="why">
+  <div class="section-inner">
+    <div class="section-label reveal">01 — ทำไมต้องตอนนี้</div>
+    <h2 class="reveal">ความท้าทาย<br>ของโรงเรียนยุคใหม่</h2>
+    <div class="divider reveal"></div>
+    <p class="reveal" style="color:rgba(245,240,232,0.65); font-size:1.05rem; max-width:600px; margin-bottom:48px;">
+      ผู้บริหารสถานศึกษากำลังเผชิญโจทย์เดียวกัน — และยังไม่มีระบบที่แก้ได้ทุกมิติพร้อมกัน
+    </p>
+
+    <div class="challenge-grid">
+      <div class="challenge-item reveal reveal-delay-1">
+        <div class="challenge-icon">🧠</div>
+        <p>เด็กสมาธิสั้นลง<br>ยากต่อการโฟกัสในห้องเรียน</p>
+      </div>
+      <div class="challenge-item reveal reveal-delay-2">
+        <div class="challenge-icon">⏱</div>
+        <p>การจดจำแบบเดิมใช้เวลานานขึ้น<br>ทรัพยากรครูถูกใช้มากเกินไป</p>
+      </div>
+      <div class="challenge-item reveal reveal-delay-1">
+        <div class="challenge-icon">👩‍🏫</div>
+        <p>ครูต้องใช้พลังงานมากขึ้น<br>ในการควบคุมและดูแลห้องเรียน</p>
+      </div>
+      <div class="challenge-item reveal reveal-delay-2">
+        <div class="challenge-icon">👨‍👩‍👧</div>
+        <p>ผู้ปกครองคาดหวังผลลัพธ์<br>ที่จับต้องได้และวัดผลได้</p>
+      </div>
+    </div>
+
+    <div class="big-question reveal">
+      <p>"มีระบบไหนที่ช่วยให้เด็กสนุกกับการเรียนรู้ พร้อมพัฒนาวินัยและการจดจำไปพร้อมกัน?"</p>
+    </div>
+  </div>
+</div>
+
+<!-- METHOD -->
+<section id="method">
+  <div class="section-label reveal">02 — เครื่องมือหลัก</div>
+  <h2 class="reveal">Echo Note<br>+ สูตรคูณเสียง</h2>
+  <div class="divider reveal"></div>
+
+  <div class="method-intro">
+    <div class="method-description reveal">
+      <p>Echo Program ใช้ <strong>"สูตรคูณเสียง"</strong> เป็นเครื่องมือกลาง มีหน้าตาใกล้เคียงกับสูตรคูณคณิตศาสตร์ที่เด็กไทยคุ้นเคย</p>
+      <p>เด็กเรียนรู้จากสิ่งที่พวกเขารู้อยู่แล้ว แต่ผ่านช่องทางใหม่ที่สมองเปิดรับได้ง่ายกว่า — เสียงและจังหวะ</p>
+      <p style="color:var(--muted);">ผลลัพธ์ไม่ได้หยุดแค่เรื่องดนตรี แต่ขยายไปสู่ทักษะชีวิตที่แท้จริง</p>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="outcomes-strip">
+        <div class="outcome-chip">
+          <div class="emoji">🧩</div>
+          <span>ความจำ</span>
+        </div>
+        <div class="outcome-chip">
+          <div class="emoji">🎯</div>
+          <span>วินัย</span>
+        </div>
+        <div class="outcome-chip">
+          <div class="emoji">⏳</div>
+          <span>การรอคอย</span>
+        </div>
+        <div class="outcome-chip">
+          <div class="emoji">👂</div>
+          <span>การรับฟัง</span>
+        </div>
+        <div class="outcome-chip">
+          <div class="emoji">🏆</div>
+          <span>ลำดับ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="learning-pillars">
+    <div class="pillar reveal reveal-delay-1">
+      <div class="pillar-title">👂 การฟัง</div>
+      <p>ฟัง Pattern ของเสียงอย่างมีโครงสร้าง ฝึกสมองให้จับรูปแบบและคาดเดาล่วงหน้า</p>
+    </div>
+    <div class="pillar reveal reveal-delay-2">
+      <div class="pillar-title">🤲 การเคลื่อนไหว</div>
+      <p>ปรบมือ เคาะ รอจังหวะ ส่งต่อ เชื่อมสมองกับร่างกายผ่านการกระทำที่มีความหมาย</p>
+    </div>
+    <div class="pillar reveal reveal-delay-3">
+      <div class="pillar-title">💬 การตอบสนอง</div>
+      <p>ฟังเพื่อน รอคิว รับสัญญาณ ตอบกลับ พัฒนาทักษะสังคมในบริบทที่สนุก</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT STEPS -->
+<div class="full-width-section impact-section" id="impact">
+  <div class="section-inner">
+    <div class="section-label reveal">03 — Impact Model</div>
+    <h2 class="reveal">3 ขั้นตอน<br>สู่การเปลี่ยนแปลง</h2>
+    <div class="divider reveal"></div>
+
+    <div class="steps-container">
+      <!-- STEP 1 -->
+      <div class="step-card s1 reveal reveal-delay-1">
+        <div class="step-number">01</div>
+        <div class="step-tag">60 นาทีแรก</div>
+        <h3 class="step-headline">"เด็กจำได้ทันที"</h3>
+        <div class="kpi-label">KPI — รับประกันขั้นต่ำ 50%</div>
+        <ul class="kpi-list">
+          <li>จำ Pattern พื้นฐานได้</li>
+          <li>ปรบมือหรือเคาะตามได้</li>
+          <li>แยกจังหวะถูก–ผิดได้</li>
+        </ul>
+        <div class="step-note">
+          สิ่งที่ผู้บริหารเห็นทันที: เด็กสนุก ครูมีส่วนร่วม ห้องเรียนตอบสนองเร็ว
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-card s2 reveal reveal-delay-2">
+        <div class="step-number">02</div>
+        <div class="step-tag">1 Quarter — 90 วัน</div>
+        <h3 class="step-headline">"ครูขับเคลื่อนได้เอง"</h3>
+        <div class="kpi-label">ครูสามารถ</div>
+        <ul class="kpi-list">
+          <li>ใช้สูตรคูณเสียงนำกิจกรรมเอง</li>
+          <li>บันทึกพัฒนาการของเด็ก</li>
+          <li>ใช้สื่อในห้องเรียนได้ต่อเนื่อง</li>
+        </ul>
+        <div class="kpi-label" style="margin-top:20px;">เด็กสามารถ</div>
+        <ul class="kpi-list">
+          <li>เล่นแม่ 1–4</li>
+          <li>ทำกิจกรรมกลุ่ม</li>
+          <li>แข่งขันกันอย่างสร้างสรรค์</li>
+        </ul>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-card s3 reveal reveal-delay-3">
+        <div class="step-number">03</div>
+        <div class="step-tag">1 ปี</div>
+        <h3 class="step-headline">"โรงเรียนมี<br>Signature Program"</h3>
+        <div class="kpi-label">โรงเรียนสามารถมี</div>
+        <ul class="kpi-list">
+          <li>งานแข่งขันสูตรคูณเสียงประจำปี</li>
+          <li>Parent Showcase</li>
+          <li>คลิปผลงานนักเรียน</li>
+          <li>จุดขายใหม่รับสมัครนักเรียน</li>
+        </ul>
+        <div class="step-note">
+          "โรงเรียนที่สร้างเด็กที่ฟังเป็น ขอบคุณเป็น และสร้างเป็น"
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<div class="full-width-section philosophy-section" id="philosophy">
+  <div class="section-inner">
+    <div class="section-label reveal">04 — ปรัชญา</div>
+    <h2 class="reveal" style="color:var(--white);">ทำไม "การฟัง"<br>จึงนำไปสู่ "การขอบคุณ"</h2>
+    <div class="divider reveal"></div>
+
+    <div class="flow-chain reveal">
+      <div class="flow-node">
+        <div class="flow-icon">👂</div>
+        <div class="flow-title">ฟังเป็น</div>
+        <div class="flow-desc">รับรู้ว่ามีบางสิ่งถูกส่งมาถึงเรา</div>
+      </div>
+      <div class="flow-node">
+        <div class="flow-icon">🙏</div>
+        <div class="flow-title">ขอบคุณเป็น</div>
+        <div class="flow-desc">เริ่มเข้าใจ "กตัญญู" ผ่านประสบการณ์จริง</div>
+      </div>
+      <div class="flow-node">
+        <div class="flow-icon">🛠</div>
+        <div class="flow-title">สร้างเป็น</div>
+        <div class="flow-desc">เปลี่ยนจากผู้รับสู่ผู้สร้างคุณค่า</div>
+      </div>
+    </div>
+
+    <div class="philosophy-text reveal">
+      <p>เราพบว่า เด็กที่เริ่มฟังเป็น มักเริ่มขอบคุณเป็น เพราะการขอบคุณที่แท้จริงเริ่มจากการรับรู้ว่า <em>มีบางสิ่งบางอย่างถูกส่งมาถึงเรา</em></p>
+      <p>ใน Echo Program เราใช้ดนตรีช่วยให้เด็กฟังคนอื่น รอจังหวะของตัวเอง และรับก่อนตอบสนอง</p>
+      <div class="philosophy-highlight">"กตัญญู ไม่ใช่คำสอน — แต่เป็นประสบการณ์ที่เด็กค้นพบเอง"</div>
+    </div>
+  </div>
+</div>
+
+<!-- VISION -->
+<section id="vision">
+  <div class="section-label reveal">05 — วิสัยทัศน์ระยะยาว</div>
+  <h2 class="reveal">จาก "ผู้รับ"<br>สู่ "ผู้สร้างคุณค่า"</h2>
+  <div class="divider reveal"></div>
+
+  <div class="vision-cols">
+    <div class="vision-ladder reveal">
+      <div class="ladder-step">
+        <div class="ladder-dot">👂</div>
+        <div class="ladder-text">
+          <strong>ฟังเป็น</strong>
+          <span>รับรู้จังหวะและโครงสร้างของโลกรอบตัว</span>
+        </div>
+      </div>
+      <div class="ladder-arrow">↓</div>
+      <div class="ladder-step">
+        <div class="ladder-dot">🙏</div>
+        <div class="ladder-text">
+          <strong>ขอบคุณเป็น</strong>
+          <span>เข้าใจคุณค่าของสิ่งที่ได้รับ</span>
+        </div>
+      </div>
+      <div class="ladder-arrow">↓</div>
+      <div class="ladder-step">
+        <div class="ladder-dot">🛠</div>
+        <div class="ladder-text">
+          <strong>สร้างเป็น</strong>
+          <span>มีพลังสร้างคุณค่าและส่งต่อ</span>
+        </div>
+      </div>
+      <div class="ladder-arrow">↓</div>
+      <div class="ladder-step" style="border:none;">
+        <div class="ladder-dot" style="background:var(--red);">🏭</div>
+        <div class="ladder-text">
+          <strong>ผู้ผลิต</strong>
+          <span>Producer Mindset — ไม่ใช่แค่ผู้บริโภค</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2">
+      <div class="motto-box">
+        <p>ปรัชญาของ Echo Program</p>
+        <blockquote>"ดนตรี กตัญญู ผู้ผลิต มิตร AI"</blockquote>
+      </div>
+      <div style="margin-top: 24px; padding: 28px; background: var(--section-bg); border-left: 3px solid var(--gold);">
+        <p style="font-size:0.9rem; color:var(--muted); margin-bottom:8px;">ความแตกต่างที่โรงเรียนสร้างได้</p>
+        <p style="font-size:1rem; color:var(--ink); line-height:1.7;">โรงเรียนที่ใช้ Echo Program ไม่ได้แค่ <em>สอนดนตรี</em> — แต่กำลัง <strong>สร้างคนรุ่นใหม่</strong> ที่รับฟัง มีวินัย และรู้จักขอบคุณก่อนสร้าง</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILOT -->
+<div class="full-width-section pilot-section" id="pilot">
+  <div class="section-inner">
+    <div class="pilot-left">
+      <div class="section-label">06 — Pilot Proposal</div>
+      <h2>เริ่มต้น<br>ง่ายที่สุด</h2>
+      <div class="divider" style="background:rgba(0,0,0,0.3);"></div>
+      <p>ไม่จำเป็นต้องลงทุนเต็มรูปแบบในทันที เริ่มจาก <strong>1 Session ทดลอง 60 นาที</strong> แล้วปล่อยให้ผลลัพธ์พูดแทน</p>
+      <p>เราพร้อมเข้าโรงเรียน ทดสอบจริงกับนักเรียนกลุ่มทดลอง ให้ผู้บริหารและครูเห็นภาพชัดก่อนตัดสินใจ</p>
+      <a class="cta-btn" href="mailto:">นัด Pilot Session</a>
+    </div>
+
+    <div class="pilot-card reveal reveal-delay-1">
+      <h3>1 Session</h3>
+      <div class="duration">60 นาที · ฟรีสำหรับ Pilot</div>
+      <ul class="pilot-list">
+        <li>ผู้บริหารโรงเรียนเข้าร่วมสังเกต</li>
+        <li>ครูดนตรีหรือครูประจำชั้น</li>
+        <li>นักเรียนกลุ่มทดลอง (ปฐมวัย)</li>
+        <li>สาธิต Echo Note + สูตรคูณเสียง</li>
+        <li>วัดผล KPI 50% ทันทีหลัง Session</li>
+        <li>สรุปและ Q&A หลังจบ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ECHO</div>
+  <div class="footer-sub">สยามสกลการดนตรี · Siam Sakon Music School · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
