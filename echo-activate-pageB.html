@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Activate · หน้า B (เวลา · Interval · Shape)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 80% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 48px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:4px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:16px}
+
+  .modes{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+  .pill{padding:8px 16px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:700;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .pill.on{border-color:#E8C547;background:#E8C547;color:#0B1020}
+  .hint{text-align:center;font-size:12px;color:#9aa6c2;margin-bottom:10px;min-height:16px}
+
+  .clockwrap{display:block;text-align:center;min-height:300px}
+  #clock{width:100%;max-width:420px;margin:0 auto}
+  svg{display:block;width:100%;max-width:420px;height:auto}
+
+  .answer{text-align:center;margin:8px 0 4px}
+  .answer .nm{font-size:19px;font-weight:900;color:#fff}
+  .answer .hr{font-size:19px;font-weight:900;color:#E8C547;margin:0 3px}
+
+  .toggles{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  .tog{padding:7px 14px;border-radius:999px;cursor:pointer;font-size:12.5px;font-weight:700;border:1.5px solid #2a3458;background:transparent;color:#9aa6c2}
+  .tog.on{border-color:#15A6E8;color:#15A6E8}
+  .btn{padding:10px 18px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+
+  .panel{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:14px 16px;margin-top:14px;font-size:13px;line-height:1.7;color:#cdd6ee}
+  .panel b{color:#E8C547}
+  .shapeName{text-align:center;font-size:16px;font-weight:900;margin:4px 0 2px}
+  .sym{color:#E0479E}.home{color:#36C03F}
+  .ivlist{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .ivchip{padding:4px 9px;border-radius:7px;font-size:12px;font-weight:700;background:#0a0f22;border:1px solid #1f2a4d;color:#cdd6ee}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:20px;line-height:1.8}
+  .dict{margin-top:12px;font-size:12px;color:#9aa6c2;line-height:1.9}
+  .dict b{color:#E8C547}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Echo Activate · หน้า B · เวลา → Interval → Shape</p>
+  <h1>สร้างเชปเสียงของคุณเอง</h1>
+  <p class="sub">แตะหน้าปัดเลือกจุด · ระบบไล่บทบาทให้ตามการซ้อนคู่สาม (1·3·5·7·9·11·13)</p>
+
+  <div class="modes" id="modes">
+    <button class="pill" data-mode="custom">✋ Custom (เลือกเอง)</button>
+    <button class="pill" data-mode="major">สามเหลี่ยมเมเจอร์</button>
+    <button class="pill" data-mode="minor">สามเหลี่ยมไมเนอร์</button>
+    <button class="pill" data-mode="aug">ออกเมนต์</button>
+    <button class="pill" data-mode="dim7">ดิมินิช 7</button>
+    <button class="pill" data-mode="penta">เพนทาโทนิก</button>
+  </div>
+  <div class="hint" id="hint"></div>
+
+  <div class="clockwrap"><div id="clock"></div></div>
+
+  <div class="answer" id="answer"></div>
+
+  <div class="toggles">
+    <button class="tog on" id="tgClock">🕐 โมง</button>
+    <button class="tog" id="tgIv">📏 Interval</button>
+    <button class="tog" id="tgShape">◆ Shape</button>
+    <button class="btn gold" id="hear">♪ ฟัง</button>
+    <button class="btn" id="clear">ล้าง</button>
+  </div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="dict">
+    <b>Shape Dictionary</b> — เส้นตรง 12↔6 = ไทรโทน · สามเหลี่ยมด้านเท่า = ออกเมนต์ · สามเหลี่ยมเบี้ยว = มีบ้าน (เมเจอร์/ไมเนอร์) · สี่เหลี่ยมจัตุรัส = ดิมินิช 7 · ห้าเหลี่ยม = เพนทาโทนิก · หกเหลี่ยม = โฮลโทน · <b>กฎ:</b> ด้านเท่ากันหมด = สมมาตร = ลอย · ด้านไม่เท่า = มีบ้าน
+  </div>
+
+  <p class="foot">เดโมหน้า B · กดบทบาทเดินตามเลขคี่ · กดจุดเดิมซ้ำ = ปลดออก</p>
+</div>
+
+<script>
+var NOTES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var THAI=["โด","โด#","เร","เร#","มี","ฟา","ฟา#","ซอล","ซอล#","ลา","ลา#","ที"];
+var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
+var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
+
+// ชื่อ Interval ตามระยะห่างชั่วโมง
+var IVNAME=["ราก","m2","M2","m3","M3","P4","TT","P5","m6","M6","m7","M7"];
+var IVTHAI=["บ้าน","คู่2ไมเนอร์","คู่2","คู่3ไมเนอร์","คู่3เมเจอร์","คู่4","ไทรโทน","คู่5","คู่6ไมเนอร์","คู่6","คู่7ไมเนอร์","คู่7เมเจอร์"];
+// บทบาทตามลำดับเลือก (การซ้อนคู่สาม)
+var ROLE=["Root (1)","คู่สาม (3)","คู่ห้า (5)","คู่เจ็ด (7)","คู่เก้า (9)","คู่สิบเอ็ด (11)","คู่สิบสาม (13)","+8","+9","+10","+11","+12"];
+
+var PRESET={
+  major:[0,4,7], minor:[0,3,7], aug:[0,4,8], dim7:[0,3,6,9], penta:[0,2,4,7,9]
+};
+
+var S={mode:"custom", picks:[0], show:{clock:true,iv:false,shape:false}};
+
+var CX=200,CY=200,RO=185,RI=120;
+function xy(d,r){var t=(d-90)*Math.PI/180;return [CX+r*Math.cos(t),CY+r*Math.sin(t)];}
+function sec(i){var a0=i*30-15,a1=i*30+15,o0=xy(a0,RO),o1=xy(a1,RO),n1=xy(a1,RI),n0=xy(a0,RI);
+  return "M "+o0[0]+" "+o0[1]+" A "+RO+" "+RO+" 0 0 1 "+o1[0]+" "+o1[1]+" L "+n1[0]+" "+n1[1]+" A "+RI+" "+RI+" 0 0 0 "+n0[0]+" "+n0[1]+" Z";}
+
+/* วิเคราะห์เชป */
+function analyze(picks){
+  var u=picks.slice().sort(function(a,b){return a-b;}), n=u.length;
+  if(n===0)return{name:"ยังไม่เลือกจุด",sym:null};
+  if(n===1)return{name:"จุดเดียว (ราก)",sym:null};
+  if(n===2){var g=Math.abs(u[0]-u[1]);g=Math.min(g,12-g);
+    return g===6?{name:"เส้นผ่านศูนย์กลาง — ไทรโทน",sym:true}:{name:"เส้นเชื่อม 2 จุด",sym:false};}
+  var gaps=[];for(var i=0;i<n;i++)gaps.push((u[(i+1)%n]-u[i]+12)%12);
+  var eq=gaps.every(function(g){return g===gaps[0];});
+  if(n===3)return eq?{name:"สามเหลี่ยมด้านเท่า — ออกเมนต์",sym:true}:{name:"สามเหลี่ยมเบี้ยว — มีบ้าน",sym:false};
+  if(n===4)return eq?{name:"สี่เหลี่ยมจัตุรัส — ดิมินิช 7",sym:true}:{name:"สี่เหลี่ยมเบี้ยว — มีบ้าน",sym:false};
+  if(n===5)return eq?{name:"ห้าเหลี่ยมด้านเท่า",sym:true}:{name:"ห้าเหลี่ยม — เพนทาโทนิก/มีบ้าน",sym:false};
+  if(n===6)return eq?{name:"หกเหลี่ยม — โฮลโทน",sym:true}:{name:"หกเหลี่ยมเบี้ยว",sym:false};
+  return eq?{name:n+"เหลี่ยมด้านเท่า — สมมาตร",sym:true}:{name:n+" จุด — มีบ้าน",sym:false};
+}
+
+function setClockSVG(inner){
+  document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:420px;height:auto;display:block;margin:0 auto">'+inner+'</svg>';
+}
+function onClockClick(e){
+  var t=e.target.closest("[data-i]"); if(!t)return;
+  var i=parseInt(t.getAttribute("data-i"),10);
+  if(S.mode==="custom"){
+    var idx=S.picks.indexOf(i);
+    if(idx>=0){S.picks.splice(idx,1);} else if(S.picks.length<12){S.picks.push(i);}
+  }else{ S.picks=PRESET[S.mode].map(function(off){return (i+off)%12;}); }
+  tonePicks(); render();
+}
+function render(){
+  var picks=S.picks, root=picks[0];
+  var s='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
+  for(var i=0;i<12;i++){
+    var on=picks.indexOf(i)>=0, isRoot=(i===root&&picks.length>0), p=xy(i*30,(RO+RI)/2);
+    s+='<path d="'+sec(i)+'" data-i="'+i+'" fill="'+COLORS[i]+'" opacity="'+(on?1:.18)+'" stroke="'+(isRoot?"#fff":on?"#E8C547":"#05070f")+'" stroke-width="'+(isRoot?4:on?3:1.5)+'" style="cursor:pointer;transition:opacity .25s"/>';
+    var txt=CLOCK[i];
+    s+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="16" font-weight="800" fill="'+(on?"#fff":"#5a6488")+'" style="pointer-events:none">'+txt+'</text>';
+    // ป้าย Interval รอบนอก
+    if(S.show.iv && on && picks.length>0){
+      var iv=(i-root+12)%12, lp=xy(i*30,RO-2);
+      s+='<text x="'+lp[0]+'" y="'+(lp[1]+3)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#15A6E8" style="pointer-events:none">'+(i===root?"R":IVNAME[iv])+'</text>';
+    }
+  }
+  // SHAPE
+  if(S.show.shape && picks.length>=2){
+    var pts=picks.map(function(h){return xy(h*30,RI-6).join(",");}).join(" ");
+    if(picks.length===2)
+      s+='<line x1="'+xy(picks[0]*30,RI-6)[0]+'" y1="'+xy(picks[0]*30,RI-6)[1]+'" x2="'+xy(picks[1]*30,RI-6)[0]+'" y2="'+xy(picks[1]*30,RI-6)[1]+'" stroke="#E8C547" stroke-width="3"/>';
+    else
+      s+='<polygon points="'+pts+'" fill="#E8C54722" stroke="#E8C547" stroke-width="2.5" stroke-linejoin="round"/>';
+  }
+  s+='<circle cx="200" cy="200" r="7" fill="#E8C547"/>';
+  setClockSVG(s);
+
+  // answer line (เวลา)
+  var ans="";
+  if(S.show.clock && picks.length){
+    ans='<span class="nm">เลือก '+picks.length+' จุด</span> = ';
+    ans+=picks.map(function(h){return '<span class="hr">'+CLOCK[h]+'</span>';}).join(" · ")+' โมง';
+  }
+  document.getElementById("answer").innerHTML=ans;
+
+  // panel
+  var a=analyze(picks), html="";
+  if(picks.length){
+    html+='<div class="shapeName '+(a.sym===true?"sym":a.sym===false?"home":"")+'">'+(S.show.shape?("◆ "+a.name):a.name)+'</div>';
+    if(a.sym===true)html+='<div style="text-align:center;font-size:12px;color:#E0479E">ทุกด้านเท่ากัน = สมมาตร = เสียงลอย หาบ้านยาก</div>';
+    if(a.sym===false&&picks.length>=3)html+='<div style="text-align:center;font-size:12px;color:#36C03F">ด้านไม่เท่า = มีลำดับชั้น = รู้ว่าบ้านอยู่ไหน</div>';
+    // โน้ต + บทบาท
+    html+='<div style="margin-top:10px"><b>โน้ต & บทบาท:</b></div>';
+    html+='<div class="ivlist">';
+    picks.forEach(function(h,k){
+      var iv=(h-root+12)%12;
+      html+='<span class="ivchip" style="border-color:'+COLORS[h]+'">'+NOTES[h]+' · '+CLOCK[h]+'โมง'+(S.show.iv?(' · '+(k===0?"บ้าน":IVTHAI[iv])):'')+'</span>';
+    });
+    html+='</div>';
+  }else{
+    html='แตะหน้าปัดเพื่อเริ่ม — จุดแรก = Root, จุดถัดไประบบไล่ให้เป็น คู่3·5·7·9... กดจุดเดิมซ้ำเพื่อปลดออก';
+  }
+  document.getElementById("panel").innerHTML=html;
+
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.classList.toggle("on",b.dataset.mode===S.mode);});
+  document.getElementById("tgClock").classList.toggle("on",S.show.clock);
+  document.getElementById("tgIv").classList.toggle("on",S.show.iv);
+  document.getElementById("tgShape").classList.toggle("on",S.show.shape);
+  document.getElementById("hint").textContent = S.mode==="custom"
+    ? "โหมด Custom: แตะเลือกจุดเอง · กดซ้ำเพื่อปลด"
+    : "โหมดสำเร็จรูป: แตะหน้าปัดเพื่อย้ายราก (ทั้งเชปหมุนตาม)";
+}
+
+/* คลิกหน้าปัด */
+/* คลิกหน้าปัดผูกไว้ใน setClockSVG แล้ว */
+
+document.querySelectorAll("[data-mode]").forEach(function(b){
+  b.onclick=function(){
+    S.mode=b.dataset.mode;
+    if(S.mode==="custom"){S.picks=[0];}
+    else{S.picks=PRESET[S.mode].slice();S.show.shape=true;}
+    render();
+  };
+});
+document.getElementById("tgClock").onclick=function(){S.show.clock=!S.show.clock;render();};
+document.getElementById("tgIv").onclick=function(){S.show.iv=!S.show.iv;render();};
+document.getElementById("tgShape").onclick=function(){S.show.shape=!S.show.shape;render();};
+document.getElementById("clear").onclick=function(){S.picks=S.mode==="custom"?[]:S.picks;render();};
+document.getElementById("hear").onclick=tonePicks;
+
+var ac=null;
+function tonePicks(){
+  if(!S.picks.length)return;
+  if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();
+  S.picks.forEach(function(h,k){
+    var t=ac.currentTime, f=440*Math.pow(2,(60+h-69)/12);
+    var o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=f;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+1.0);
+    o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+1.0);
+  });
+}
+
+document.getElementById("clock").addEventListener("click",onClockClick);
+document.querySelector('[data-mode="custom"]').classList.add("on");
+render();
