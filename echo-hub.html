@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Program · เส้นทางการเรียน</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 60% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 56px}
+  .wrap{max-width:680px;margin:0 auto}
+  .top{text-align:center;margin-bottom:6px}
+  .brand{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase}
+  h1{font-size:24px;font-weight:800;color:#fff;margin:6px 0 2px}
+  .tagline{color:#9aa6c2;font-size:12px;margin-bottom:14px}
+
+  .progwrap{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:14px 16px;margin-bottom:8px}
+  .progtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+  .progtop b{color:#E8C547;font-size:15px}
+  .bar{height:10px;background:#0a0f22;border-radius:999px;overflow:hidden}
+  .bar > div{height:100%;background:linear-gradient(90deg,#36C03F,#E8C547);border-radius:999px;transition:width .4s}
+
+  .adminrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 18px}
+  .mini{padding:7px 14px;border-radius:999px;cursor:pointer;font-size:12.5px;font-weight:700;border:1.5px solid #2a3458;background:transparent;color:#9aa6c2}
+  .mini.on{border-color:#E0479E;color:#E0479E}
+
+  .stage{margin-bottom:8px}
+  .stagehead{display:flex;align-items:center;gap:10px;margin:18px 0 10px}
+  .stagenum{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0B1020;flex:0 0 auto}
+  .stagehead .st{font-size:15px;font-weight:800;color:#fff}
+  .stagehead .ss{font-size:12px;color:#9aa6c2}
+  .weeks{margin-left:auto;font-size:11px;color:#56607f;white-space:nowrap}
+
+  .lesson{display:flex;align-items:center;gap:12px;background:#0e1530;border:1.5px solid #1f2a4d;border-radius:14px;padding:12px 14px;margin-bottom:8px}
+  .lesson.done{border-color:#36C03F44}
+  .lesson.current{border-color:#E8C547;box-shadow:0 0 0 2px #E8C54733}
+  .lesson.locked{opacity:.5}
+  .status{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex:0 0 auto;border:2px solid #2a3458;color:#9aa6c2}
+  .status.done{background:#36C03F;border-color:#36C03F;color:#06210c}
+  .status.current{border-color:#E8C547;color:#E8C547}
+  .lmid{flex:1;min-width:0}
+  .lmid .lt{font-size:14px;font-weight:800;color:#fff}
+  .lmid .ld{font-size:12px;color:#9aa6c2;margin-top:1px}
+  .lacts{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
+  .btn{padding:7px 13px;border-radius:999px;cursor:pointer;font-size:12px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee;white-space:nowrap;text-align:center;text-decoration:none;display:block}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+  .btn.ghost{font-size:11px;padding:5px 11px}
+  .btn[disabled]{opacity:.4;pointer-events:none}
+
+  .note{background:#0a1430;border:1px solid #2a3458;border-radius:12px;padding:12px 14px;font-size:12px;color:#9aa6c2;line-height:1.7;margin-top:14px}
+  .note b{color:#E8C547}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:16px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Echo Program · Platform</div>
+    <h1>เส้นทางการเรียน</h1>
+    <div class="tagline">ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+  </div>
+
+  <div class="progwrap">
+    <div class="progtop"><span>ความคืบหน้า</span><b><span id="pdone">0</span>/<span id="ptotal">8</span> บท</b></div>
+    <div class="bar"><div id="pbar" style="width:0%"></div></div>
+  </div>
+
+  <div class="adminrow">
+    <button class="mini" id="teacherBtn">🔑 โหมดครู/แอดมิน</button>
+    <button class="mini" id="resetBtn">↺ ล้างความคืบหน้า</button>
+  </div>
+
+  <div id="roadmap"></div>
+
+  <div class="note" id="adminNote"></div>
+  <p class="foot">Echo Program · ต้นแบบแพลตฟอร์ม (A) · ความคืบหน้าเก็บในเครื่องนี้ · ระบบแอดมิน+เก็บเงินจริงอยู่ในแผนถัดไป</p>
+</div>
+
+<script>
+/* ====== ตั้งค่าที่ครูแก้ได้ ====== */
+var TEACHER_CODE="echo01";   /* รหัสเข้าโหมดครู — เปลี่ยนได้ */
+/* ================================= */
+
+var STAGES=[
+  {n:1,title:"สูตรคูณเสียง · จังหวะ",sub:"ด่านแรก — รากฐานที่กันกับดักเมโลดี้",weeks:"สัปดาห์ 1–2",color:"#36C03F"},
+  {n:2,title:"นาฬิกาเสียง · ระดับเสียง",sub:"คอร์ด คีย์ และรูปทรง",weeks:"สัปดาห์ 3–5",color:"#15A6E8"},
+  {n:3,title:"เชื่อมสองแกน · อ่านโน้ตจริง",sub:"จังหวะ + เสียง รวมกัน",weeks:"สัปดาห์ 6–8",color:"#E8C547"}
+];
+var LESSONS=[
+  {id:1,stage:1,title:"พจนานุกรมค่าโน้ต",desc:"นับ 1-2-3-4 ในหนึ่งห้อง",file:"echo-notevalues.html"},
+  {id:2,stage:1,title:"ซอยลึก สองสายขนาน",desc:"หารสอง vs ทริปเพล็ต",file:"echo-subdivide.html"},
+  {id:3,stage:2,title:"นาฬิกาเสียง — คอร์ดนี้กี่โมง",desc:"อ่านคอร์ดเป็นเวลา",file:"echo-clock.html"},
+  {id:4,stage:2,title:"เวลา → Interval → เชป",desc:"คอร์ดเป็นรูปทรงเรขาคณิต",file:"echo-activate-pageB-v2.html"},
+  {id:5,stage:2,title:"Key Signature + 5 เส้น",desc:"เลือกคีย์ ระดับเสียงจริง",file:"echo-v2-keysig.html"},
+  {id:6,stage:3,title:"กับดักเมโลดี้ — ทิศ + ระยะ",desc:"อ่านเสียงเป็นทิศ ไม่ใช่ชื่อ",file:"echo-direction-stepA.html"},
+  {id:7,stage:3,title:"กับดักเมโลดี้ — 5 เส้น",desc:"เส้นเดียวสู่บรรทัด 5 เส้น",file:"echo-direction-stepB.html"},
+  {id:8,stage:3,title:"รวมจังหวะ + เสียง",desc:"สองแกนทำงานพร้อมกันเรียลไทม์",file:"echo-activate-AB.html"}
+];
+
+function load(){try{return JSON.parse(localStorage.getItem("echo_progress")||"[]");}catch(e){return [];}}
+function save(a){try{localStorage.setItem("echo_progress",JSON.stringify(a));}catch(e){}}
+function isTeacher(){try{return localStorage.getItem("echo_teacher")==="1";}catch(e){return false;}}
+function setTeacher(v){try{localStorage.setItem("echo_teacher",v?"1":"0");}catch(e){}}
+
+function done(){return load();}
+function isDone(id){return done().indexOf(id)>=0;}
+function unlocked(id){
+  if(isTeacher())return true;
+  if(id===1)return true;
+  return isDone(id-1);
+}
+function firstCurrent(){
+  for(var i=0;i<LESSONS.length;i++){var L=LESSONS[i];if(!isDone(L.id)&&unlocked(L.id))return L.id;}
+  return -1;
+}
+
+function render(){
+  var cur=firstCurrent(), comp=done().length, html="";
+  document.getElementById("pdone").textContent=comp;
+  document.getElementById("ptotal").textContent=LESSONS.length;
+  document.getElementById("pbar").style.width=Math.round(comp/LESSONS.length*100)+"%";
+
+  for(var si=0;si<STAGES.length;si++){
+    var stg=STAGES[si];
+    html+='<div class="stage"><div class="stagehead">';
+    html+='<div class="stagenum" style="background:'+stg.color+'">'+stg.n+'</div>';
+    html+='<div><div class="st">'+stg.title+'</div><div class="ss">'+stg.sub+'</div></div>';
+    html+='<div class="weeks">'+stg.weeks+'</div></div>';
+    for(var li=0;li<LESSONS.length;li++){
+      var L=LESSONS[li]; if(L.stage!==stg.n)continue;
+      var d=isDone(L.id), un=unlocked(L.id), isCur=(L.id===cur);
+      var cls="lesson"+(d?" done":(isCur?" current":(un?"":" locked")));
+      var stcls="status"+(d?" done":(isCur?" current":""));
+      var icon=d?"✓":(un?L.id:"🔒");
+      html+='<div class="'+cls+'">';
+      html+='<div class="'+stcls+'">'+icon+'</div>';
+      html+='<div class="lmid"><div class="lt">'+L.title+'</div><div class="ld">'+L.desc+'</div></div>';
+      html+='<div class="lacts">';
+      if(un){
+        html+='<a class="btn gold" href="'+L.file+'" target="_blank" rel="noopener">เปิดบทเรียน</a>';
+        html+='<button class="btn ghost" data-toggle="'+L.id+'">'+(d?"✓ เรียนแล้ว":"ทำเครื่องหมาย")+'</button>';
+      }else{
+        html+='<button class="btn" disabled>🔒 ล็อก</button>';
+      }
+      html+='</div></div>';
+    }
+    html+='</div>';
+  }
+  document.getElementById("roadmap").innerHTML=html;
+
+  // โหมดครู
+  var tb=document.getElementById("teacherBtn");
+  tb.className="mini"+(isTeacher()?" on":"");
+  tb.textContent=isTeacher()?"🔑 โหมดครู: เปิดอยู่":"🔑 โหมดครู/แอดมิน";
+  document.getElementById("adminNote").innerHTML = isTeacher()
+    ? '<b>โหมดครู/แอดมินเปิดอยู่</b> — ทุกบทปลดล็อกหมด ใช้สำหรับครู/พ่อแม่ช่วยอำนวยความสะดวก หรือถ่ายคลิป · กดปุ่มโหมดครูอีกครั้งเพื่อออก'
+    : '<b>โหมดนักเรียน</b> — บทเรียนปลดล็อกทีละขั้นเมื่อทำเครื่องหมาย "เรียนแล้ว" · ครู/พ่อแม่กด "โหมดครู" (ใส่รหัส) เพื่อปลดล็อกทั้งหมด';
+}
+
+document.getElementById("roadmap").addEventListener("click",function(e){
+  var t=e.target.closest("[data-toggle]"); if(!t)return;
+  var id=parseInt(t.getAttribute("data-toggle"),10);
+  var a=done(), i=a.indexOf(id);
+  if(i>=0)a.splice(i,1); else a.push(id);
+  save(a); render();
+});
+document.getElementById("teacherBtn").onclick=function(){
+  if(isTeacher()){ setTeacher(false); render(); return; }
+  var code=prompt("ใส่รหัสครู/แอดมิน:");
+  if(code===null)return;
+  if(code===TEACHER_CODE){ setTeacher(true); render(); }
+  else alert("รหัสไม่ถูกต้อง");
+};
+document.getElementById("resetBtn").onclick=function(){
+  if(confirm("ล้างความคืบหน้าทั้งหมด?")){ save([]); render(); }
+};
+
+render();
+</script>
+</body>
+</html>
