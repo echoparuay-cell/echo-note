@@ -43,6 +43,17 @@
   .axis .clk{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#2E4FD4;color:#fff;font-weight:900;font-size:12px}
 
   .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+  .vocab{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .vocab .vh{font-size:12px;color:#E8C547;font-weight:800;text-align:center;margin-bottom:9px;letter-spacing:1px}
+  .vrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .vchip{flex:1 1 150px;background:#0a0f22;border:1px solid #1f2a4d;border-radius:10px;padding:9px 10px;text-align:center}
+  .vchip .vn{font-size:15px;font-weight:900}
+  .vchip .vd{font-size:11px;color:#9aa6c2;margin-top:3px;line-height:1.5}
+  .illus{background:#fbfbf7;border-radius:14px;padding:14px 8px;margin-top:16px}
+  .illus svg{display:block;margin:0 auto;width:100%;max-width:480px;height:auto}
+  .illuscap{text-align:center;font-size:12px;color:#9aa6c2;margin-top:6px}
+  .illuscap b{color:#E8C547}
+  .illushead{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-align:center;margin:16px 0 6px;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -52,7 +63,20 @@
   <p class="sub">ห้อง 4/4 · ทุกตัวในชุดเดียวกันยาวเท่ากันเป๊ะ</p>
   <p class="ask">นับ <b>1 → 2 → 3 → 4</b> · กดฟังแต่ละชุดเทียบกัน</p>
 
+  <div class="vocab">
+    <div class="vh">โครงสร้าง เม็ด · กลุ่ม · ก้อน</div>
+    <div class="vrow">
+      <div class="vchip"><div class="vn" style="color:#E8C547">เม็ด</div><div class="vd">1 โน้ตในจังหวะ<br>หน่วยย่อย (subdivision)</div></div>
+      <div class="vchip"><div class="vn" style="color:#79c0ff">กลุ่ม</div><div class="vd">1 ห้องเพลง<br>(1 measure)</div></div>
+      <div class="vchip"><div class="vn" style="color:#5fe07a">ก้อน</div><div class="vd">4 ห้องต่อเนื่อง<br>= 1 แม่สูตรคูณ</div></div>
+    </div>
+  </div>
+
   <div class="cards" id="cards"></div>
+
+  <div class="illushead">ภาพรวม · แม่ ๑ บนบรรทัด 5 เส้น</div>
+  <div class="illus"><div id="mae1"></div></div>
+  <div class="illuscap">โน้ตแต่ละตัว = <b style="color:#E8C547">เม็ด</b> · แต่ละห้อง = <b style="color:#79c0ff">กลุ่ม</b> · ทั้ง 4 ห้อง = <b style="color:#5fe07a">ก้อน</b> (แม่ ๑)</div>
 
   <p class="foot">เดโมพจนานุกรมค่าโน้ต · ขั้นถัดไป: ซอยลึกต่อ (หารสอง 8·16 / หารสาม 6·12)</p>
 </div>
@@ -157,6 +181,58 @@ document.getElementById("cards").addEventListener("click",function(e){
   var rv=e.target.closest("#reveal3");
   if(rv){ S.revealed=true; renderCards(); return; }
 });
+
+/* ===== ภาพแม่ ๑ บนบรรทัด 5 เส้น (นิ่ง) ===== */
+/* ---- ชั้นภาษา (แยกข้อความไว้ที่เดียว เผื่อแปลภาษาอื่น) ---- */
+var MAE1_TXT={med:"เม็ด", group:"1 กลุ่ม", chunk:"1 ก้อน = แม่ ๑"};
+/* ---- แก่นสากล: โครงจังหวะแม่ ๑ (q=ดำ h=ขาว w=กลม) ---- */
+var MAE1=[["q","q","h"],["q","q","h"],["q","q","q","q"],["w"]];
+var COL_MED="#E8C547",COL_GROUP="#2E4FD4",COL_CHUNK="#36C03F";
+
+function durBeats(k){return k==="w"?4:(k==="h"?2:1);}
+function mNoteSVG(x,y,kind){
+  var open=(kind==="w"||kind==="h"),s="";
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="8" ry="6" fill="'+(open?"#fbfbf7":"#1a1a2e")+'" stroke="#1a1a2e" stroke-width="2.2" transform="rotate(-20 '+x+' '+y+')"/>';
+  if(kind!=="w") s+='<line x1="'+(x-7.5)+'" y1="'+(y+1)+'" x2="'+(x-7.5)+'" y2="'+(y+34)+'" stroke="#1a1a2e" stroke-width="2.2"/>'; /* เส้นกลางขึ้นไป = หางลง */
+  return s;
+}
+function drawMae1(){
+  var W=480,GAP=11,topY=44,midY=topY+2*GAP,s="",i;
+  for(i=0;i<5;i++){var yy=topY+i*GAP;s+='<line x1="18" y1="'+yy+'" x2="'+(W-14)+'" y2="'+yy+'" stroke="#222" stroke-width="1.3"/>';}
+  /* กุญแจซอล รอบเส้น G (เส้นที่ 2 จากล่าง = topY+3*GAP) */
+  var gY=topY+3*GAP;
+  s+='<line x1="40" y1="'+(gY-34)+'" x2="40" y2="'+(gY+28)+'" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="40" cy="'+gY+'" r="11" fill="none" stroke="#111" stroke-width="3"/><circle cx="40" cy="'+gY+'" r="3.4" fill="#111"/>';
+  var mStart=62,mEnd=W-16,mW=(mEnd-mStart)/4,m,n;
+  for(m=0;m<4;m++){
+    var mx=mStart+m*mW;
+    if(m>0)s+='<line x1="'+mx+'" y1="'+topY+'" x2="'+mx+'" y2="'+(topY+4*GAP)+'" stroke="#bbb" stroke-width="1"/>';
+    var notes=MAE1[m],acc=0;
+    for(n=0;n<notes.length;n++){
+      var nx=mx+((acc+durBeats(notes[n])/2)/4)*mW;
+      s+=mNoteSVG(nx,midY,notes[n]); /* ทุกเม็ดวางเส้นกลาง (เน้นค่าจังหวะ ไม่เน้นระดับเสียง) */
+      acc+=durBeats(notes[n]);
+    }
+  }
+  s+='<line x1="'+mEnd+'" y1="'+topY+'" x2="'+mEnd+'" y2="'+(topY+4*GAP)+'" stroke="#111" stroke-width="3"/>';
+  /* ป้าย เม็ด (ชี้โน้ตตัวแรก) */
+  var firstX=mStart+((0+0.5)/4)*mW, by=topY+4*GAP;
+  s+='<line x1="'+firstX+'" y1="'+(midY-14)+'" x2="'+firstX+'" y2="'+(topY-8)+'" stroke="'+COL_MED+'" stroke-width="1.5"/>';
+  s+='<rect x="'+(firstX-16)+'" y="'+(topY-26)+'" width="32" height="16" rx="4" fill="'+COL_MED+'"/>';
+  s+='<text x="'+firstX+'" y="'+(topY-14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#0B1020">'+MAE1_TXT.med+'</text>';
+  /* วงเล็บ กลุ่ม (ห้องแรก) */
+  var g0=mStart+4,g1=mStart+mW-4,gy2=by+12;
+  s+='<line x1="'+g0+'" y1="'+gy2+'" x2="'+g1+'" y2="'+gy2+'" stroke="'+COL_GROUP+'" stroke-width="2"/>';
+  s+='<line x1="'+g0+'" y1="'+gy2+'" x2="'+g0+'" y2="'+(gy2-5)+'" stroke="'+COL_GROUP+'" stroke-width="2"/><line x1="'+g1+'" y1="'+gy2+'" x2="'+g1+'" y2="'+(gy2-5)+'" stroke="'+COL_GROUP+'" stroke-width="2"/>';
+  s+='<text x="'+((g0+g1)/2)+'" y="'+(gy2+14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+COL_GROUP+'">'+MAE1_TXT.group+'</text>';
+  /* วงเล็บ ก้อน (ทั้ง 4 ห้อง) */
+  var k0=mStart,k1=mEnd,ky=by+34;
+  s+='<line x1="'+k0+'" y1="'+ky+'" x2="'+k1+'" y2="'+ky+'" stroke="'+COL_CHUNK+'" stroke-width="2"/>';
+  s+='<line x1="'+k0+'" y1="'+ky+'" x2="'+k0+'" y2="'+(ky-5)+'" stroke="'+COL_CHUNK+'" stroke-width="2"/><line x1="'+k1+'" y1="'+ky+'" x2="'+k1+'" y2="'+(ky-5)+'" stroke="'+COL_CHUNK+'" stroke-width="2"/>';
+  s+='<text x="'+((k0+k1)/2)+'" y="'+(ky+14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+COL_CHUNK+'">'+MAE1_TXT.chunk+'</text>';
+  document.getElementById("mae1").innerHTML='<svg viewBox="0 0 480 150" style="width:100%;max-width:480px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+drawMae1();
 
 renderCards();
 </script>
