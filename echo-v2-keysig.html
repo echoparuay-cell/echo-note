@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เสียงสะท้อนจากโมงยาม · v2.0 Key Signature</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:14px}
+  .secLabel{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-align:center;margin:16px 0 6px;text-transform:uppercase}
+
+  .keys{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+  .kbtn{padding:7px 11px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee;min-width:42px}
+  .kbtn.on{border-color:#E8C547;background:#E8C547;color:#0B1020}
+  .kbtn.flat{color:#79c0ff}.kbtn.sharp{color:#ffb86b}.kbtn.on{color:#0B1020}
+  .keyname{text-align:center;font-size:14px;color:#fff;font-weight:800;margin:4px 0 2px}
+  .keysub{text-align:center;font-size:12px;color:#9aa6c2;margin-bottom:8px}
+
+  .staffwrap{background:#fbfbf7;border-radius:14px;padding:14px 8px}
+  .staffwrap svg{display:block;margin:0 auto;width:100%;max-width:420px;height:auto}
+
+  .modeRow{display:flex;gap:6px;justify-content:center;margin:12px 0 4px}
+  .pill{padding:8px 16px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:700;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .pill.on{border-color:#36C03F;background:#36C03F;color:#0B1020}
+  .modeHint{text-align:center;font-size:12px;color:#9aa6c2;min-height:16px;margin-bottom:6px}
+
+  #clock{width:100%;max-width:360px;margin:0 auto}
+  .play{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+  .btn{padding:10px 20px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+
+  .panel{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.7;color:#cdd6ee}
+  .panel b{color:#E8C547}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v2.0 · Key Signature</p>
+  <h1>เลือกคีย์ — ระดับเสียงจริง</h1>
+  <p class="sub">ชาร์ปเดินขวา · แฟลตเดินซ้าย · เนเชอรัลคือบ้าน C / Am</p>
+
+  <div class="secLabel">เลือกคีย์ (วงกลมคู่ห้า)</div>
+  <div class="keys" id="keys"></div>
+  <div class="keyname" id="keyname"></div>
+  <div class="keysub" id="keysub"></div>
+
+  <div class="secLabel">บรรทัด 5 เส้น · ระดับเสียงจริง</div>
+  <div class="staffwrap"><svg id="staff" viewBox="0 0 440 180"></svg></div>
+
+  <div class="secLabel">นาฬิกาเสียง</div>
+  <div class="modeRow" id="modeRow">
+    <button class="pill on" data-mode="fixed">🔒 ตรึง (12 โมง = C)</button>
+    <button class="pill" data-mode="movable">🔄 หมุน (Root = 12)</button>
+  </div>
+  <div class="modeHint" id="modeHint"></div>
+  <div id="clock"></div>
+
+  <div class="play">
+    <button class="btn gold" id="playScale">▶ ไล่สเกล</button>
+  </div>
+
+  <div class="panel" id="panel"></div>
+  <p class="foot">เดโม v2.0 · โน้ตในสเกลไม่ต้องเขียนเครื่องหมายซ้ำ เพราะ Key Signature คุมให้แล้ว</p>
+</div>
+
+<script>
+/* ── ข้อมูลโน้ต ── */
+var LETTER_PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+var LETTER_IDX={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
+var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
+
+/* แต่ละโน้ตในสเกล = [ตัวอักษร, เครื่องหมาย(-1 แฟลต,0,1 ชาร์ป), อ็อกเทฟ] */
+var KEYS=[
+  {name:"A♭ เมเจอร์",rel:"Fm",sig:"flat",n:4,scale:[["A",-1,4],["B",-1,4],["C",0,5],["D",-1,5],["E",-1,5],["F",0,5],["G",0,5]]},
+  {name:"E♭ เมเจอร์",rel:"Cm",sig:"flat",n:3,scale:[["E",-1,4],["F",0,4],["G",0,4],["A",-1,4],["B",-1,4],["C",0,5],["D",0,5]]},
+  {name:"B♭ เมเจอร์",rel:"Gm",sig:"flat",n:2,scale:[["B",-1,4],["C",0,5],["D",0,5],["E",-1,5],["F",0,5],["G",0,5],["A",0,5]]},
+  {name:"F เมเจอร์",rel:"Dm",sig:"flat",n:1,scale:[["F",0,4],["G",0,4],["A",0,4],["B",-1,4],["C",0,5],["D",0,5],["E",0,5]]},
+  {name:"C เมเจอร์",rel:"Am",sig:"none",n:0,scale:[["C",0,4],["D",0,4],["E",0,4],["F",0,4],["G",0,4],["A",0,4],["B",0,4]]},
+  {name:"G เมเจอร์",rel:"Em",sig:"sharp",n:1,scale:[["G",0,4],["A",0,4],["B",0,4],["C",0,5],["D",0,5],["E",0,5],["F",1,5]]},
+  {name:"D เมเจอร์",rel:"Bm",sig:"sharp",n:2,scale:[["D",0,4],["E",0,4],["F",1,4],["G",0,4],["A",0,4],["B",0,4],["C",1,5]]},
+  {name:"A เมเจอร์",rel:"F♯m",sig:"sharp",n:3,scale:[["A",0,4],["B",0,4],["C",1,5],["D",0,5],["E",0,5],["F",1,5],["G",1,5]]},
+  {name:"E เมเจอร์",rel:"C♯m",sig:"sharp",n:4,scale:[["E",0,4],["F",1,4],["G",1,4],["A",0,4],["B",0,4],["C",1,5],["D",1,5]]}
+];
+var KEYLABEL=["4♭","3♭","2♭","1♭","♮","1♯","2♯","3♯","4♯"];
+
+var SHARP_POS=[38,35,39,36];           /* dv ของ F♯ C♯ G♯ D♯ */
+var FLAT_POS=[34,37,33,36];            /* dv ของ B♭ E♭ A♭ D♭ */
+var SHARP_GLY="\u266F", FLAT_GLY="\u266D";
+
+var S={key:4,mode:"fixed"};            /* เริ่มที่ C */
+
+function dv(letter,oct){return oct*7+LETTER_IDX[letter];}      /* ค่าตำแหน่งบนบรรทัด */
+function pc(note){return (LETTER_PC[note[0]]+note[1]+12)%12;}  /* pitch class 0-11 */
+function accGly(a){return a===1?SHARP_GLY:(a===-1?FLAT_GLY:"");}
+
+/* ── บรรทัด 5 เส้น ── */
+var GAP=11, E4Y=120, E4DV=30;
+function y(d){return E4Y-(d-E4DV)*(GAP/2);}
+function buildStaff(){
+  var key=KEYS[S.key], s="", i;
+  /* เส้น 5 เส้น */
+  for(i=0;i<5;i++){var yy=E4Y-i*GAP;s+='<line x1="20" y1="'+yy+'" x2="420" y2="'+yy+'" stroke="#222" stroke-width="1.3"/>';}
+  /* กุญแจซอล (วาดเอง: ก้าน + วงรอบเส้น G) */
+  var gY=y(32); /* เส้น G4 */
+  s+='<line x1="42" y1="'+(gY-34)+'" x2="42" y2="'+(gY+30)+'" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="42" cy="'+gY+'" r="11" fill="none" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="42" cy="'+gY+'" r="3.5" fill="#111"/>';
+  s+='<text x="34" y="'+(E4Y+24)+'" font-size="9" fill="#888">G</text>';
+  /* Key signature */
+  var pos = key.sig==="sharp"?SHARP_POS:(key.sig==="flat"?FLAT_POS:[]);
+  var gly = key.sig==="sharp"?SHARP_GLY:FLAT_GLY;
+  var sx=62;
+  for(i=0;i<key.n;i++){
+    s+='<text x="'+(sx+i*9)+'" y="'+(y(pos[i])+5)+'" font-size="19" fill="#111" text-anchor="middle">'+gly+'</text>';
+  }
+  /* โน้ตในสเกล (ไม่ต้องใส่เครื่องหมาย เพราะ key sig คุมแล้ว) */
+  var nx=62+key.n*9+24, step=(420-nx-10)/7;
+  for(i=0;i<7;i++){
+    var note=key.scale[i], d=dv(note[0],note[2]), ny=y(d), x=nx+i*step+step/2;
+    /* เส้นน้อย */
+    var p;
+    for(p=28;p>=d;p-=2){ s+='<line x1="'+(x-11)+'" y1="'+y(p)+'" x2="'+(x+11)+'" y2="'+y(p)+'" stroke="#111" stroke-width="1.3"/>'; }
+    for(p=40;p<=d;p+=2){ s+='<line x1="'+(x-11)+'" y1="'+y(p)+'" x2="'+(x+11)+'" y2="'+y(p)+'" stroke="#111" stroke-width="1.3"/>'; }
+    /* หัวโน้ต (สีตาม pc) + ก้านขึ้น */
+    var col=COLORS[pc(note)];
+    s+='<ellipse id="nh'+i+'" cx="'+x+'" cy="'+ny+'" rx="7" ry="5.2" fill="'+col+'" stroke="#111" stroke-width="1.6" transform="rotate(-20 '+x+' '+ny+')"/>';
+    s+='<line x1="'+(x+6.5)+'" y1="'+(ny-2)+'" x2="'+(x+6.5)+'" y2="'+(ny-34)+'" stroke="#111" stroke-width="1.6"/>';
+    /* ชื่อโน้ตใต้บรรทัด */
+    s+='<text x="'+x+'" y="168" font-size="11" font-weight="700" text-anchor="middle" fill="#333">'+note[0]+accGly(note[1])+'</text>';
+  }
+  document.getElementById("staff").innerHTML='<svg viewBox="0 0 440 180" style="width:100%;max-width:440px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+/* ── นาฬิกา ── */
+var CX=200,CY=200,RO=185,RI=120;
+function xy(deg,r){var t=(deg-90)*Math.PI/180;return [CX+r*Math.cos(t),CY+r*Math.sin(t)];}
+function sec(i){var a0=i*30-15,a1=i*30+15,o0=xy(a0,RO),o1=xy(a1,RO),n1=xy(a1,RI),n0=xy(a0,RI);
+  return "M "+o0[0]+" "+o0[1]+" A "+RO+" "+RO+" 0 0 1 "+o1[0]+" "+o1[1]+" L "+n1[0]+" "+n1[1]+" A "+RI+" "+RI+" 0 0 0 "+n0[0]+" "+n0[1]+" Z";}
+
+function buildClock(){
+  var key=KEYS[S.key], rootPc=pc(key.scale[0]);
+  /* map pc -> ชื่อโน้ตในสเกล (สำหรับโน้ตในคีย์) */
+  var nameOf={}; for(var j=0;j<7;j++){nameOf[pc(key.scale[j])]=key.scale[j][0]+accGly(key.scale[j][1]);}
+  var scalePcs=[]; for(j=0;j<7;j++)scalePcs.push(pc(key.scale[j]));
+  var s="", i;
+  s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
+  for(i=0;i<12;i++){
+    /* hour = ตำแหน่งบนหน้าปัด · note pc ที่อยู่ตรงนั้น */
+    var notePc = (S.mode==="fixed") ? i : (rootPc+i)%12;
+    var hour = i; /* เลขโมงเป็นกรอบคงที่ */
+    var on = scalePcs.indexOf(notePc)>=0;
+    var isRoot = (notePc===rootPc);
+    var p=xy(hour*30,(RO+RI)/2);
+    var stroke=isRoot?"#fff":(on?"#E8C547":"#05070f");
+    s+='<path d="'+sec(hour)+'" fill="'+COLORS[notePc]+'" fill-opacity="'+(on?1:0.15)+'" stroke="'+stroke+'" stroke-width="'+(isRoot?4:(on?3:1.4))+'"/>';
+    s+='<text x="'+p[0]+'" y="'+(p[1]-2)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+(on?"#fff":"#5a6488")+'" pointer-events="none">'+CLOCK[hour]+'</text>';
+    if(on){s+='<text x="'+p[0]+'" y="'+(p[1]+13)+'" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,0.9)" pointer-events="none">'+(nameOf[notePc]||"")+'</text>';}
+  }
+  s+='<circle cx="200" cy="200" r="7" fill="#E8C547"/>';
+  document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:360px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+/* ── เสียง ── */
+var ac=null;
+function tone(noteMidi,when,dur){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var t=ac.currentTime+when, f=440*Math.pow(2,(noteMidi-69)/12);
+  var o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+function midiOf(note){return 12*(note[2]+1)+(LETTER_PC[note[0]]+note[1]);}
+function playScale(){
+  var key=KEYS[S.key];
+  for(var i=0;i<7;i++){ tone(midiOf(key.scale[i]), i*0.34, 0.5); }
+}
+
+/* ── แผงข้อมูล ── */
+function refreshPanel(){
+  var key=KEYS[S.key];
+  var sigText = key.n===0 ? "ไม่มีเครื่องหมาย (เนเชอรัล)" :
+    (key.n+" "+(key.sig==="sharp"?"ชาร์ป ♯ (เดินขวา)":"แฟลต ♭ (เดินซ้าย)"));
+  var names=""; for(var i=0;i<7;i++){names+=key.scale[i][0]+accGly(key.scale[i][1])+(i<6?" · ":"");}
+  document.getElementById("keyname").textContent=key.name+"  /  "+key.rel;
+  document.getElementById("keysub").textContent="Key Signature: "+sigText;
+  document.getElementById("panel").innerHTML=
+    '<b>คีย์:</b> '+key.name+' (ญาติ: '+key.rel+')<br>'+
+    '<b>เครื่องหมายประจำคีย์:</b> '+sigText+'<br>'+
+    '<b>โน้ตในสเกล:</b> '+names+'<br>'+
+    '<span style="color:#9aa6c2">สังเกต: หัวโน้ตบนบรรทัดไม่มีเครื่องหมายติดอยู่ เพราะ Key Signature ที่หัวบรรทัดคุมให้ทั้งหมดแล้ว</span>';
+  document.getElementById("modeHint").textContent = S.mode==="fixed"
+    ? "โหมดตรึง: 12 โมง = C เสมอ (นาฬิกาไม่โกหก · เห็นคีย์ญาติได้)"
+    : "โหมดหมุน: Root เด้งมาอยู่ 12 โมง (จำรูปทรง/นิ้วชุดเดียวข้ามคีย์)";
+}
+
+/* ── ปุ่มเลือกคีย์ ── */
+function buildKeyButtons(){
+  var box=document.getElementById("keys"), html="", i;
+  for(i=0;i<9;i++){
+    var cls="kbtn"+(i<4?" flat":(i>4?" sharp":""))+(i===S.key?" on":"");
+    html+='<button class="'+cls+'" data-k="'+i+'">'+KEYLABEL[i]+'</button>';
+  }
+  box.innerHTML=html;
+  var btns=box.children;
+  for(i=0;i<btns.length;i++){
+    btns[i].onclick=function(){ S.key=parseInt(this.getAttribute("data-k"),10); renderAll(); };
+  }
+}
+
+function renderAll(){ buildKeyButtons(); buildStaff(); buildClock(); refreshPanel(); }
+
+/* โหมด */
+var modeBtns=document.getElementById("modeRow").children;
+for(var mi=0;mi<modeBtns.length;mi++){
+  modeBtns[mi].onclick=function(){
+    S.mode=this.getAttribute("data-mode");
+    var b=document.getElementById("modeRow").children;
+    for(var k=0;k<b.length;k++){ b[k].className="pill"+(b[k].getAttribute("data-mode")===S.mode?" on":""); }
+    buildClock(); refreshPanel();
+  };
+}
+document.getElementById("playScale").onclick=playScale;
+
+renderAll();
+</script>
+</body>
+</html>

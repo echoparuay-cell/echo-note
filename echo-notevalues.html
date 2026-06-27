@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>พจนานุกรมค่าโน้ต · v2.1</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:8px}
+  .ask{text-align:center;color:#fff;font-size:14px;font-weight:700;margin:10px 0 16px}
+  .ask b{color:#E8C547}
+
+  .cards{display:flex;flex-direction:column;gap:12px}
+  .card{background:#0e1530;border:1.5px solid #1f2a4d;border-radius:16px;padding:14px 16px}
+  .card.three{border-color:#2E4FD4;box-shadow:0 0 0 2px #2E4FD433}
+  .card.gap{border-style:dashed;border-color:#56607f;background:#0a0f22}
+  .cardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+  .cardhead .cnt{font-size:15px;font-weight:900;color:#fff}
+  .cardhead .cnt .num{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#E8C547;color:#0B1020;margin-right:8px;font-weight:900}
+  .card.three .cardhead .cnt .num{background:#2E4FD4;color:#fff}
+  .cardhead .nm{font-size:13px;color:#cdd6ee}
+  .measure{background:#fbfbf7;border-radius:12px;padding:8px;margin:6px 0 10px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+  .chip{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;background:#0a0f22;border:1px solid #1f2a4d;color:#cdd6ee}
+  .chip.bead{border-color:#E8C547;color:#E8C547}
+  .chip.fam{border-color:#36C03F;color:#36C03F}
+  .chip.fam3{border-color:#2E4FD4;color:#79c0ff}
+  .btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:9px 18px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+  .btn.blue{background:#2E4FD4;color:#fff;border:none}
+
+  .gapbox{text-align:center;color:#9aa6c2;font-size:14px;line-height:1.7;padding:14px 0}
+  .gapbox b{color:#E0479E}
+
+  .axis{margin-top:10px;background:#0a1430;border:1px solid #2E4FD4;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;font-size:13px;color:#cdd6ee}
+  .axis b{color:#79c0ff}
+  .axis .clk{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#2E4FD4;color:#fff;font-weight:900;font-size:12px}
+
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v2.1 · พจนานุกรมค่าโน้ต</p>
+  <h1>ใน 1 ห้อง มีโน้ตเท่ากันกี่ตัว?</h1>
+  <p class="sub">ห้อง 4/4 · ทุกตัวในชุดเดียวกันยาวเท่ากันเป๊ะ</p>
+  <p class="ask">นับ <b>1 → 2 → 3 → 4</b> · กดฟังแต่ละชุดเทียบกัน</p>
+
+  <div class="cards" id="cards"></div>
+
+  <p class="foot">เดโมพจนานุกรมค่าโน้ต · ขั้นถัดไป: ซอยลึกต่อ (หารสอง 8·16 / หารสาม 6·12)</p>
+</div>
+
+<script>
+var COL3="#2E4FD4"; /* สีของ 3 โมง */
+var S={revealed:false};
+
+var CARDS=[
+  {count:1,name:"ตัวกลม",kind:"whole",beads:1,value:"4 จังหวะ",fam:"ยาวสุด",famcls:"fam"},
+  {count:2,name:"ตัวขาว",kind:"half",beads:2,value:"2 จังหวะ/ตัว",fam:"หารสอง",famcls:"fam"},
+  {count:3,name:"ทริปเพล็ตของตัวขาว",kind:"half",beads:3,value:"หารห้องเป็น 3",fam:"หารสาม",famcls:"fam3",triplet:true},
+  {count:4,name:"ตัวดำ",kind:"quarter",beads:4,value:"1 จังหวะ/ตัว",fam:"หารสอง",famcls:"fam"}
+];
+
+/* ── วาดหัวโน้ต ── */
+function noteSVG(x,y,kind,color){
+  color=color||"#1a1a2e";
+  var open=(kind==="whole"||kind==="half"), s="";
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="8.5" ry="6.2" fill="'+(open?"#fbfbf7":color)+'" stroke="'+color+'" stroke-width="2.4" transform="rotate(-20 '+x+' '+y+')"/>';
+  if(kind!=="whole")s+='<line x1="'+(x+8)+'" y1="'+(y-2)+'" x2="'+(x+8)+'" y2="'+(y-36)+'" stroke="'+color+'" stroke-width="2.4"/>';
+  return s;
+}
+/* ── วาด 1 ห้อง พร้อม n โน้ต ── */
+function measureSVG(n,kind,triplet,accent){
+  var W=300,H=100,by=58,s="",i;
+  s+='<line x1="22" y1="'+by+'" x2="'+(W-22)+'" y2="'+by+'" stroke="#d8d8cf" stroke-width="1.5"/>';
+  s+='<line x1="22" y1="'+(by-24)+'" x2="22" y2="'+(by+22)+'" stroke="#999" stroke-width="2"/>';
+  s+='<line x1="'+(W-22)+'" y1="'+(by-24)+'" x2="'+(W-22)+'" y2="'+(by+22)+'" stroke="#999" stroke-width="2"/>';
+  var startX=46,endX=W-46,span=endX-startX,xs=[];
+  for(i=0;i<n;i++)xs.push(startX+span*((i+0.5)/n));
+  var col=accent||"#1a1a2e";
+  for(i=0;i<n;i++)s+=noteSVG(xs[i],by,kind,col);
+  if(triplet){
+    var bx0=xs[0]-11,bx1=xs[n-1]+11,byb=by-46,mx=(bx0+bx1)/2;
+    s+='<line x1="'+bx0+'" y1="'+byb+'" x2="'+bx1+'" y2="'+byb+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<line x1="'+bx0+'" y1="'+byb+'" x2="'+bx0+'" y2="'+(byb+6)+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<line x1="'+bx1+'" y1="'+byb+'" x2="'+bx1+'" y2="'+(byb+6)+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<rect x="'+(mx-10)+'" y="'+(byb-12)+'" width="20" height="17" fill="#fbfbf7"/>';
+    s+='<text x="'+mx+'" y="'+(byb+2)+'" text-anchor="middle" font-size="16" font-weight="800" fill="'+(accent||COL3)+'">3</text>';
+  }
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function cardHTML(c){
+  var three=c.triplet?" three":"";
+  var numbg=c.triplet?'style="background:'+COL3+';color:#fff"':'';
+  var accent=c.triplet?COL3:"#1a1a2e";
+  var h='<div class="card'+three+'">';
+  h+='<div class="cardhead"><span class="cnt"><span class="num" '+numbg+'>'+c.count+'</span>'+c.count+' ตัวเท่ากัน</span><span class="nm">'+c.name+'</span></div>';
+  h+='<div class="measure">'+measureSVG(c.count,c.kind,c.triplet,accent)+'</div>';
+  h+='<div class="meta"><span class="chip bead">'+c.beads+' เม็ด</span><span class="chip">'+c.value+'</span><span class="chip '+c.famcls+'">'+c.fam+'</span></div>';
+  if(c.triplet){
+    h+='<div class="axis"><span>เลข 3 เชื่อมสามแกน:</span> <b>3 ตัว</b> (จังหวะ) = <span class="clk">3</span> <b>3 โมง</b> (เสียง) = <svg width="22" height="20" viewBox="0 0 22 20" style="vertical-align:middle"><polygon points="11,3 19,17 3,17" fill="none" stroke="#79c0ff" stroke-width="2"/></svg> <b>สามเหลี่ยม</b> (เชป)</div>';
+    h+='<div class="btnrow" style="margin-top:10px"><button class="btn blue" data-play="3">▶ ฟังทริปเพล็ต</button><button class="btn" data-play="3" data-beats="1">▶ เทียบ 4 จังหวะ</button></div>';
+  }else{
+    h+='<div class="btnrow"><button class="btn gold" data-play="'+c.count+'">▶ ฟัง</button></div>';
+  }
+  h+='</div>';
+  return h;
+}
+function gapHTML(){
+  return '<div class="card gap"><div class="cardhead"><span class="cnt"><span class="num" style="background:#56607f;color:#fff">?</span>นับ 3 — ?</span></div>'+
+    '<div class="gapbox">ทำไมข้ามจาก <b>2</b> ไป <b>4</b> เลย?<br>แล้ว <b>เลข 3</b> หายไปไหน?</div>'+
+    '<div class="btnrow"><button class="btn blue" id="reveal3">🔓 เติมเต็มเลข 3</button></div></div>';
+}
+
+function renderCards(){
+  var html="",i;
+  for(i=0;i<CARDS.length;i++){
+    if(CARDS[i].triplet && !S.revealed){ html+=gapHTML(); }
+    else { html+=cardHTML(CARDS[i]); }
+  }
+  document.getElementById("cards").innerHTML=html;
+}
+
+/* ── เสียง ── */
+var ac=null;
+function noteTone(when,dur){
+  var t=ac.currentTime+when,f=523.25,o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+function clickTone(when){
+  var t=ac.currentTime+when,o=ac.createOscillator(),g=ac.createGain();
+  o.type="square";o.frequency.value=1600;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.004);g.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.06);
+}
+function playCount(n,withBeats){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var dur=2.4,nd=dur/n,i;
+  for(i=0;i<n;i++)noteTone(i*nd,nd*0.9);
+  if(withBeats){for(i=0;i<4;i++)clickTone(i*(dur/4));}
+}
+
+/* ── คลิก (delegation) ── */
+document.getElementById("cards").addEventListener("click",function(e){
+  var pb=e.target.closest("[data-play]");
+  if(pb){ playCount(parseInt(pb.getAttribute("data-play"),10), pb.getAttribute("data-beats")==="1"); return; }
+  var rv=e.target.closest("#reveal3");
+  if(rv){ S.revealed=true; renderCards(); return; }
+});
+
+renderCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ซอยลึก · สองสายขนาน · v2.1</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:14px}
+
+  .legend{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;font-size:12px}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .dot.two{background:#36C03F}.dot.three{background:#2E4FD4}
+
+  .level{background:#0e1530;border:1.5px solid #1f2a4d;border-radius:16px;padding:12px 14px;margin-bottom:12px}
+  .levelhead{text-align:center;font-size:14px;font-weight:900;color:#E8C547;margin-bottom:8px}
+  .lane{background:#fbfbf7;border-radius:12px;padding:6px;margin:6px 0}
+  .lane svg{display:block;margin:0 auto;width:100%;max-width:330px;height:auto}
+  .laneInfo{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .tag{font-size:12px;font-weight:800;padding:3px 9px;border-radius:7px}
+  .tag.two{background:#0a2010;color:#5fe07a;border:1px solid #36C03F}
+  .tag.three{background:#0a1430;color:#79c0ff;border:1px solid #2E4FD4}
+  .lbl{font-size:12px;color:#9aa6c2}
+  .btn{padding:7px 15px;border-radius:999px;cursor:pointer;font-size:12.5px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.green{background:#36C03F;color:#06210c;border:none}
+  .btn.blue{background:#2E4FD4;color:#fff;border:none}
+
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v2.1 · ซอยลึก</p>
+  <h1>สองสายขนาน — คู่ vs ทริปเพล็ต</h1>
+  <p class="sub">ทุกระดับซอยได้ 2 ทาง: หารสอง (เลขคู่) และ หารสาม (ทริปเพล็ต)</p>
+
+  <div class="legend">
+    <span><i class="dot two"></i> หารสอง — ลงตรงจังหวะ</span>
+    <span><i class="dot three"></i> หารสาม — ทริปเพล็ต</span>
+  </div>
+
+  <div id="levels"></div>
+
+  <p class="foot">เดโม v2.1 · กดฟังเทียบสายคู่กับสายทริปเพล็ตในระดับเดียวกัน · ปุ่มน้ำเงินมีเสียงเคาะ 4 จังหวะใต้ทริปเพล็ต</p>
+</div>
+
+<script>
+var GREEN="#1a6e2e", BLUE="#2E4FD4";
+
+var LEVELS=[
+  {lvl:"ระดับตัวขาว",
+   two:{n:2,open:true,beam:false,trip:0,name:"ตัวขาว ×2",val:"2 จังหวะ/ตัว"},
+   three:{n:3,open:true,beam:false,trip:3,name:"ทริปเพล็ตตัวขาว ×3",val:"3 ตัวเท่ากันในห้อง"}},
+  {lvl:"ระดับตัวดำ",
+   two:{n:4,open:false,beam:false,trip:0,name:"ตัวดำ ×4",val:"1 จังหวะ/ตัว"},
+   three:{n:6,open:false,beam:false,trip:3,name:"ทริปเพล็ตตัวดำ ×6",val:"2 กลุ่ม กลุ่มละ 3"}},
+  {lvl:"ระดับเขบ็ต 1 ชั้น",
+   two:{n:8,open:false,beam:true,bg:2,trip:0,name:"เขบ็ต ×8",val:"½ จังหวะ/ตัว"},
+   three:{n:12,open:false,beam:true,bg:3,trip:3,name:"ทริปเพล็ตเขบ็ต ×12",val:"4 กลุ่ม กลุ่มละ 3"}}
+];
+
+/* ── หัวโน้ต ── */
+function head(x,y,open,color){
+  return '<ellipse cx="'+x+'" cy="'+y+'" rx="6.6" ry="4.9" fill="'+(open?"#fbfbf7":color)+'" stroke="'+color+'" stroke-width="2.1" transform="rotate(-20 '+x+' '+y+')"/>';
+}
+/* ── วาดห้องพร้อม n โน้ต ── */
+function measureSVG(cfg,accent){
+  var W=330,H=108,by=72,stemTop=34,s="",i;
+  var col=accent||"#1a1a2e";
+  /* baseline + barlines */
+  s+='<line x1="20" y1="'+by+'" x2="'+(W-20)+'" y2="'+by+'" stroke="#d8d8cf" stroke-width="1.4"/>';
+  s+='<line x1="20" y1="'+(by-26)+'" x2="20" y2="'+(by+18)+'" stroke="#999" stroke-width="2"/>';
+  s+='<line x1="'+(W-20)+'" y1="'+(by-26)+'" x2="'+(W-20)+'" y2="'+(by+18)+'" stroke="#999" stroke-width="2"/>';
+  var startX=44,endX=W-44,span=endX-startX,n=cfg.n,xs=[];
+  for(i=0;i<n;i++)xs.push(startX+span*((i+0.5)/n));
+  /* stems */
+  for(i=0;i<n;i++)s+='<line x1="'+(xs[i]+6.4)+'" y1="'+(by-1)+'" x2="'+(xs[i]+6.4)+'" y2="'+stemTop+'" stroke="'+col+'" stroke-width="2"/>';
+  /* beams (เขบ็ต) เป็นกลุ่ม bg */
+  if(cfg.beam){
+    var bg=cfg.bg;
+    for(i=0;i<n;i+=bg){
+      var x0=xs[i]+6.4, x1=xs[Math.min(i+bg-1,n-1)]+6.4;
+      s+='<rect x="'+x0+'" y="'+stemTop+'" width="'+(x1-x0)+'" height="4.5" fill="'+col+'"/>';
+    }
+  }
+  /* noteheads */
+  for(i=0;i<n;i++)s+=head(xs[i],by,cfg.open,col);
+  /* triplet bracket + 3 ต่อกลุ่ม */
+  if(cfg.trip){
+    var tg=cfg.trip, byb=stemTop-13;
+    for(i=0;i<n;i+=tg){
+      var a=xs[i]-9, b=xs[Math.min(i+tg-1,n-1)]+9, mx=(a+b)/2;
+      s+='<line x1="'+a+'" y1="'+byb+'" x2="'+b+'" y2="'+byb+'" stroke="'+(accent||BLUE)+'" stroke-width="1.8"/>';
+      s+='<line x1="'+a+'" y1="'+byb+'" x2="'+a+'" y2="'+(byb+5)+'" stroke="'+(accent||BLUE)+'" stroke-width="1.8"/>';
+      s+='<line x1="'+b+'" y1="'+byb+'" x2="'+b+'" y2="'+(byb+5)+'" stroke="'+(accent||BLUE)+'" stroke-width="1.8"/>';
+      s+='<rect x="'+(mx-8)+'" y="'+(byb-11)+'" width="16" height="15" fill="#fbfbf7"/>';
+      s+='<text x="'+mx+'" y="'+(byb+1)+'" text-anchor="middle" font-size="14" font-weight="800" fill="'+(accent||BLUE)+'">3</text>';
+    }
+  }
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:330px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function laneHTML(cfg,isThree){
+  var accent=isThree?BLUE:"#1a1a2e";
+  var tagcls=isThree?"three":"two";
+  var btncls=isThree?"blue":"green";
+  var beats=isThree?' data-beats="1"':'';
+  var h='<div class="lane">'+measureSVG(cfg,accent)+'</div>';
+  h+='<div class="laneInfo"><span class="tag '+tagcls+'">'+cfg.name+'</span><span class="lbl">'+cfg.val+' · ห้องละ '+cfg.n+' ตัว</span>';
+  h+='<button class="btn '+btncls+'" data-n="'+cfg.n+'"'+beats+'>▶ ฟัง</button></div>';
+  return h;
+}
+function render(){
+  var html="",i;
+  for(i=0;i<LEVELS.length;i++){
+    var L=LEVELS[i];
+    html+='<div class="level"><div class="levelhead">'+L.lvl+'</div>';
+    html+=laneHTML(L.two,false);
+    html+='<div style="height:8px"></div>';
+    html+=laneHTML(L.three,true);
+    html+='</div>';
+  }
+  document.getElementById("levels").innerHTML=html;
+}
+
+/* ── เสียง ── */
+var ac=null;
+function noteTone(when,dur){
+  var t=ac.currentTime+when,f=523.25,o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+function clickTone(when){
+  var t=ac.currentTime+when,o=ac.createOscillator(),g=ac.createGain();
+  o.type="square";o.frequency.value=1600;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.004);g.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.06);
+}
+function playCount(n,withBeats){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var dur=2.4,nd=dur/n,i;
+  for(i=0;i<n;i++)noteTone(i*nd,nd*0.9);
+  if(withBeats){for(i=0;i<4;i++)clickTone(i*(dur/4));}
+}
+
+document.getElementById("levels").addEventListener("click",function(e){
+  var pb=e.target.closest("[data-n]");
+  if(pb)playCount(parseInt(pb.getAttribute("data-n"),10), pb.getAttribute("data-beats")==="1");
+});
+
+render();
+</script>
+</body>
+</html>

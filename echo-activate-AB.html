@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เสียงสะท้อนจากโมงยาม · A+B</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 48px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:14px}
+
+  .secLabel{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-align:center;margin:14px 0 6px;text-transform:uppercase}
+
+  /* ── ครึ่งบน: สแตฟจังหวะ (A) ── */
+  .staffwrap{background:#fbfbf7;border-radius:14px;padding:14px 8px;overflow-x:auto}
+  .staffwrap svg{display:block;margin:0 auto;width:100%;max-width:680px;height:auto}
+  .ctrlA{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  .vbox{background:#0e1530;border:1.5px solid #E8C547;border-radius:12px;padding:8px 14px;text-align:center;min-width:150px}
+  .vbox .vt{font-size:11px;color:#9aa6c2}
+  .vbox .vv{font-size:14px;color:#fff;font-weight:800}
+  .arrows{display:flex;gap:6px;justify-content:center;margin-top:6px}
+  .arrows button{width:34px;height:30px;border-radius:8px;border:1px solid #2a3458;background:#0a0f22;color:#cdd6ee;font-weight:800;cursor:pointer}
+  .tempo{display:flex;gap:6px;align-items:center}
+  .pill{padding:8px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:700;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .pill.on{border-color:#E8C547;background:#E8C547;color:#0B1020}
+
+  /* ── สายเชื่อม ── */
+  .pipe{text-align:center;color:#E8C547;font-size:13px;font-weight:700;margin:12px 0 4px}
+  .pipe small{color:#9aa6c2;font-weight:400}
+
+  /* ── ครึ่งล่าง: นาฬิกา+เชป (B) ── */
+  #clock{width:100%;max-width:380px;margin:0 auto}
+  .nowplay{text-align:center;min-height:24px;font-size:15px;font-weight:800;color:#fff;margin:6px 0}
+
+  .play{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+  .btn{padding:11px 22px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+
+  .panel{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.7;color:#cdd6ee}
+  .shapeName{text-align:center;font-size:15px;font-weight:900;margin:2px 0}
+  .sym{color:#E0479E}.home{color:#36C03F}
+  .ivlist{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .ivchip{padding:4px 9px;border-radius:7px;font-size:12px;font-weight:700;background:#0a0f22;border:1px solid #1f2a4d;color:#cdd6ee}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · A + B รวมแกน</p>
+  <h1>เสียงสะท้อนจากโมงยาม</h1>
+  <p class="sub">จังหวะ (บน) ป้อนเข้า → ระดับเสียง + เชป (ล่าง)</p>
+
+  <div class="secLabel">▲ แกนจังหวะ · นับเม็ด</div>
+  <div class="staffwrap"><svg id="staff" viewBox="0 0 680 120"></svg></div>
+  <div class="ctrlA">
+    <div class="vbox">
+      <div class="vt">กลุ่มสุดท้าย (สลับ 8 แบบ)</div>
+      <div class="vv" id="vName"></div>
+      <div class="arrows"><button id="prevV">◀</button><button id="nextV">▶</button></div>
+    </div>
+    <div class="vbox" style="border-color:#2a3458">
+      <div class="vt">Tempo</div>
+      <div class="tempo" style="justify-content:center;margin-top:4px">
+        <button class="pill" data-bpm="60">60</button>
+        <button class="pill" data-bpm="240">240</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipe">⬇ จำนวนเม็ด = เวลาโมง <small>(สายส่งจากบนลงล่าง)</small> ⬇</div>
+
+  <div class="secLabel">▼ แกนระดับเสียง · เวลา → โน้ต → เชป</div>
+  <div id="clock"></div>
+  <div class="nowplay" id="nowplay"></div>
+
+  <div class="play">
+    <button class="btn gold" id="play">▶ เล่นก้อนเสียง</button>
+    <button class="btn" id="stop">■ หยุด</button>
+  </div>
+
+  <div class="panel" id="panel"></div>
+  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ตั้งหลัก · กลุ่ม 4 สลับได้)</p>
+</div>
+
+<script>
+var NOTES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var THAI=["โด","โด#","เร","เร#","มี","ฟา","ฟา#","ซอล","ซอล#","ลา","ลา#","ที"];
+var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
+var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
+
+/* กลุ่ม 1-3 ตั้งหลัก (ค่าจังหวะของแต่ละเม็ด: 1=ดำ 2=ขาว 3=ขาวจุด 4=กลม) */
+var FIXED=[[1,1,2],[1,1,2],[1,1,1,1]];
+/* กลุ่ม 4: 8 แบบ */
+var VARIANTS=[
+  {p:[4],name:"4"},{p:[3,1],name:"3+1"},{p:[2,2],name:"2+2"},{p:[1,3],name:"1+3"},
+  {p:[1,1,2],name:"1+1+2"},{p:[1,2,1],name:"1+2+1"},{p:[2,1,1],name:"2+1+1"},{p:[1,1,1,1],name:"1+1+1+1"}
+];
+var S={variant:0,bpm:60};
+function dur2type(d){return d===4?"w":d===3?"hd":d===2?"h":"q";}
+function groups(){return FIXED.concat([VARIANTS[S.variant].p]);}
+function beadHour(beadCount){return beadCount%12;} /* จำนวนเม็ด -> โมง */
+
+/* ── หัวโน้ต SVG ── */
+function noteGlyph(x,y,type,color){
+  var open=(type==="w"||type==="h"||type==="hd"), s="";
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="8.4" ry="6" fill="'+(open?"#fbfbf7":(color||"#111"))+'" stroke="'+(color||"#111")+'" stroke-width="2.4" transform="rotate(-20 '+x+' '+y+')"/>';
+  if(type!=="w")s+='<line x1="'+(x+8)+'" y1="'+(y-3)+'" x2="'+(x+8)+'" y2="'+(y-40)+'" stroke="'+(color||"#111")+'" stroke-width="2.4"/>';
+  if(type==="hd")s+='<circle cx="'+(x+16)+'" cy="'+(y-2)+'" r="2.4" fill="'+(color||"#111")+'"/>';
+  return s;
+}
+/* ── วาดสแตฟ (A) ── highlightGroup = ดัชนีกลุ่มที่กำลังเล่น (-1=ไม่มี) */
+function drawStaff(highlightGroup){
+  var W=680,x0=18,gap=10,top=38,s="",i;
+  for(i=0;i<5;i++){var yy=top+i*gap;s+='<line x1="'+x0+'" y1="'+yy+'" x2="'+(W-18)+'" y2="'+yy+'" stroke="#111" stroke-width="1.3"/>';}
+  s+='<text x="'+(x0+4)+'" y="76" font-size="56" fill="#111" font-family="serif">\uD834\uDD1E</text>';
+  var gs=groups(),startX=78,endX=W-26,per=(endX-startX)/4,g;
+  for(g=0;g<4;g++){
+    var gx=startX+g*per, hour=beadHour(gs[g].length), col=COLORS[hour];
+    if(g>0)s+='<line x1="'+(gx-6)+'" y1="'+top+'" x2="'+(gx-6)+'" y2="'+(top+4*gap)+'" stroke="#999" stroke-width="1"/>';
+    if(highlightGroup===g)s+='<rect x="'+(gx-6)+'" y="'+(top-6)+'" width="'+per+'" height="'+(4*gap+12)+'" fill="'+col+'" fill-opacity="0.18"/>';
+    var notes=gs[g],acc=0,n;
+    for(n=0;n<notes.length;n++){
+      var nx=gx+(acc/4)*per+16;
+      s+=noteGlyph(nx,70,dur2type(notes[n]), highlightGroup===g?col:"#111");
+      acc+=notes[n];
+    }
+    // ป้ายจำนวนเม็ด -> โมง ใต้ห้อง
+    s+='<text x="'+(gx+per/2-6)+'" y="'+(top+4*gap+22)+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+col+'">'+notes.length+' เม็ด → '+CLOCK[hour]+' โมง</text>';
+  }
+  s+='<line x1="'+endX+'" y1="'+top+'" x2="'+endX+'" y2="'+(top+4*gap)+'" stroke="#111" stroke-width="3"/>';
+  document.getElementById("staff").innerHTML='<svg viewBox="0 0 680 140" style="width:100%;max-width:680px;height:auto;display:block;margin:0 auto">'+s.replace('viewBox="0 0 680 120"','')+'</svg>';
+}
+
+/* ── นาฬิกา + เชป (B) ── activeHours=โมงที่สะสม, handHour=เข็มเด่น */
+var CX=200,CY=200,RO=185,RI=120;
+function xy(d,r){var t=(d-90)*Math.PI/180;return [CX+r*Math.cos(t),CY+r*Math.sin(t)];}
+function sec(i){var a0=i*30-15,a1=i*30+15,o0=xy(a0,RO),o1=xy(a1,RO),n1=xy(a1,RI),n0=xy(a0,RI);
+  return "M "+o0[0]+" "+o0[1]+" A "+RO+" "+RO+" 0 0 1 "+o1[0]+" "+o1[1]+" L "+n1[0]+" "+n1[1]+" A "+RI+" "+RI+" 0 0 0 "+n0[0]+" "+n0[1]+" Z";}
+function drawClock(activeHours,handHour){
+  var s="",i;
+  s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
+  for(i=0;i<12;i++){
+    var on=activeHours.indexOf(i)>=0, p=xy(i*30,(RO+RI)/2);
+    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(on?1:0.16)+'" stroke="'+(on?"#E8C547":"#05070f")+'" stroke-width="'+(on?3:1.4)+'"/>';
+    s+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+(on?"#fff":"#5a6488")+'" pointer-events="none">'+CLOCK[i]+'</text>';
+  }
+  // เชป
+  if(activeHours.length>=2){
+    if(activeHours.length===2){var q0=xy(activeHours[0]*30,RI-8),q1=xy(activeHours[1]*30,RI-8);
+      s+='<line x1="'+q0[0]+'" y1="'+q0[1]+'" x2="'+q1[0]+'" y2="'+q1[1]+'" stroke="#E8C547" stroke-width="3"/>';}
+    else{var pts="";for(i=0;i<activeHours.length;i++){var q=xy(activeHours[i]*30,RI-8);pts+=q[0]+","+q[1]+" ";}
+      s+='<polygon points="'+pts+'" fill="#E8C547" fill-opacity="0.13" stroke="#E8C547" stroke-width="2.5" stroke-linejoin="round"/>';}
+  }
+  // เข็ม
+  for(i=0;i<activeHours.length;i++){var h=activeHours[i],isH=(h===handHour),e=xy(h*30,RI-8);
+    s+='<line x1="200" y1="200" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#E8C547" stroke-width="'+(isH?5:2.5)+'" stroke-linecap="round" stroke-opacity="'+(isH?1:0.75)+'"/>';
+    s+='<circle cx="'+e[0]+'" cy="'+e[1]+'" r="'+(isH?5:3.5)+'" fill="#E8C547"/>';}
+  s+='<circle cx="200" cy="200" r="7" fill="#E8C547"/>';
+  document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:380px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function uniqueHours(){var gs=groups(),u=[],i;for(i=0;i<4;i++){var h=beadHour(gs[i].length);if(u.indexOf(h)<0)u.push(h);}return u;}
+function analyze(hrs){
+  var u=hrs.slice().sort(function(a,b){return a-b;}),n=u.length,i;
+  if(n<=1)return{name:"จุดเดียว",sym:null};
+  if(n===2){var g=Math.abs(u[0]-u[1]);if(g>6)g=12-g;return g===6?{name:"เส้น — ไทรโทน",sym:true}:{name:"เส้นเชื่อม",sym:false};}
+  var gaps=[];for(i=0;i<n;i++)gaps.push((u[(i+1)%n]-u[i]+12)%12);
+  var eq=true;for(i=0;i<gaps.length;i++)if(gaps[i]!==gaps[0])eq=false;
+  if(n===3)return eq?{name:"สามเหลี่ยมด้านเท่า — ออกเมนต์",sym:true}:{name:"สามเหลี่ยมเบี้ยว — มีบ้าน",sym:false};
+  if(n===4)return eq?{name:"สี่เหลี่ยมจัตุรัส — ดิมินิช 7",sym:true}:{name:"สี่เหลี่ยมเบี้ยว — มีบ้าน",sym:false};
+  return eq?{name:n+"เหลี่ยมด้านเท่า",sym:true}:{name:n+" จุด — มีบ้าน",sym:false};
+}
+
+function refreshStatic(){
+  document.getElementById("vName").textContent="แบบ "+(S.variant+1)+"/8 · "+VARIANTS[S.variant].name;
+  drawStaff(-1);
+  var u=uniqueHours();
+  drawClock(u,null);
+  var gs=groups(), melody=[];for(var i=0;i<4;i++)melody.push(NOTES[beadHour(gs[i].length)]);
+  var a=analyze(u);
+  var html='<div class="shapeName '+(a.sym===true?"sym":a.sym===false?"home":"")+'">◆ '+a.name+'</div>';
+  html+='<div style="margin-top:8px"><b style="color:#E8C547">ทำนองจากก้อนนี้:</b> '+melody.join(" · ")+'</div>';
+  html+='<div class="ivlist">';
+  for(i=0;i<u.length;i++)html+='<span class="ivchip" style="border-color:'+COLORS[u[i]]+'">'+NOTES[u[i]]+' · '+CLOCK[u[i]]+'โมง</span>';
+  html+='</div>';
+  document.getElementById("panel").innerHTML=html;
+  // tempo pills
+  var tp=document.querySelectorAll("[data-bpm]");
+  for(i=0;i<tp.length;i++){tp[i].className="pill"+(parseInt(tp[i].getAttribute("data-bpm"),10)===S.bpm?" on":"");}
+}
+
+/* ── เสียง ── */
+var ac=null;
+function tone(idx,dur){if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();
+  var t=ac.currentTime,f=440*Math.pow(2,(60+idx-69)/12),o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
+
+/* ── เล่น: playhead วิ่งบนสแตฟ + เข็มนาฬิกาเต้นตามกลุ่ม ── */
+var timers=[],playing=false;
+function stop(){playing=false;for(var i=0;i<timers.length;i++)clearTimeout(timers[i]);timers=[];
+  document.getElementById("nowplay").textContent="";refreshStatic();}
+function play(){
+  if(playing)return;playing=true;for(var i=0;i<timers.length;i++)clearTimeout(timers[i]);timers=[];
+  var spb=60/S.bpm, gs=groups(), t=0, acc=[];
+  for(var g=0;g<4;g++){
+    (function(gi){
+      var notes=gs[gi], hour=beadHour(notes.length);
+      // ตอนกลุ่มเริ่ม: ไฮไลต์สแตฟ + เพิ่มเข็ม
+      timers.push(setTimeout(function(){
+        if(!playing)return;
+        if(acc.indexOf(hour)<0)acc.push(hour);
+        drawStaff(gi); drawClock(acc,hour);
+        document.getElementById("nowplay").textContent=notes.length+" เม็ด → "+CLOCK[hour]+" โมง → "+NOTES[hour]+" ("+THAI[hour]+")";
+      }, t*1000));
+      // เล่นเสียงแต่ละเม็ดตามค่าจังหวะ (โน้ตเดียวกันทั้งกลุ่ม)
+      var localT=t;
+      for(var n=0;n<notes.length;n++){
+        (function(at,val){timers.push(setTimeout(function(){if(playing)tone(hour,val*spb*0.9);},at*1000));})(localT,notes[n]);
+        localT+=notes[n]*spb;
+      }
+    })(g);
+    for(var n2=0;n2<gs[g].length;n2++)t+=gs[g][n2]*spb;
+  }
+  timers.push(setTimeout(function(){if(playing){playing=false;refreshStatic();
+    document.getElementById("nowplay").textContent="จบก้อนเสียง · เชปรวม = "+analyze(uniqueHours()).name;}}, t*1000+200));
+}
+
+/* ── ปุ่ม ── */
+document.getElementById("prevV").onclick=function(){S.variant=(S.variant+7)%8;refreshStatic();};
+document.getElementById("nextV").onclick=function(){S.variant=(S.variant+1)%8;refreshStatic();};
+var tps=document.querySelectorAll("[data-bpm]");
+for(var ti=0;ti<tps.length;ti++){tps[ti].onclick=function(){S.bpm=parseInt(this.getAttribute("data-bpm"),10);refreshStatic();};}
+document.getElementById("play").onclick=play;
+document.getElementById("stop").onclick=stop;
+
+refreshStatic();
+</script>
+</body>
+</html>

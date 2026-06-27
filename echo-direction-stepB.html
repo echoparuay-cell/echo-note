@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เส้นเดียว → 5 เส้น · สเต็ป B · v2.1</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:14px}
+  .secLabel{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-align:center;margin:14px 0 6px;text-transform:uppercase}
+  .staffwrap{background:#fbfbf7;border-radius:14px;padding:14px 8px}
+  .staffwrap svg{display:block;margin:0 auto;width:100%;max-width:420px;height:auto}
+  .nowsub{text-align:center;min-height:20px;font-size:13px;color:#9aa6c2;margin:8px 0}
+  .play{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+  .btn{padding:11px 20px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+  .btn.blue{background:#2E4FD4;color:#fff;border:none}
+  .panel{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.7;color:#cdd6ee}
+  .panel b{color:#E8C547}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v2.1 · สเต็ป B</p>
+  <h1>กับดักเมโลดี้ → บรรทัด 5 เส้น</h1>
+  <p class="sub">เส้นอ้างอิงแตกออกเป็น 5 เส้น แล้วโน้ตไปนั่งตำแหน่งจริง (โน้ต G)</p>
+
+  <div class="secLabel" id="stageLabel">เริ่มที่เส้นเดียว</div>
+  <div class="staffwrap"><svg id="staff" viewBox="0 0 440 200"></svg></div>
+  <div class="nowsub" id="nowsub"></div>
+
+  <div class="play">
+    <button class="btn gold" id="expand">↔ ขยายเป็น 5 เส้น</button>
+    <button class="btn blue" id="playMelody">♪ ฟังทำนอง</button>
+    <button class="btn" id="reset">■ เริ่มใหม่</button>
+  </div>
+
+  <div class="panel" id="panel"></div>
+  <p class="foot">เดโม v2.1 สเต็ป B · คู่ 2 = สลับเส้น↔ช่องเสมอ · กฎหาง: เส้นกลางขึ้นไป = หางลง</p>
+</div>
+
+<script>
+var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
+
+/* แม่ ๑ บนบรรทัดจริง · โน้ต G เป็นหลัก · เคลื่อนคู่ 2 */
+/* letter/oct ใช้กำหนดตำแหน่งบนบรรทัด · pc สำหรับสีและเสียง */
+var SEQ=[
+  {letter:"G",oct:4,dir:null,   iv:0, label:"เริ่ม"},
+  {letter:"G",oct:4,dir:"same", iv:0, label:"ซ้ำ"},
+  {letter:"A",oct:4,dir:"up",   iv:2, label:"ขึ้นคู่ 2"},
+  {letter:"G",oct:4,dir:"down", iv:2, label:"ลงคู่ 2"}
+];
+var LETTER_IDX={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+var LETTER_PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+function dvOf(n){return n.oct*7+LETTER_IDX[n.letter];}      /* ตำแหน่งบรรทัด */
+function pcOf(n){return LETTER_PC[n.letter]%12;}
+function midiOf(n){return 12*(n.oct+1)+LETTER_PC[n.letter];}
+
+/* บรรทัด: dv30=E4(เส้นล่างสุด) ... dv38=F5(เส้นบนสุด) · เส้นกลาง=B4 dv34 */
+var GAP=12, E4Y=140, E4DV=30, MIDDV=34;
+function yOf(dv){return E4Y-(dv-E4DV)*(GAP/2);}
+
+var S={expanded:false, step:-1, playing:false};
+
+/* กุญแจซอล (วาดเอง รอบเส้น G) */
+function clef(){
+  var gY=yOf(32); /* เส้น G4 */
+  var s='<line x1="44" y1="'+(gY-36)+'" x2="44" y2="'+(gY+30)+'" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="44" cy="'+gY+'" r="12" fill="none" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="44" cy="'+gY+'" r="3.6" fill="#111"/>';
+  s+='<text x="34" y="'+(E4Y+26)+'" font-size="9" fill="#999">G</text>';
+  return s;
+}
+/* หัวโน้ต + หาง (กฎ: เส้นกลางขึ้นไป หางลง) */
+function note(x,dv,col,hot){
+  var y=yOf(dv),s="";
+  /* เส้นน้อย */
+  var p;
+  for(p=28;p>=dv;p-=2)s+='<line x1="'+(x-12)+'" y1="'+yOf(p)+'" x2="'+(x+12)+'" y2="'+yOf(p)+'" stroke="#111" stroke-width="1.4"/>';
+  for(p=40;p<=dv;p+=2)s+='<line x1="'+(x-12)+'" y1="'+yOf(p)+'" x2="'+(x+12)+'" y2="'+yOf(p)+'" stroke="#111" stroke-width="1.4"/>';
+  /* หาง: เส้นกลาง(dv34)ขึ้นไป=ลง · ต่ำกว่า=ขึ้น */
+  var stemDown=(dv>=MIDDV);
+  if(stemDown) s+='<line x1="'+(x-7.5)+'" y1="'+(y+2)+'" x2="'+(x-7.5)+'" y2="'+(y+38)+'" stroke="'+(hot?col:"#111")+'" stroke-width="2.3"/>';
+  else         s+='<line x1="'+(x+7.5)+'" y1="'+(y-2)+'" x2="'+(x+7.5)+'" y2="'+(y-38)+'" stroke="'+(hot?col:"#111")+'" stroke-width="2.3"/>';
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+(hot?9:8)+'" ry="'+(hot?6.6:6)+'" fill="'+col+'" stroke="'+(hot?"#E8C547":"#111")+'" stroke-width="'+(hot?3:2)+'" transform="rotate(-20 '+x+' '+y+')"/>';
+  return s;
+}
+
+function buildStaff(cur){
+  var W=440,s="",i;
+  if(!S.expanded){
+    /* เส้นเดียว = เส้น G (dv32) */
+    var gy=yOf(32);
+    s+='<line x1="20" y1="'+gy+'" x2="'+(W-20)+'" y2="'+gy+'" stroke="#c9c9c0" stroke-width="2.5"/>';
+  }else{
+    /* 5 เส้น */
+    for(i=0;i<5;i++){var yy=E4Y-i*GAP;s+='<line x1="20" y1="'+yy+'" x2="'+(W-20)+'" y2="'+yy+'" stroke="#222" stroke-width="1.3"/>';}
+    s+=clef();
+  }
+  /* โน้ต 4 ตัว */
+  var startX=S.expanded?90:70, endX=W-30, step=(endX-startX)/4;
+  for(i=0;i<4;i++){
+    var n=SEQ[i], x=startX+step*i+step/2;
+    var dv = S.expanded ? dvOf(n) : (32 + (n.dir==='up'?2:(n.dir==='down'?0:0))); /* ก่อนขยาย: กลุ่ม3(up)ลอยเหนือเส้น เหมือน Step A */
+    var col=COLORS[pcOf(n)], hot=(cur===i);
+    s+=note(x,dv,col,hot);
+    s+='<text x="'+x+'" y="190" text-anchor="middle" font-size="11" font-weight="800" fill="#555">กลุ่ม '+(i+1)+'</text>';
+    if(S.expanded)s+='<text x="'+x+'" y="'+(yOf(dvOf(n))-((dv>=MIDDV)?-52:48))+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+col+'">'+n.letter+'</text>';
+  }
+  document.getElementById("staff").innerHTML='<svg viewBox="0 0 440 200" style="width:100%;max-width:440px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function refreshPanel(){
+  var p=document.getElementById("panel");
+  if(!S.expanded){
+    p.innerHTML='<b>ตอนนี้: เส้นเดียว</b> — โน้ตทั้ง 4 กลุ่มเกาะอยู่บนเส้นอ้างอิงเส้นเดียว (เส้น G)<br><span style="color:#9aa6c2">กด "ขยายเป็น 5 เส้น" เพื่อให้เส้นแตกออก แล้วโน้ตไปนั่งตำแหน่งจริง</span>';
+    document.getElementById("stageLabel").textContent="เริ่มที่เส้นเดียว";
+  }else{
+    p.innerHTML='<b>บรรทัด 5 เส้น · โน้ตตามจริง:</b><br>'+
+      'กลุ่ม 1·2·4 = <span style="color:'+COLORS[7]+'">G</span> (เส้นที่ 2) · กลุ่ม 3 = <span style="color:'+COLORS[9]+'">A</span> (ช่องที่ 2)<br>'+
+      '<b>กฎเส้น-ช่อง:</b> คู่ 2 สลับ เส้น↔ช่อง เสมอ — G(เส้น) ขึ้นคู่ 2 ไป A(ช่องที่ติดกัน)<br>'+
+      '<b>กฎหาง:</b> เส้นกลาง (B) ขึ้นไป = หางลง · G กับ A ต่ำกว่าเส้นกลาง จึงหางขึ้นทั้งหมด<br>'+
+      '<span style="color:#9aa6c2">กุญแจซอลม้วนรอบเส้น G พอดี — ตำแหน่งอ้างอิงของโน้ต G</span>';
+    document.getElementById("stageLabel").textContent="ขยายเป็น 5 เส้นแล้ว";
+  }
+}
+
+/* เสียง */
+var ac=null;
+function tone(midi,when,dur){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var t=ac.currentTime+when,f=440*Math.pow(2,(midi-69)/12),o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+var timers=[];
+function clearTimers(){for(var i=0;i<timers.length;i++)clearTimeout(timers[i]);timers=[];}
+function reset(){S.playing=false;clearTimers();S.expanded=false;S.step=-1;buildStaff(-1);refreshPanel();document.getElementById("nowsub").textContent="";}
+function expand(){S.expanded=true;buildStaff(-1);refreshPanel();document.getElementById("nowsub").textContent="เส้นแตกเป็น 5 เส้น · โน้ตไปนั่งตำแหน่งจริงแล้ว";}
+function play(){
+  if(S.playing)return;S.playing=true;clearTimers();
+  for(var k=0;k<4;k++){
+    (function(step){
+      timers.push(setTimeout(function(){
+        if(!S.playing)return;
+        S.step=step;buildStaff(step);
+        var n=SEQ[step];
+        document.getElementById("nowsub").textContent="กลุ่ม "+(step+1)+" : "+n.letter+" ("+n.label+")";
+        tone(midiOf(n),0,0.55);
+      }, step*1150));
+    })(k);
+  }
+  timers.push(setTimeout(function(){if(S.playing){S.playing=false;
+    document.getElementById("nowsub").textContent=S.expanded?"จบ · โน้ต G·G·A·G บนบรรทัดจริง":"จบ · ลองกดขยายเป็น 5 เส้น";}}, 4*1150));
+}
+document.getElementById("expand").onclick=expand;
+document.getElementById("playMelody").onclick=play;
+document.getElementById("reset").onclick=reset;
+
+buildStaff(-1);refreshPanel();
+</script>
+</body>
+</html>
