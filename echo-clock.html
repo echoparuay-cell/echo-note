@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>นาฬิกาเสียง · คอร์ดนี้กี่โมง · v2.1</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 65% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:680px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:22px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:14px;line-height:1.6}
+
+  .q{text-align:center;font-size:15px;font-weight:800;color:#fff;margin:6px 0 4px}
+  .q b{color:#E8C547}
+  .qen{text-align:center;font-size:12px;color:#9aa6c2;margin-bottom:10px}
+
+  #clock{width:100%;max-width:280px;margin:2px auto 6px}
+
+  .mover{display:flex;gap:8px;justify-content:center;align-items:center;margin:8px 0 6px}
+  .btn{padding:9px 16px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.up{border-color:#36C03F;color:#5fe07a}
+  .btn.down{border-color:#E0479E;color:#f0a0cf}
+  .btn.play{background:#E8C547;color:#0B1020;border:none}
+
+  .ans{background:#0e1530;border:1.5px solid #1f2a4d;border-radius:14px;padding:12px 14px;margin:10px 0}
+  .ansno{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-transform:uppercase;margin-bottom:8px}
+  .staffwrap{background:#fbfbf7;border-radius:12px;padding:10px 6px}
+  .staffwrap svg{display:block;margin:0 auto;width:100%;max-width:300px;height:auto}
+  .chordname{text-align:center;font-size:20px;font-weight:900;color:#0B1020;margin-top:4px}
+  .timecode{text-align:center;font-size:30px;font-weight:900;letter-spacing:2px}
+  .timecode small{font-size:14px;color:#9aa6c2;font-weight:600}
+
+  .bridge{text-align:center;font-size:12.5px;color:#9aa6c2;margin:10px 0;line-height:1.7}
+  .bridge b{color:#E8C547}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:16px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow" id="eyebrow"></p>
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="q" id="q"></div>
+  <div class="qen" id="qen"></div>
+
+  <div id="clock"></div>
+
+  <div class="mover">
+    <button class="btn down" id="down"></button>
+    <button class="btn play" id="play"></button>
+    <button class="btn up" id="up"></button>
+  </div>
+
+  <div class="ans">
+    <div class="ansno" id="ansno1"></div>
+    <div class="staffwrap"><div id="staff"></div></div>
+    <div class="chordname" id="chordname"></div>
+  </div>
+
+  <div class="ans">
+    <div class="ansno" id="ansno2"></div>
+    <div class="timecode" id="timecode"></div>
+  </div>
+
+  <div class="bridge" id="bridge"></div>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+/* ===================== ชั้นภาษา (แยกข้อความไว้ที่เดียว) ===================== */
+var TXT={
+  eyebrow:"เสียงสะท้อนจากโมงยาม · v2.1 · นาฬิกาเสียง",
+  h1:"คอร์ดนี้กี่โมง?",
+  sub:"เลื่อนพิกัดเวลาบนนาฬิกา · ชื่อเปลี่ยน · เสียงเปลี่ยน — สองภาษาของสิ่งเดียวกัน",
+  qTh:"ขอคอร์ด ", qThEnd:" กี่โมง?",
+  qEn:"What time is this chord?",
+  up:"▲ ขึ้น", down:"▼ ลง", play:"▶ ฟังคอร์ด",
+  ans1:"คำตอบ 1 · สัญลักษณ์ดนตรี",
+  ans2:"คำตอบ 2 · รหัสเวลา",
+  bridge:"ขึ้น = เพิ่มชาร์ป (C→G→D) · ลง = เพิ่มแฟลต (C→F→B♭) · ทุกก้าวเปลี่ยนคีย์ เปลี่ยนเสียง",
+  foot:"เดโม v2.1 · บ้านของ เวลา↔ชื่อ↔เสียง · รองรับ 5 คีย์ (B♭ F C G D) · คีย์อื่นเก็บไว้ขั้นถัดไป"
+};
+/* ===================== แก่นสากล ===================== */
+var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
+var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
+var LIDX={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+
+/* รองรับ 5 คีย์: B\u266D(2\u266D) F(1\u266D) C(0) G(1\u266F) D(2\u266F) เรียงตามพิกัดเวลา */
+/* keysig: ลำดับ accidental จริงบนกุญแจ — sharps: F C / flats: B E */
+var KEYS=[
+  {chroma:10, name:"B\u266D", notes:[["B",-1],["D",0],["F",0]],  sig:{type:"flat",  letters:["B","E"]}},
+  {chroma:5,  name:"F",       notes:[["F",0],["A",0],["C",0]],   sig:{type:"flat",  letters:["B"]}},
+  {chroma:0,  name:"C",       notes:[["C",0],["E",0],["G",0]],   sig:{type:"none",  letters:[]}},
+  {chroma:7,  name:"G",       notes:[["G",0],["B",0],["D",0]],   sig:{type:"sharp", letters:["F"]}},
+  {chroma:2,  name:"D",       notes:[["D",0],["F",1],["A",0]],   sig:{type:"sharp", letters:["F","C"]}}
+];
+/* ดัชนีปัจจุบันใน KEYS (เริ่มที่ C = index 2) */
+var S={ki:2};
+function curKey(){return KEYS[S.ki];}
+
+/* ── บรรทัด 5 เส้น + คอร์ด ── */
+var E4Y=130,E4DV=30,GAP=12;
+function yOf(dv){return E4Y-(dv-E4DV)*(GAP/2);}
+function accGlyph(a){return a===1?"\u266F":(a===-1?"\u266D":"");}
+/* ตำแหน่ง accidental บนกุญแจ (มาตรฐาน treble) — รองรับ F C (sharp) / B E (flat) */
+var KSIG_SHARP={F:38,C:35};
+var KSIG_FLAT={B:34,E:37};
+function drawStaff(key){
+  var W=300,s="",i;
+  for(i=0;i<5;i++){var yy=E4Y-i*GAP;s+='<line x1="20" y1="'+yy+'" x2="'+(W-16)+'" y2="'+yy+'" stroke="#222" stroke-width="1.3"/>';}
+  /* กุญแจซอล รอบเส้น G (dv32) */
+  var gY=yOf(32);
+  s+='<line x1="42" y1="'+(gY-34)+'" x2="42" y2="'+(gY+28)+'" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="42" cy="'+gY+'" r="11" fill="none" stroke="#111" stroke-width="3"/><circle cx="42" cy="'+gY+'" r="3.4" fill="#111"/>';
+  /* key signature (วาด ♯/♭ ตามลำดับจริง) */
+  var kx=82, sig=key.sig, glyph=(sig.type==="sharp")?"\u266F":"\u266D", dvmap=(sig.type==="sharp")?KSIG_SHARP:KSIG_FLAT;
+  for(i=0;i<sig.letters.length;i++){
+    var dvk=dvmap[sig.letters[i]];
+    s+='<text x="'+kx+'" y="'+(yOf(dvk)+5)+'" text-anchor="middle" font-size="18" font-weight="900" fill="#111">'+glyph+'</text>';
+    kx+=12;
+  }
+  /* time signature 4/4 (หลัง key signature) */
+  var tx=kx+12;
+  s+='<text x="'+tx+'" y="'+(yOf(33)+2)+'" text-anchor="middle" font-size="19" font-weight="900" fill="#111">4</text>';
+  s+='<text x="'+tx+'" y="'+(yOf(29)+2)+'" text-anchor="middle" font-size="19" font-weight="900" fill="#111">4</text>';
+  /* คอร์ด: 3 หัวโน้ตซ้อน — ไม่ต้องมี accidental เพราะ key signature คุมแล้ว */
+  var rootL=key.notes[0][0], dv0=28+LIDX[rootL], cx=tx+52, i2,p;
+  var dvs=[dv0,dv0+2,dv0+4];
+  for(i2=0;i2<3;i2++){
+    var dv=dvs[i2],y=yOf(dv);
+    for(p=28;p>=dv;p-=2)if(p<30)s+='<line x1="'+(cx-13)+'" y1="'+yOf(p)+'" x2="'+(cx+13)+'" y2="'+yOf(p)+'" stroke="#111" stroke-width="1.4"/>';
+    for(p=40;p<=dv;p+=2)s+='<line x1="'+(cx-13)+'" y1="'+yOf(p)+'" x2="'+(cx+13)+'" y2="'+yOf(p)+'" stroke="#111" stroke-width="1.4"/>';
+    s+='<ellipse cx="'+cx+'" cy="'+y+'" rx="8" ry="6" fill="#fbfbf7" stroke="#111" stroke-width="2.4" transform="rotate(-20 '+cx+' '+y+')"/>';
+  }
+  document.getElementById("staff").innerHTML='<svg viewBox="0 0 300 175" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+/* ── นาฬิกา ── */
+var CX=200,CY=200,RO=185,RI=120;
+function xy(deg,r){var t=(deg-90)*Math.PI/180;return [CX+r*Math.cos(t),CY+r*Math.sin(t)];}
+function sec(i){var a0=i*30-15,a1=i*30+15,o0=xy(a0,RO),o1=xy(a1,RO),n1=xy(a1,RI),n0=xy(a0,RI);
+  return "M "+o0[0]+" "+o0[1]+" A "+RO+" "+RO+" 0 0 1 "+o1[0]+" "+o1[1]+" L "+n1[0]+" "+n1[1]+" A "+RI+" "+RI+" 0 0 0 "+n0[0]+" "+n0[1]+" Z";}
+function chordHours(root){return [root,(root+4)%12,(root+7)%12];}
+function drawClock(){
+  var rc=curKey().chroma,hrs=chordHours(rc),s="",i;
+  function on(i){return hrs.indexOf(i)>=0;}
+  s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
+  for(i=0;i<12;i++){
+    var p=xy(i*30,(RO+RI)/2),lit=on(i),isRoot=(i===rc);
+    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(lit?1:0.14)+'" stroke="'+(isRoot?"#fff":(lit?"#E8C547":"#05070f"))+'" stroke-width="'+(isRoot?3.5:(lit?2.4:1.3))+'"/>';
+    s+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+(lit?"#fff":"#5a6488")+'" pointer-events="none">'+CLOCK[i]+'</text>';
+  }
+  var e=xy(rc*30,RI-8);
+  s+='<line x1="200" y1="200" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#E8C547" stroke-width="5" stroke-linecap="round"/>';
+  s+='<circle cx="'+e[0]+'" cy="'+e[1]+'" r="6" fill="#E8C547"/><circle cx="200" cy="200" r="7" fill="#E8C547"/>';
+  document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:280px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function timeCodeStr(){
+  var hrs=chordHours(curKey().chroma),i,out=[];
+  for(i=0;i<3;i++)out.push(hrs[i]===0?12:hrs[i]);
+  return out.join(" · ");
+}
+
+function render(){
+  var ch=curKey();
+  document.getElementById("eyebrow").textContent=TXT.eyebrow;
+  document.getElementById("h1").textContent=TXT.h1;
+  document.getElementById("sub").textContent=TXT.sub;
+  document.getElementById("q").innerHTML=TXT.qTh+'<b>'+ch.name+' major</b>'+TXT.qThEnd;
+  document.getElementById("qen").textContent=TXT.qEn;
+  document.getElementById("up").textContent=TXT.up;
+  document.getElementById("down").textContent=TXT.down;
+  document.getElementById("play").textContent=TXT.play;
+  document.getElementById("ansno1").textContent=TXT.ans1;
+  document.getElementById("ansno2").textContent=TXT.ans2;
+  document.getElementById("chordname").textContent=ch.name+" major";
+  document.getElementById("timecode").innerHTML=timeCodeStr()+'  <small>= '+ch.name+' major</small>';
+  document.getElementById("bridge").innerHTML='<b>เลื่อนเวลา → ชื่อเปลี่ยน → เสียงเปลี่ยน</b><br>'+TXT.bridge;
+  document.getElementById("foot").textContent=TXT.foot;
+  drawClock();drawStaff(ch);
+}
+
+/* ── เสียง ── */
+var ac=null;
+function playChord(){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var base=60+curKey().chroma,offs=[0,4,7],i;
+  for(i=0;i<3;i++){
+    (function(k){
+      var t=ac.currentTime+k*0.04,f=440*Math.pow(2,(base+offs[k]-69)/12),o=ac.createOscillator(),g=ac.createGain();
+      o.type="triangle";o.frequency.value=f;
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.16,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+1.1);
+      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+1.15);
+    })(i);
+  }
+}
+function move(dir){
+  var ni=S.ki+dir;
+  if(ni<0||ni>KEYS.length-1)return; /* สุดขอบ 5 คีย์ ไม่เลยไปคีย์โหด */
+  S.ki=ni;render();playChord();
+}
+
+document.getElementById("up").onclick=function(){move(1);};
+document.getElementById("down").onclick=function(){move(-1);};
+document.getElementById("play").onclick=playChord;
+document.getElementById("clock").addEventListener("click",function(){playChord();});
+
+render();
+</script>
+</body>
+</html>
