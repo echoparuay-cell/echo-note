@@ -38,6 +38,7 @@
   .clockwrap svg{display:block;width:100%;height:auto;overflow:visible}
   .answer{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:26px;color:#fff;margin-top:6px;opacity:0;transform:translateY(6px);transition:.5s}
   .answer.show{opacity:1;transform:none}
+  #shape{transition:opacity .6s ease}
   .answer b{color:var(--amber)}
   .answer .eq{color:var(--cream-dim);font-weight:500;font-size:18px}
   .playbtn{margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;border:none;font-family:'Bai Jamjuree',sans-serif;font-weight:600;font-size:14px;padding:11px 22px;border-radius:999px;cursor:pointer;box-shadow:0 6px 20px rgba(232,93,28,.4)}
@@ -92,6 +93,12 @@
 
   footer{background:var(--ink);color:var(--cream-dim);text-align:center;padding:26px 20px;font-size:12px}
   footer .bm{font-family:'Bai Jamjuree',sans-serif;font-weight:700;color:var(--cream);font-size:14px;margin-bottom:4px}
+  .splitlede{text-align:center;color:#7a6650;font-size:14.5px;max-width:430px;margin:10px auto 0}
+  .cta-main{display:block;max-width:400px;margin:24px auto 0;text-align:center;text-decoration:none;font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:19px;color:#fff;background:linear-gradient(150deg,var(--orange),var(--orange-deep));padding:18px 24px;border-radius:16px;box-shadow:0 14px 34px rgba(168,57,12,.35);transition:transform .12s}
+  .cta-main:active{transform:translateY(1px)}
+  .cta-sub{display:block;font-family:'Sarabun',sans-serif;font-weight:500;font-size:12.5px;color:#ffe2c8;margin-top:3px}
+  .tiers-center{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .tiers-center .tier{font-family:'Bai Jamjuree',sans-serif;font-size:12px;font-weight:600;background:#fff;border:1px solid #ecdcca;color:#8a7158;padding:5px 12px;border-radius:7px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   @media(min-width:560px){h1.disp{font-size:54px}}
 </style>
@@ -108,7 +115,7 @@
 
 <section class="hero">
   <div class="col">
-    <div class="eyebrow">เล่นดนตรีเป็น แต่ยังไม่เข้าใจทั้งระบบ?</div>
+    <div class="eyebrow">เล่นดนตรีเป็น รู้จักชื่อคอร์ด C แต่ไม่รู้วิธีสร้าง</div>
     <h1 class="disp">คอร์ด C<br>อยู่ที่ <em>กี่โมง?</em></h1>
     <p class="lede">Echo อ่านคอร์ดเป็น “เวลา” บนหน้าปัด — ง่ายจนเด็กเข้าใจ เลยทำให้คนที่เล่นดนตรีอยู่แล้วทะลุได้เร็วกว่าเดิม</p>
 
@@ -146,23 +153,14 @@
 
 <section class="split">
   <div class="col">
-    <div class="kicker">เลือกทางของคุณ</div>
-    <h2 class="disp">อยากได้เครื่องมือ<br>หรืออยากมีคนพาไป?</h2>
-    <div class="paths">
-      <a class="path tool" href="#" id="ctaTool">
-        <div class="pl">ซื้อไปใช้เอง</div>
-        <div class="pt">Echo Starter Kit</div>
-        <div class="pd">ชุดเครื่องมือนาฬิกาเสียง ฝึกเองตามจังหวะคุณ เหมาะกับคนที่ขวนขวายเอง</div>
-        <div class="go">ดูชุดเครื่องมือ ›</div>
-      </a>
-      <a class="path learn" href="#" id="ctaLearn">
-        <div class="pl">เรียนกับเรา</div>
-        <div class="pt">คอร์สเฉลยคำถาม</div>
-        <div class="pd">มีคนเฉลยและพาไปทีละขั้น จัดระดับให้ตรงกับคุณ</div>
-        <div class="tiers"><span class="tier">Starter</span><span class="tier">Beginner</span><span class="tier">After Beginner</span></div>
-        <div class="go">สมัครเรียน / ปรึกษา ›</div>
-      </a>
-    </div>
+    <div class="kicker">พร้อมเริ่มแล้ว?</div>
+    <h2 class="disp">เฉลยทุกคำถาม<br>ที่ Echo Project</h2>
+    <p class="splitlede">เครื่องมือนาฬิกาเสียง และคอร์สจัดระดับ Starter / Beginner / After Beginner — รวมอยู่ที่เดียว</p>
+    <a class="cta-main" href="https://www.musicsupport.shop/category/969/%E0%B9%80%E0%B8%AD%E0%B8%9F%E0%B9%80%E0%B8%9F%E0%B8%84%E0%B8%81%E0%B8%B5%E0%B8%95%E0%B8%B2%E0%B8%A3%E0%B9%8C-effect/echo-project" target="_blank" rel="noopener" id="ctaShop">
+      ไปดูเฉลยทั้งหมด ›
+      <span class="cta-sub">เครื่องมือ + คอร์ส ครบที่เดียว</span>
+    </a>
+    <div class="tiers-center"><span class="tier">Starter</span><span class="tier">Beginner</span><span class="tier">After Beginner</span></div>
   </div>
 </section>
 
@@ -191,6 +189,10 @@ function buildClock(){
     s+='<path id="sec'+i+'" d="'+sec(i)+'" fill="#F59A2E" fill-opacity="0.07" stroke="#3a2415" stroke-width="1.4"/>';
     s+='<text id="num'+i+'" x="'+p[0]+'" y="'+(p[1]+6)+'" text-anchor="middle" font-family="Bai Jamjuree,sans-serif" font-size="17" font-weight="600" fill="#8a6f56" pointer-events="none">'+NUM[i]+'</text>';
   }
+  /* เชป (รูปทรงเรขาคณิต) — เชื่อมจุดคอร์ดเป็นสามเหลี่ยม */
+  var Rs=RI, pts="";
+  for(i=0;i<CHORD.length;i++){var sp=xy(CHORD[i]*30,Rs);pts+=sp[0]+","+sp[1]+" ";}
+  s+='<polygon id="shape" points="'+pts+'" fill="#F59A2E" fill-opacity="0.14" stroke="#F59A2E" stroke-width="2.5" stroke-linejoin="round" opacity="0" filter="url(#glow)"/>';
   /* เข็ม */
   var e=xy(0,RI-6);
   s+='<g id="hand"><line x1="200" y1="200" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#F59A2E" stroke-width="5" stroke-linecap="round"/><circle cx="'+e[0]+'" cy="'+e[1]+'" r="6" fill="#F59A2E"/></g>';
@@ -203,10 +205,11 @@ function lightTone(i){
   if(nu){nu.setAttribute("fill","#fff");nu.setAttribute("font-weight","700");}
 }
 function setHand(deg){var h=document.getElementById("hand");if(h)h.setAttribute("transform","rotate("+deg+" 200 200)");}
+function showShape(){var sh=document.getElementById("shape");if(sh)sh.setAttribute("opacity","1");}
 
 var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 function runIntro(){
-  if(reduce){CHORD.forEach(lightTone);document.getElementById("answer").classList.add("show");return;}
+  if(reduce){CHORD.forEach(lightTone);showShape();document.getElementById("answer").classList.add("show");return;}
   var start=null,dur=1300;
   function step(ts){
     if(!start)start=ts;
@@ -216,7 +219,8 @@ function runIntro(){
     else{ setTimeout(function(){lightTone(0);},120);
           setTimeout(function(){lightTone(4);},320);
           setTimeout(function(){lightTone(7);},520);
-          setTimeout(function(){document.getElementById("answer").classList.add("show");},760); }
+          setTimeout(function(){showShape();},650);
+          setTimeout(function(){document.getElementById("answer").classList.add("show");},820); }
   }
   requestAnimationFrame(step);
 }
