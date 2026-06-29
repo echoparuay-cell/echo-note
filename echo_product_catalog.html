@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Project — Product Catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;--navy2:#0D1F3C;--navy3:#152444;
+  --red:#CC0000;--red2:#E8002D;
+  --wh:#FFFFFF;--tx:#C8D6E8;--mt:#5A7A9A;
+  --bd:rgba(255,255,255,0.08);
+  --gn:#00C853;--yw:#FFD600;--or:#FF6B00;--bl:#00AAFF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun',sans-serif;background:var(--navy);color:var(--tx);overflow-x:hidden}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.01) 60px,rgba(255,255,255,0.01) 61px);
+  pointer-events:none;z-index:0;
+}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(10,22,40,0.97);backdrop-filter:blur(16px);
+  border-bottom:2px solid var(--red2);
+  height:54px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+}
+.tb-logo{font-family:'Kanit',sans-serif;font-size:16px;font-weight:800;color:var(--wh);letter-spacing:2px}
+.tb-logo span{color:var(--red2)}
+.tb-right{display:flex;gap:10px;align-items:center}
+.tb-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mt);letter-spacing:2px}
+.tb-cta{background:var(--red2);color:#fff;font-family:'Kanit',sans-serif;font-size:11px;font-weight:600;padding:6px 16px;border-radius:2px;text-decoration:none;letter-spacing:1px;transition:all .2s}
+.tb-cta:hover{background:#FF1744}
+
+/* HERO BANNER */
+.hero-banner{
+  background:linear-gradient(135deg,var(--navy2),var(--navy3));
+  border-bottom:2px solid var(--red2);
+  padding:60px 28px 50px;text-align:center;
+  position:relative;overflow:hidden;z-index:1;
+}
+.hero-banner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(204,0,0,0.07),transparent);
+}
+.hb-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--red2);margin-bottom:12px;position:relative;z-index:2}
+.hb-h1{font-family:'Kanit',sans-serif;font-size:clamp(28px,5vw,52px);font-weight:900;color:var(--wh);margin-bottom:8px;position:relative;z-index:2;letter-spacing:-1px}
+.hb-h1 em{color:var(--red2);font-style:normal}
+.hb-sub{font-size:14px;color:var(--mt);position:relative;z-index:2;line-height:1.7}
+
+/* JOURNEY BAR */
+.journey{
+  display:flex;align-items:center;justify-content:center;
+  padding:20px 28px;
+  background:rgba(0,0,0,0.3);
+  border-bottom:1px solid var(--bd);
+  gap:0;overflow-x:auto;
+  position:relative;z-index:1;
+}
+.jstep{display:flex;align-items:center;gap:0}
+.js-box{
+  padding:8px 16px;text-align:center;white-space:nowrap;
+  background:var(--navy3);border:1px solid var(--bd);
+}
+.js-price{font-family:'Kanit',sans-serif;font-size:13px;font-weight:700;color:var(--red2)}
+.js-name{font-size:9px;color:var(--mt);margin-top:1px;font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+.js-arrow{color:var(--red2);font-size:14px;padding:0 4px;flex-shrink:0}
+
+/* SECTION */
+section{padding:60px 28px;position:relative;z-index:1}
+.container{max-width:1100px;margin:0 auto}
+.sec-head{margin-bottom:28px}
+.sec-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--red2);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sec-tag::before{content:'';width:16px;height:2px;background:var(--red2)}
+.sec-title{font-family:'Kanit',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:800;color:var(--wh);letter-spacing:-0.5px}
+.sec-sub{font-size:13px;color:var(--mt);margin-top:4px;line-height:1.7}
+
+/* ── HERO PRODUCT ── */
+.hero-product{
+  background:linear-gradient(135deg,rgba(204,0,0,0.08),rgba(204,0,0,0.02));
+  border:2px solid rgba(204,0,0,0.3);
+  border-radius:4px;padding:36px 32px;
+  display:grid;grid-template-columns:1fr auto;
+  gap:32px;align-items:start;
+  position:relative;overflow:hidden;
+  margin-bottom:40px;
+}
+@media(max-width:640px){.hero-product{grid-template-columns:1fr;gap:20px}}
+.hero-product::before{
+  content:'HERO PRODUCT';
+  position:absolute;top:0;left:0;
+  background:var(--red2);color:#fff;
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  padding:4px 14px;letter-spacing:2px;
+}
+.hp-left{}
+.hp-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--mt);margin-bottom:10px;margin-top:16px}
+.hp-name{font-family:'Kanit',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:900;color:var(--wh);margin-bottom:6px;line-height:1.1}
+.hp-name em{color:var(--red2);font-style:normal}
+.hp-desc{font-size:13px;color:var(--mt);line-height:1.8;margin-bottom:20px;max-width:500px}
+.hp-includes{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.hp-inc{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--tx)}
+.hp-inc-dot{width:6px;height:6px;border-radius:50%;background:var(--red2);flex-shrink:0;margin-top:5px}
+.hp-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--red2);color:#fff;
+  font-family:'Kanit',sans-serif;font-size:14px;font-weight:600;
+  padding:12px 28px;border-radius:2px;text-decoration:none;letter-spacing:1px;
+  transition:all .2s;
+}
+.hp-cta:hover{background:#FF1744;transform:translateY(-2px)}
+.hp-right{text-align:right}
+.hp-price-old{font-size:13px;color:rgba(255,255,255,0.2);text-decoration:line-through;margin-bottom:4px}
+.hp-price{font-family:'Kanit',sans-serif;font-size:clamp(42px,6vw,64px);font-weight:900;color:var(--red2);line-height:1}
+.hp-price small{font-size:20px}
+.hp-period{font-size:11px;color:var(--mt);margin-top:4px;font-family:'Share Tech Mono',monospace}
+.hp-zoom{
+  margin-top:16px;
+  background:rgba(0,180,255,0.08);
+  border:1px solid rgba(0,180,255,0.2);
+  border-radius:4px;padding:10px 14px;
+  text-align:center;
+}
+.hp-zoom p{font-family:'Kanit',sans-serif;font-size:13px;font-weight:600;color:var(--bl)}
+.hp-zoom span{font-size:10px;color:var(--mt);display:block;margin-top:2px}
+
+/* ── STEP PRODUCTS ── */
+.step-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:3px;margin-bottom:40px;
+}
+@media(max-width:700px){.step-grid{grid-template-columns:1fr;gap:8px}}
+.step-card{
+  background:var(--navy3);border:1px solid var(--bd);
+  padding:24px 20px;display:flex;flex-direction:column;
+  position:relative;overflow:hidden;transition:transform .2s;
+}
+.step-card:hover{transform:translateY(-3px)}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc-s1::before{background:var(--gn)}.sc-s2::before{background:var(--or)}.sc-s3::before{background:var(--yw)}
+.sc-step{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;margin-bottom:8px}
+.sc-s1 .sc-step{color:var(--gn)}.sc-s2 .sc-step{color:var(--or)}.sc-s3 .sc-step{color:var(--yw)}
+.sc-icon{font-size:24px;margin-bottom:10px}
+.sc-name{font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;color:var(--wh);margin-bottom:4px}
+.sc-desc{font-size:11px;color:var(--mt);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd);line-height:1.6}
+.sc-price{font-family:'Kanit',sans-serif;font-size:30px;font-weight:900;line-height:1;margin-bottom:3px}
+.sc-s1 .sc-price{color:var(--gn)}.sc-s2 .sc-price{color:var(--or)}.sc-s3 .sc-price{color:var(--yw)}
+.sc-period{font-size:10px;color:var(--mt);margin-bottom:14px;font-family:'Share Tech Mono',monospace}
+.sc-feat{list-style:none;display:flex;flex-direction:column;gap:6px;flex:1;margin-bottom:16px}
+.sc-feat li{font-size:11px;color:var(--tx);display:flex;gap:7px;line-height:1.5}
+.sc-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px;background:currentColor}
+.sc-btn{
+  display:block;text-align:center;font-family:'Kanit',sans-serif;
+  font-size:12px;font-weight:600;padding:9px;border-radius:2px;
+  text-decoration:none;letter-spacing:1px;transition:all .2s;
+  border:1px solid rgba(255,255,255,0.15);color:var(--tx);
+}
+.sc-btn:hover{border-color:var(--red2);color:var(--red2)}
+
+/* ── APP PRODUCT ── */
+.app-section{background:var(--navy2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:28px}
+@media(max-width:600px){.app-grid{grid-template-columns:1fr}}
+.app-card{
+  background:var(--navy3);border:1px solid var(--bd);
+  padding:24px 20px;position:relative;overflow:hidden;
+}
+.app-card.featured{
+  background:linear-gradient(135deg,rgba(0,200,83,0.06),var(--navy3));
+  border-color:rgba(0,200,83,0.25);
+}
+.app-card.featured::before{
+  content:'INTRODUCTORY PRICE';
+  position:absolute;top:0;right:0;
+  background:var(--gn);color:#000;
+  font-family:'Share Tech Mono',monospace;font-size:8px;
+  padding:3px 10px;letter-spacing:1px;font-weight:700;
+}
+.ac-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mt);margin-bottom:8px}
+.ac-name{font-family:'Kanit',sans-serif;font-size:20px;font-weight:800;color:var(--wh);margin-bottom:4px}
+.ac-desc{font-size:11px;color:var(--mt);margin-bottom:16px;line-height:1.6;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.ac-price-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:4px}
+.ac-price{font-family:'Kanit',sans-serif;font-size:32px;font-weight:900;line-height:1}
+.app-card.featured .ac-price{color:var(--gn)}
+.app-card:not(.featured) .ac-price{color:var(--bl)}
+.ac-old{font-size:14px;color:rgba(255,255,255,0.2);text-decoration:line-through;margin-bottom:6px}
+.ac-period{font-size:10px;color:var(--mt);margin-bottom:14px;font-family:'Share Tech Mono',monospace}
+.ac-note{
+  background:rgba(0,200,83,0.06);border-left:2px solid var(--gn);
+  padding:8px 10px;font-size:11px;color:var(--tx);line-height:1.6;margin-bottom:14px;
+}
+.app-card:not(.featured) .ac-note{background:rgba(0,170,255,0.06);border-color:var(--bl)}
+.ac-btn{
+  display:block;text-align:center;
+  font-family:'Kanit',sans-serif;font-size:12px;font-weight:600;
+  padding:9px;border-radius:2px;text-decoration:none;letter-spacing:1px;
+  transition:all .2s;border:1px solid;
+}
+.app-card.featured .ac-btn{background:var(--gn);color:#000;border-color:var(--gn)}
+.app-card:not(.featured) .ac-btn{border-color:rgba(0,170,255,0.4);color:var(--bl)}
+.app-card:not(.featured) .ac-btn:hover{background:rgba(0,170,255,0.1)}
+
+/* ── SPECIALTY PRODUCTS ── */
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:28px}
+@media(max-width:600px){.spec-grid{grid-template-columns:1fr}}
+.spec-card{
+  background:var(--navy3);border:1px solid var(--bd);
+  padding:28px 24px;position:relative;overflow:hidden;transition:transform .2s;
+}
+.spec-card:hover{transform:translateY(-3px)}
+.spec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sp-guitar::before{background:var(--or)}
+.sp-gratitude::before{background:var(--yw)}
+.sp-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mt);margin-bottom:10px}
+.sp-icon{font-size:32px;margin-bottom:12px}
+.sp-name{font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--wh);margin-bottom:6px}
+.sp-desc{font-size:13px;color:var(--mt);line-height:1.8;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.sp-price{font-family:'Kanit',sans-serif;font-size:36px;font-weight:900;line-height:1;margin-bottom:4px}
+.sp-guitar .sp-price{color:var(--or)}
+.sp-gratitude .sp-price{color:var(--yw)}
+.sp-period{font-size:10px;color:var(--mt);margin-bottom:16px;font-family:'Share Tech Mono',monospace}
+.sp-feat{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.sp-feat li{font-size:12px;color:var(--tx);display:flex;gap:8px;line-height:1.5}
+.sp-fdot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.sp-guitar .sp-fdot{background:var(--or)}
+.sp-gratitude .sp-fdot{background:var(--yw)}
+.sp-btn{
+  display:block;text-align:center;
+  font-family:'Kanit',sans-serif;font-size:12px;font-weight:600;
+  padding:10px;border-radius:2px;text-decoration:none;letter-spacing:1px;
+  transition:all .2s;border:1px solid;
+}
+.sp-guitar .sp-btn{border-color:rgba(255,107,0,0.4);color:var(--or)}
+.sp-guitar .sp-btn:hover{background:rgba(255,107,0,0.1)}
+.sp-gratitude .sp-btn{border-color:rgba(255,214,0,0.4);color:var(--yw)}
+.sp-gratitude .sp-btn:hover{background:rgba(255,214,0,0.1)}
+
+/* ── SUMMARY TABLE ── */
+.summary-sec{background:var(--navy)}
+.summary-table{
+  width:100%;border-collapse:collapse;margin-top:28px;
+  border:1px solid var(--bd);
+}
+.summary-table th{
+  background:rgba(204,0,0,0.15);
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  color:var(--red2);padding:10px 14px;text-align:left;
+  border-bottom:1px solid rgba(204,0,0,0.2);
+}
+.summary-table td{
+  padding:11px 14px;font-size:13px;border-bottom:1px solid var(--bd);
+  color:var(--tx);
+}
+.summary-table tr:last-child td{border-bottom:none}
+.summary-table tr:hover td{background:rgba(255,255,255,0.02)}
+.st-name{font-family:'Kanit',sans-serif;font-size:14px;color:var(--wh);font-weight:600}
+.st-cat{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 7px;border-radius:2px}
+.cat-course{background:rgba(204,0,0,0.1);color:var(--red2)}
+.cat-app{background:rgba(0,200,83,0.1);color:var(--gn)}
+.cat-spec{background:rgba(255,107,0,0.1);color:var(--or)}
+.st-price{font-family:'Kanit',sans-serif;font-size:16px;font-weight:800;color:var(--wh);text-align:right;white-space:nowrap}
+
+/* ── CTA ── */
+.cta-final{
+  background:var(--navy2);border-top:2px solid var(--red2);
+  text-align:center;padding:60px 28px;
+}
+.cf-code{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  color:var(--red2);letter-spacing:3px;
+  background:rgba(204,0,0,0.08);border:1px solid rgba(204,0,0,0.2);
+  padding:5px 14px;border-radius:2px;display:inline-block;margin-bottom:14px;
+}
+.cf-h2{font-family:'Kanit',sans-serif;font-size:clamp(22px,4vw,36px);font-weight:900;color:var(--wh);margin-bottom:8px}
+.cf-h2 em{color:var(--red2);font-style:normal}
+.cf-sub{font-size:13px;color:var(--mt);margin-bottom:24px}
+.cf-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.line-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#06C755;color:#fff;
+  font-family:'Kanit',sans-serif;font-size:14px;font-weight:600;
+  padding:14px 32px;border-radius:2px;text-decoration:none;letter-spacing:1px;transition:all .2s;
+}
+.line-btn:hover{background:#05A847;transform:translateY(-2px)}
+.web-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);
+  color:var(--wh);font-family:'Kanit',sans-serif;font-size:13px;
+  padding:14px 22px;border-radius:2px;text-decoration:none;transition:all .2s;
+}
+.web-btn:hover{border-color:var(--wh)}
+.cf-note{font-size:11px;color:var(--mt);margin-top:12px}
+
+footer{
+  background:rgba(0,0,0,0.5);padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+  border-top:1px solid var(--bd);
+}
+.ft{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.15);letter-spacing:1px}
+.ft a{color:rgba(204,0,0,0.4);text-decoration:none}
+.ft a:hover{color:var(--red2)}
+
+@media(max-width:500px){.journey{justify-content:flex-start}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">ECHO <span>PROJECT</span></div>
+  <div class="tb-right">
+    <div class="tb-tag">PRODUCT CATALOG 2569</div>
+    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="tb-cta">LINE ครับ</a>
+  </div>
+</div>
+
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hb-tag">ECHO PROJECT · COMPLETE PRODUCT LINE</div>
+  <h1 class="hb-h1">เครื่องดนตรีของคุณ<br><em>ยังไม่ได้ Activate ครับ</em></h1>
+  <p class="hb-sub">ทุก Product ในหน้านี้ออกแบบมาเพื่อพัฒนาการที่เร็วและเห็นผลจริงครับ</p>
+</div>
+
+<!-- JOURNEY BAR -->
+<div class="journey">
+  <div class="jstep">
+    <div class="js-box"><div class="js-price">990฿</div><div class="js-name">STARTER KIT</div></div>
+    <div class="js-arrow">→</div>
+  </div>
+  <div class="jstep">
+    <div class="js-box"><div class="js-price">2,500฿</div><div class="js-name">BEGINNER</div></div>
+    <div class="js-arrow">→</div>
+  </div>
+  <div class="jstep">
+    <div class="js-box"><div class="js-price">4,500฿</div><div class="js-name">AFTER BEGINNER</div></div>
+    <div class="js-arrow">→</div>
+  </div>
+  <div class="jstep">
+    <div class="js-box" style="border-color:rgba(204,0,0,0.4);background:rgba(204,0,0,0.08)">
+      <div class="js-price">7,900฿</div><div class="js-name" style="color:var(--red2)">ECHO HUB ★</div>
+    </div>
+    <div class="js-arrow">+</div>
+  </div>
+  <div class="jstep">
+    <div class="js-box"><div class="js-price">190฿</div><div class="js-name">APP / 6 เดือน</div></div>
+    <div class="js-arrow">+</div>
+  </div>
+  <div class="jstep">
+    <div class="js-box"><div class="js-price">5,000฿</div><div class="js-name">DIY GUITAR</div></div>
+  </div>
+</div>
+
+<!-- HERO PRODUCT -->
+<section style="background:var(--navy);padding:60px 28px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">HERO PRODUCT</div>
+      <div class="sec-title">สินค้าหลัก — เต็มระบบครับ</div>
+    </div>
+
+    <div class="hero-product">
+      <div class="hp-left">
+        <div class="hp-tag">ECHO HUB PROGRAM · FULL ACTIVATION</div>
+        <div class="hp-name">Echo <em>Hub</em><br>Program ครับ</div>
+        <div class="hp-desc">เครื่องอำนวยความสะดวกเพื่อพัฒนาการที่เห็นชัดเจนว่าเร็วและได้ผลครับ ใน 1 คอร์สจะมีพัฒนาการก้าวกระโดดครับ</div>
+        <div class="hp-includes">
+          <div class="hp-inc"><div class="hp-inc-dot"></div>Echo Hub App — ระบบการสอนดิจิทัล 3 Phase 8 บทเรียนครับ</div>
+          <div class="hp-inc"><div class="hp-inc-dot"></div>คลิปวิดีโอแนะนำการใช้งานทุก Module ครับ</div>
+          <div class="hp-inc"><div class="hp-inc-dot"></div>หนังสือ Hall Leonard เล่ม 1–2 ครับ</div>
+          <div class="hp-inc"><div class="hp-inc-dot"></div>Zoom 12 ครั้ง · ครั้งละ 50 นาที · สัปดาห์ละ 1 ครั้งครับ</div>
+          <div class="hp-inc"><div class="hp-inc-dot"></div>Milestone Assessment ทุกระยะครับ</div>
+        </div>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="hp-cta">💬 สมัครได้เลยครับ</a>
+      </div>
+      <div class="hp-right">
+        <div class="hp-price">7,900<small>฿</small></div>
+        <div class="hp-period">FULL PROGRAM · 12 WEEKS</div>
+        <div class="hp-zoom">
+          <p>🎙️ Zoom 12 ครั้ง</p>
+          <span>สัปดาห์ละ 1 ครั้ง · 50 นาทีครับ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP COURSES -->
+    <div class="sec-head">
+      <div class="sec-tag">STEP COURSES</div>
+      <div class="sec-title">เส้นทาง 3 ขั้นครับ</div>
+      <div class="sec-sub">เริ่มที่ไหนก็ได้ครับ ทุก Step นำไปสู่ Echo Hub ครับ</div>
+    </div>
+
+    <div class="step-grid">
+      <div class="step-card sc-s1">
+        <div class="sc-step">STEP 1 · STARTER</div>
+        <div class="sc-icon">🎹</div>
+        <div class="sc-name">Echo Note<br>Starter Kit</div>
+        <div class="sc-desc">ลองดูก่อนครับ เริ่ม Activate ที่บ้านได้เลยครับ</div>
+        <div class="sc-price">990<span style="font-size:14px">฿</span></div>
+        <div class="sc-period">ENTRY LEVEL · ส่งฟรีทั่วประเทศ</div>
+        <ul class="sc-feat">
+          <li><div class="sc-dot" style="color:var(--gn)"></div>คีย์บอร์ด Little Pianist 37 คีย์</li>
+          <li><div class="sc-dot" style="color:var(--gn)"></div>Echo App — เข้าถึงแบบจำกัด (แม่ 1–4)</li>
+          <li><div class="sc-dot" style="color:var(--gn)"></div>Sticker ติดคีย์บอร์ด</li>
+          <li><div class="sc-dot" style="color:var(--gn)"></div>QR Code วิดีโอสอน</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="sc-btn">พิมพ์ "KIT" ใน LINE ครับ</a>
+      </div>
+
+      <div class="step-card sc-s2">
+        <div class="sc-step">STEP 2 · BEGINNER</div>
+        <div class="sc-icon">🎵</div>
+        <div class="sc-name">Echo<br>Beginner</div>
+        <div class="sc-desc">ก้อน กลุ่ม เม็ด — สูตรคูณดนตรีครบ 8 แม่ครับ</div>
+        <div class="sc-price">2,500<span style="font-size:14px">฿</span></div>
+        <div class="sc-period">4 WEEKS · LIVE 2 SESSIONS</div>
+        <ul class="sc-feat">
+          <li><div class="sc-dot" style="color:var(--or)"></div>Echo App — เข้าถึงแบบจำกัด (แม่ 1–8)</li>
+          <li><div class="sc-dot" style="color:var(--or)"></div>คลิปสอน Async ทุก Module</li>
+          <li><div class="sc-dot" style="color:var(--or)"></div>Live Session 2 ครั้ง · 45 นาที</li>
+          <li><div class="sc-dot" style="color:var(--or)"></div>Milestone Assessment</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="sc-btn">พิมพ์ "PRO" ใน LINE ครับ</a>
+      </div>
+
+      <div class="step-card sc-s3">
+        <div class="sc-step">STEP 3 · AFTER BEGINNER</div>
+        <div class="sc-icon">🎼</div>
+        <div class="sc-name">Echo After<br>Beginner</div>
+        <div class="sc-desc">Subdivision · Syncopation · Triple Time ครับ</div>
+        <div class="sc-price">4,500<span style="font-size:14px">฿</span></div>
+        <div class="sc-period">8 WEEKS · LIVE 4 SESSIONS</div>
+        <ul class="sc-feat">
+          <li><div class="sc-dot" style="color:var(--yw)"></div>ทุกอย่างใน Beginner</li>
+          <li><div class="sc-dot" style="color:var(--yw)"></div>Live Session 4 ครั้ง · 45 นาที</li>
+          <li><div class="sc-dot" style="color:var(--yw)"></div>Effort Paradox Workshop</li>
+          <li><div class="sc-dot" style="color:var(--yw)"></div>Melody Trap Workshop</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="sc-btn">พิมพ์ "PRO" ใน LINE ครับ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<section class="app-section">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">DIGITAL TOOL</div>
+      <div class="sec-title">Echo Hub App ครับ</div>
+      <div class="sec-sub">เครื่องมือดิจิทัลประกอบการเรียนครับ นาฬิกาเสียง Scale Mode คอร์ดครับ</div>
+    </div>
+    <div class="app-grid">
+      <div class="app-card featured">
+        <div class="ac-tag">APP FULL · 6 เดือน</div>
+        <div class="ac-name">Echo App — Introductory ครับ</div>
+        <div class="ac-desc">ราคาพิเศษเปิดตัวครับ เข้าถึงทุก Feature ครบ 6 เดือนครับ</div>
+        <div class="ac-old">ราคาปกติ 1,900฿ ครับ</div>
+        <div class="ac-price-row">
+          <div class="ac-price">190<span style="font-size:16px">฿</span></div>
+        </div>
+        <div class="ac-period">INTRODUCTORY PRICE · 6 MONTHS FULL ACCESS</div>
+        <div class="ac-note">
+          ราคานี้เป็น Introductory Price ครับ<br>
+          เปิดรับช่วงแรกเท่านั้นครับ
+        </div>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="ac-btn">สมัครได้เลยครับ</a>
+      </div>
+      <div class="app-card">
+        <div class="ac-tag">APP FULL · ราคาปกติ</div>
+        <div class="ac-name">Echo App — Standard ครับ</div>
+        <div class="ac-desc">ราคาปกติหลังจากช่วง Introductory ครับ</div>
+        <div class="ac-price-row">
+          <div class="ac-price">1,900<span style="font-size:16px">฿</span></div>
+        </div>
+        <div class="ac-period">STANDARD PRICE · 1 YEAR FULL ACCESS</div>
+        <div class="ac-note" style="background:rgba(0,170,255,0.06);border-color:var(--bl)">
+          เข้าถึงได้ทุก Feature ครบครับ<br>
+          Echo Hub · Clock · Scale · Mode · Chord
+        </div>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="ac-btn">สอบถามครับ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALTY -->
+<section style="background:var(--navy);padding:60px 28px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">SPECIALTY PROGRAMS</div>
+      <div class="sec-title">หลักสูตรพิเศษครับ</div>
+      <div class="sec-sub">ขยายทักษะในแบบที่ไม่มีที่อื่นครับ</div>
+    </div>
+    <div class="spec-grid">
+      <div class="spec-card sp-guitar">
+        <div class="sp-tag">DIY GUITAR PROGRAM</div>
+        <div class="sp-icon">🔧</div>
+        <div class="sp-name">DIY Guitar ครับ</div>
+        <div class="sp-desc">สอนให้เป็นช่าง Setup กีตาร์ด้วยตัวเองครับ ดูแลเครื่องดนตรีของตัวเองได้อย่างมืออาชีพครับ</div>
+        <div class="sp-price">5,000<span style="font-size:16px">฿</span></div>
+        <div class="sp-period">DIY GUITAR SETUP PROGRAM</div>
+        <ul class="sp-feat">
+          <li><div class="sp-fdot"></div>Setup กีตาร์ด้วยตัวเองได้ครับ</li>
+          <li><div class="sp-fdot"></div>ปรับ Action · Intonation · Truss Rod ครับ</li>
+          <li><div class="sp-fdot"></div>เปลี่ยนสายและดูแลรักษาครับ</li>
+          <li><div class="sp-fdot"></div>ประหยัดค่าช่างตลอดชีพครับ</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="sp-btn">สอบถามครับ</a>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+<!-- SUMMARY TABLE -->
+<section class="summary-sec">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">PRICE SUMMARY</div>
+      <div class="sec-title">สรุปราคาทั้งหมดครับ</div>
+    </div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>สินค้าครับ</th>
+          <th>ประเภท</th>
+          <th>รายละเอียดครับ</th>
+          <th style="text-align:right">ราคา</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="st-name">Echo Note Starter Kit</div></td>
+          <td><span class="st-cat cat-course">STARTER</span></td>
+          <td style="font-size:12px;color:var(--mt)">คีย์บอร์ด + Card 4 ใบ + QR · ส่งฟรีครับ</td>
+          <td class="st-price">990฿</td>
+        </tr>
+        <tr>
+          <td><div class="st-name">Echo Beginner</div></td>
+          <td><span class="st-cat cat-course">COURSE</span></td>
+          <td style="font-size:12px;color:var(--mt)">Card 8 ใบ + Live 2 ครั้ง · 4 สัปดาห์ครับ</td>
+          <td class="st-price">2,500฿</td>
+        </tr>
+        <tr>
+          <td><div class="st-name">Echo After Beginner</div></td>
+          <td><span class="st-cat cat-course">COURSE</span></td>
+          <td style="font-size:12px;color:var(--mt)">Subdivision + Workshop · 8 สัปดาห์ครับ</td>
+          <td class="st-price">4,500฿</td>
+        </tr>
+        <tr style="background:rgba(204,0,0,0.04)">
+          <td><div class="st-name" style="color:var(--red2)">★ Echo Hub Program</div></td>
+          <td><span class="st-cat cat-course" style="background:rgba(204,0,0,0.2);color:var(--red2)">HERO</span></td>
+          <td style="font-size:12px;color:var(--mt)">App + Hall Leonard + Zoom 12 ครั้งครับ</td>
+          <td class="st-price" style="color:var(--red2)">7,900฿</td>
+        </tr>
+        <tr>
+          <td><div class="st-name">Echo App — Introductory</div></td>
+          <td><span class="st-cat cat-app">APP</span></td>
+          <td style="font-size:12px;color:var(--mt)">Full Access 6 เดือน · ราคาพิเศษเปิดตัวครับ</td>
+          <td class="st-price" style="color:var(--gn)">190฿</td>
+        </tr>
+        <tr>
+          <td><div class="st-name">Echo App — Standard</div></td>
+          <td><span class="st-cat cat-app">APP</span></td>
+          <td style="font-size:12px;color:var(--mt)">Full Access 1 ปี · ราคาปกติครับ</td>
+          <td class="st-price">1,900฿</td>
+        </tr>
+        <tr>
+          <td><div class="st-name">DIY Guitar Program</div></td>
+          <td><span class="st-cat cat-spec">SPECIALTY</span></td>
+          <td style="font-size:12px;color:var(--mt)">สอนเป็นช่าง Setup กีตาร์ครับ</td>
+          <td class="st-price" style="color:var(--or)">5,000฿</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-final">
+  <div class="container">
+    <div class="cf-code">ACTIVATION CODE: @MUSICSUPPORT</div>
+    <div class="cf-h2">เลือกแบบที่ใช่<br><em>แล้ว Activate ได้เลยครับ</em></div>
+    <p class="cf-sub">ทักมาก่อนได้เลยครับ ทีมงานช่วยเลือก Package ที่เหมาะกับคุณครับ</p>
+    <div class="cf-btns">
+      <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="line-btn">💬 LINE: @musicsupport</a>
+      <a href="https://www.skecho.org/" target="_blank" class="web-btn">🌐 skecho.org</a>
+    </div>
+    <div class="cf-note">ทีมงานตอบภายใน 1 ชั่วโมงครับ · ทุกวัน 09:00–19:00 น.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft">© 2569 ECHO PROJECT · SIAMSKOL MUSIC · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+  <div class="ft"><a href="https://www.skecho.org">skecho.org</a> · LINE: @musicsupport</div>
+</footer>
+
+</body>
+</html>
