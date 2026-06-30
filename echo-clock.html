@@ -87,6 +87,8 @@ var TXT={
 /* ===================== แก่นสากล ===================== */
 var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
 var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
+var NOTE_EN=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var NOTE_TH=["โด","โด#","เร","เร#","มี","ฟา","ฟา#","ซอล","ซอล#","ลา","ลา#","ที"];
 var LIDX={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
 
 /* รองรับ 5 คีย์: B\u266D(2\u266D) F(1\u266D) C(0) G(1\u266F) D(2\u266F) เรียงตามพิกัดเวลา */
@@ -150,9 +152,13 @@ function drawClock(){
   function on(i){return hrs.indexOf(i)>=0;}
   s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
   for(i=0;i<12;i++){
-    var p=xy(i*30,(RO+RI)/2),lit=on(i),isRoot=(i===rc);
-    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(lit?1:0.14)+'" stroke="'+(isRoot?"#fff":(lit?"#E8C547":"#05070f"))+'" stroke-width="'+(isRoot?3.5:(lit?2.4:1.3))+'"/>';
-    s+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+(lit?"#fff":"#5a6488")+'" pointer-events="none">'+CLOCK[i]+'</text>';
+    var lit=on(i),isRoot=(i===rc);
+    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(lit?1:0.16)+'" stroke="'+(isRoot?"#fff":(lit?"#E8C547":"#05070f"))+'" stroke-width="'+(isRoot?3.5:(lit?2.4:1.3))+'"/>';
+    var pNum=xy(i*30,RO-14),pEn=xy(i*30,(RO+RI)/2),pTh=xy(i*30,RI+15);
+    var cNum=lit?"#ffffff":"#7a86a8", cEn=lit?"#ffffff":"#aeb8d0", cTh=lit?"#ffe9b8":"#7f8aac";
+    s+='<text x="'+pNum[0]+'" y="'+(pNum[1]+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+cNum+'" pointer-events="none">'+CLOCK[i]+'</text>';
+    s+='<text x="'+pEn[0]+'" y="'+(pEn[1]+6)+'" text-anchor="middle" font-size="18" font-weight="800" fill="'+cEn+'" pointer-events="none">'+NOTE_EN[i]+'</text>';
+    s+='<text x="'+pTh[0]+'" y="'+(pTh[1]+3)+'" text-anchor="middle" font-size="9" font-weight="600" fill="'+cTh+'" pointer-events="none">'+NOTE_TH[i]+'</text>';
   }
   // เชป (รูปทรง) — เชื่อมจุดคอร์ดเป็นสามเหลี่ยม · หมุนตามคีย์ แต่รูปทรงคงเดิม
   var pts="";
@@ -216,5 +222,19 @@ document.getElementById("clock").addEventListener("click",function(){playChord()
 
 render();
 </script>
+
+<!-- ===== ปุ่มแบบฝึกหัด YouTube · แก้ลิงก์ที่ตัวแปร YT_URL ด้านล่าง ===== -->
+<div style="text-align:center;margin:22px auto 6px;padding:0 16px">
+  <a id="ytBtn" href="#" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;background:#FF0033;color:#fff;font-family:'Trebuchet MS','Segoe UI',sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:999px;box-shadow:0 6px 18px rgba(255,0,51,.35)">
+    <span style="font-size:15px">&#9654;</span> ดูแบบฝึกหัดบน YouTube
+  </a>
+</div>
+<script>
+/* === ลิงก์คลิปแบบฝึกหัดของบทนี้ — เปลี่ยนตรงนี้ === */
+var YT_URL="https://youtube.com/shorts/g0nSov2OHAQ";
+/* ============================================== */
+(function(){var b=document.getElementById("ytBtn");if(b)b.href=YT_URL;})();
+</script>
+
 </body>
 </html>

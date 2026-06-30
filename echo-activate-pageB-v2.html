@@ -116,7 +116,11 @@ function buildSVG(){
     var stroke=isRoot?"#fff":(on?"#E8C547":"#05070f");
     var sw=isRoot?4:(on?3:1.5);
     s+='<path d="'+sec(i)+'" data-i="'+i+'" fill="'+COLORS[i]+'" fill-opacity="'+(on?1:0.18)+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
-    s+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="16" font-weight="800" fill="'+(on?"#ffffff":"#5a6488")+'" pointer-events="none">'+CLOCK[i]+'</text>';
+    var pNum=xy(i*30,RO-14),pEn=xy(i*30,(RO+RI)/2),pTh=xy(i*30,RI+15);
+    var cNum=on?"#ffffff":"#7a86a8",cEn=on?"#ffffff":"#aeb8d0",cTh=on?"#ffe9b8":"#7f8aac";
+    s+='<text x="'+pNum[0]+'" y="'+(pNum[1]+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+cNum+'" pointer-events="none">'+CLOCK[i]+'</text>';
+    s+='<text x="'+pEn[0]+'" y="'+(pEn[1]+6)+'" text-anchor="middle" font-size="18" font-weight="800" fill="'+cEn+'" pointer-events="none">'+NOTES[i]+'</text>';
+    s+='<text x="'+pTh[0]+'" y="'+(pTh[1]+3)+'" text-anchor="middle" font-size="9" font-weight="600" fill="'+cTh+'" pointer-events="none">'+THAI[i]+'</text>';
     if(S.showIv && on && picks.length>0){
       var iv=(i-root+12)%12, lp=xy(i*30,RO-2);
       s+='<text x="'+lp[0]+'" y="'+(lp[1]+3)+'" text-anchor="middle" font-size="9" font-weight="800" fill="#15A6E8" pointer-events="none">'+(i===root?"R":IVNAME[iv])+'</text>';
@@ -229,5 +233,19 @@ document.getElementById("clear").onclick=function(){if(S.mode==="custom")S.picks
 
 render();
 </script>
+
+<!-- ===== ปุ่มแบบฝึกหัด YouTube · แก้ลิงก์ที่ตัวแปร YT_URL ด้านล่าง ===== -->
+<div style="text-align:center;margin:22px auto 6px;padding:0 16px">
+  <a id="ytBtn" href="#" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;background:#FF0033;color:#fff;font-family:'Trebuchet MS','Segoe UI',sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:999px;box-shadow:0 6px 18px rgba(255,0,51,.35)">
+    <span style="font-size:15px">&#9654;</span> ดูแบบฝึกหัดบน YouTube
+  </a>
+</div>
+<script>
+/* === ลิงก์คลิปแบบฝึกหัดของบทนี้ — เปลี่ยนตรงนี้ === */
+var YT_URL="https://youtube.com/shorts/g0nSov2OHAQ";
+/* ============================================== */
+(function(){var b=document.getElementById("ytBtn");if(b)b.href=YT_URL;})();
+</script>
+
 </body>
 </html>
