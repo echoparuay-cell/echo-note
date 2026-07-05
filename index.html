@@ -9,15 +9,14 @@
   gtag('js', new Date());
   gtag('config', 'AW-17894568140');
   gtag('config', 'G-46HW0169HW');
-</script>
-<script>
-function gtag_report_line_click(url) {
-  gtag('event', 'conversion', {
-    'send_to': 'AW-17894568140/M-FXCJ_Dy_MbEMzh5dRC',
-    'event_callback': function(){ if (url) { window.location = url; } }
-  });
-  return false;
-}
+
+  // Conversion: Line Click — Music Support Shop
+  function reportLineClick() {
+    gtag('event', 'conversion', {
+      'send_to': 'AW-17894568140/M-FXCJ_Dy_MbEMzh5dRC'
+    });
+    return true;
+  }
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -431,7 +430,7 @@ footer p{font-size:12px;opacity:.4;margin-top:6px}
       <div class="step"><div class="step-num">2</div><span>ส่งสลิป + ชื่อ + ที่อยู่จัดส่งทาง Line</span></div>
       <div class="step"><div class="step-num">3</div><span>รับสินค้าภายใน 1–3 วันทำการ ✈️</span></div>
     </div>
-    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" style="display:block;background:#06c755;color:#fff;padding:16px;border-radius:6px;font-size:16px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif;margin-top:16px;">💬 ส่งสลิปทาง Line ได้เลย</a>
+    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" onclick="reportLineClick()" style="display:block;background:#06c755;color:#fff;padding:16px;border-radius:6px;font-size:16px;font-weight:600;text-decoration:none;font-family:'Mitr',sans-serif;margin-top:16px;">💬 ส่งสลิปทาง Line ได้เลย</a>
 <div style="text-align:center;margin-top:8px;font-size:12px;color:#888">หรือค้นหาใน LINE: <strong style="color:#06c755">@musicsupport</strong></div>
   </div>
 </div>
@@ -532,14 +531,14 @@ footer p{font-size:12px;opacity:.4;margin-top:6px}
       <div class="refund-item"><div class="refund-num">4</div><span>ค่าจัดส่งสินค้าคืนเป็นความรับผิดชอบของลูกค้า ยกเว้นกรณีที่สินค้าชำรุดจากการผลิตหรือการจัดส่ง</span></div>
       <div class="refund-item"><div class="refund-num">5</div><span>หลังจากทีมงานตรวจสอบสินค้าที่ส่งคืนแล้ว จะดำเนินการคืนเงินภายใน 3–5 วันทำการ</span></div>
     </div>
-    <div class="refund-note">📌 ติดต่อขอคืนสินค้าได้ทาง Line: <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" style="color:var(--orange-dark);font-weight:600">line.me/R/ti/p/@musicsupport</a></div>
+    <div class="refund-note">📌 ติดต่อขอคืนสินค้าได้ทาง Line: <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" onclick="reportLineClick()" style="color:var(--orange-dark);font-weight:600">line.me/R/ti/p/@musicsupport</a></div>
   </div>
 </div>
 
 <div class="line-section">
   <h2>มีคำถาม? คุยกับเราได้เลย</h2>
   <p>ทีมงาน Echo Program พร้อมตอบทุกคำถาม ทุกวัน</p>
-  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="btn-line-big" onclick="return gtag_report_line_click('https://line.me/R/ti/p/@musicsupport')"><span style="font-size:20px">💬</span> Add Line — Echo Program</a>
+  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" onclick="reportLineClick()" class="btn-line-big"><span style="font-size:20px">💬</span> Add Line — Echo Program</a>
 <div style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.5)">หรือค้นหาใน LINE: <strong style="color:#06c755">@musicsupport</strong></div>
 </div>
 
@@ -568,7 +567,7 @@ footer p{font-size:12px;opacity:.4;margin-top:6px}
 
 <div class="sticky-cta">
   <a href="#payment" class="sticky-buy">🛒 สั่งซื้อ 990 ฿</a>
-  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="sticky-line" onclick="return gtag_report_line_click('https://line.me/R/ti/p/@musicsupport')">💬 Line สอบถาม</a>
+  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" onclick="reportLineClick()" class="sticky-line">💬 Line สอบถาม</a>
 </div>
 <div style="height:64px"></div>
 
