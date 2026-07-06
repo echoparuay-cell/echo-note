@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo — Content Pack 30 วัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;--navy2:#0D1F3C;--navy3:#152444;
+  --red:#E8002D;--red2:rgba(232,0,45,0.12);
+  --wh:#fff;--tx:#C8D6E8;--mt:#5A7A9A;--bd:rgba(255,255,255,0.07);
+  --or:#FF6B00;--gn:#00C853;--bl:#00AAFF;--yw:#FFD600;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:var(--navy);color:var(--tx);padding:24px 16px;max-width:900px;margin:0 auto}
+
+.header{text-align:center;padding:28px 0 24px;border-bottom:2px solid var(--red);margin-bottom:28px}
+.h-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--red);margin-bottom:10px}
+.h-title{font-family:'Kanit',sans-serif;font-size:clamp(22px,4vw,36px);font-weight:900;color:var(--wh);margin-bottom:6px}
+.h-title em{color:var(--red);font-style:normal}
+.h-sub{font-size:13px;color:var(--mt)}
+
+/* Strategy box */
+.strategy{
+  background:var(--red2);border:1px solid rgba(232,0,45,0.2);
+  border-radius:6px;padding:18px 20px;margin-bottom:24px;
+}
+.st-title{font-family:'Kanit',sans-serif;font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px;letter-spacing:1px}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.st-item{background:rgba(0,0,0,0.2);border-radius:4px;padding:10px 12px}
+.sti-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mt);letter-spacing:2px;margin-bottom:4px}
+.sti-val{font-size:12px;color:var(--tx);line-height:1.5}
+
+/* Week header */
+.week-head{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  background:var(--navy3);
+  border-left:3px solid var(--red);
+  border-radius:0 4px 4px 0;
+  margin:20px 0 8px;
+}
+.wh-num{font-family:'Kanit',sans-serif;font-size:11px;font-weight:700;color:var(--red);letter-spacing:2px}
+.wh-theme{font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;color:var(--wh)}
+.wh-goal{font-size:11px;color:var(--mt);margin-left:auto}
+
+/* Day card */
+.day-card{
+  background:var(--navy2);border:1px solid var(--bd);
+  border-radius:6px;padding:16px;margin-bottom:6px;
+  display:grid;grid-template-columns:48px 1fr;gap:14px;
+}
+.day-num{
+  font-family:'Kanit',sans-serif;font-size:22px;font-weight:900;
+  color:var(--red);line-height:1;text-align:center;padding-top:2px;
+}
+.day-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--mt);letter-spacing:1px;text-align:center;margin-top:2px}
+.day-body{}
+.day-type{
+  display:inline-block;font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:2px;
+  margin-bottom:8px;
+}
+.t-clock{background:rgba(0,170,255,0.15);color:var(--bl)}
+.t-proof{background:rgba(0,200,83,0.15);color:var(--gn)}
+.t-hook{background:rgba(232,0,45,0.15);color:var(--red)}
+.t-teach{background:rgba(255,107,0,0.15);color:var(--or)}
+.t-cta{background:rgba(255,214,0,0.15);color:var(--yw)}
+.t-rest{background:rgba(255,255,255,0.06);color:var(--mt)}
+
+.day-hook{font-family:'Kanit',sans-serif;font-size:14px;font-weight:700;color:var(--wh);margin-bottom:6px;line-height:1.4}
+.day-caption{font-size:12px;color:var(--tx);line-height:1.8;margin-bottom:8px;white-space:pre-line}
+.day-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.day-tag{font-size:10px;background:rgba(255,255,255,0.05);border:1px solid var(--bd);padding:2px 8px;border-radius:2px;color:var(--mt)}
+.day-link{font-size:10px;color:var(--red);font-family:'Share Tech Mono',monospace}
+
+/* Copy button */
+.copy-btn{
+  font-size:10px;background:none;border:1px solid var(--bd);
+  color:var(--mt);padding:3px 8px;border-radius:2px;cursor:pointer;
+  font-family:'Share Tech Mono',monospace;letter-spacing:1px;
+  transition:all .2s;margin-left:auto;
+}
+.copy-btn:hover{border-color:var(--red);color:var(--red)}
+.copy-btn.copied{border-color:var(--gn);color:var(--gn)}
+
+/* Cowork box */
+.cowork-box{
+  background:var(--navy3);border:1px solid rgba(0,200,83,0.2);
+  border-radius:6px;padding:18px;margin-top:28px;
+}
+.cb-title{font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;color:var(--gn);letter-spacing:2px;margin-bottom:14px}
+.cb-cmd{
+  background:rgba(0,0,0,0.4);border-radius:4px;padding:12px 14px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--tx);
+  line-height:1.8;white-space:pre-wrap;
+}
+
+footer{text-align:center;padding:20px 0;border-top:1px solid var(--bd);margin-top:28px;font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.15);letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-tag">ECHO PROJECT · CONTENT PACK</div>
+  <div class="h-title">Content 30 วัน<br><em>นาฬิกาเสียง</em> เป็น Hero</div>
+  <div class="h-sub">สำหรับ Cowork รันบน Facebook ส่วนตัวครับ · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+</div>
+
+<!-- STRATEGY -->
+<div class="strategy">
+  <div class="st-title">STRATEGY OVERVIEW ครับ</div>
+  <div class="st-grid">
+    <div class="st-item">
+      <div class="sti-label">HERO CONTENT</div>
+      <div class="sti-val">นาฬิกาเสียง<br>"อ่านนาฬิกาเป็น" = พร้อมครับ</div>
+    </div>
+    <div class="st-item">
+      <div class="sti-label">PLATFORM</div>
+      <div class="sti-val">Facebook ส่วนตัว<br>ผ่าน Coworkครับ</div>
+    </div>
+    <div class="st-item">
+      <div class="sti-label">VOLUME</div>
+      <div class="sti-val">วันละ 1 โพสต์<br>30 โพสต์/เดือนครับ</div>
+    </div>
+    <div class="st-item">
+      <div class="sti-label">CTA หลัก</div>
+      <div class="sti-val">skecho.org/activate<br>LINE @musicsupportครับ</div>
+    </div>
+    <div class="st-item">
+      <div class="sti-label">TONE</div>
+      <div class="sti-val">ผู้เชี่ยวชาญ<br>พี่สอนน้องครับ</div>
+    </div>
+    <div class="st-item">
+      <div class="sti-label">ต้นทุน/เดือน</div>
+      <div class="sti-val">~700฿ (Cowork)<br>Organic ฟรีครับ</div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 1 -->
+<div class="week-head">
+  <div class="wh-num">WEEK 1</div>
+  <div class="wh-theme">🕐 ปลุกความสนใจ — นาฬิกาเสียงคืออะไร</div>
+  <div class="wh-goal">สร้าง Awareness ครับ</div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">1</div><div class="day-label">จันทร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK HOOK</div>
+    <div class="day-hook">ถ้าคุณรู้จักนาฬิกา คุณรู้จักคอร์ดทุกตัวในโลกแล้วครับ</div>
+    <div class="day-caption">ฟังดูเหมือนเล่นครับ
+
+แต่นี่คือหลักการที่ผมใช้สอนมา 16 ปีครับ
+
+คุณสมบัติเดียวที่ต้องมีครับ
+อ่านนาฬิกาเป็นครับ
+
+แค่นั้นพอครับ 🔓
+
+skecho.org/activate ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#นาฬิกาเสียง</span>
+      <span class="day-tag">#EchoProgram</span>
+      <span class="day-link">→ skecho.org/activate</span>
+      <button class="copy-btn" onclick="copyText(this, 'ถ้าคุณรู้จักนาฬิกา คุณรู้จักคอร์ดทุกตัวในโลกแล้วครับ\n\nฟังดูเหมือนเล่นครับ\n\nแต่นี่คือหลักการที่ผมใช้สอนมา 16 ปีครับ\n\nนาฬิกาหน้าปัดธรรมดา\nซ่อนโครงสร้างดนตรีทั้งหมดไว้ในนั้นครับ\n\nskecho.org/activate')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">2</div><div class="day-label">อังคาร</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">TEACH</div>
+    <div class="day-hook">12·4·7 คืออะไรครับ?</div>
+    <div class="day-caption">บนหน้าปัดนาฬิกาครับ
+ตำแหน่ง 12, 4, และ 7
+
+เชื่อมสามจุดนี้เข้าหากัน
+ได้รูปสามเหลี่ยมครับ
+
+นั่นคือคอร์ด C major ครับ
+
+ทุกคอร์ดในโลกใช้รูปสามเหลี่ยมเดิมครับ
+แค่หมุนตำแหน่งครับ
+
+[ลิงก์ echo-clock บน GitHub]</div>
+    <div class="day-meta">
+      <span class="day-tag">#สูตรคูณดนตรี</span>
+      <span class="day-tag">#คอร์ด</span>
+      <span class="day-link">→ echoparuay-cell.github.io/echo-note/echo-clock.html</span>
+      <button class="copy-btn" onclick="copyText(this, '12·4·7 คืออะไรครับ?\n\nบนหน้าปัดนาฬิกาครับ\nตำแหน่ง 12, 4, และ 7\n\nเชื่อมสามจุดนี้เข้าหากัน\nได้รูปสามเหลี่ยมครับ\n\nนั่นคือคอร์ด C major ครับ\n\nทุกคอร์ดในโลกใช้รูปสามเหลี่ยมเดิมครับ\nแค่หมุนตำแหน่งครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">3</div><div class="day-label">พุธ</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">QUESTION</div>
+    <div class="day-hook">คุณมีเครื่องดนตรีอยู่ที่บ้านไหมครับ?</div>
+    <div class="day-caption">ถ้ามี — เครื่องดนตรีนั้นยังไม่ได้ Activate ครับ
+
+มันมาพร้อมภาษาดนตรีในตัวอยู่แล้วครับ
+แต่ไม่มีใครบอก Activation Code ให้คุณครับ
+
+คุณสมบัติเดียวที่ต้องมีครับ
+อ่านนาฬิกาเป็นครับ
+
+คอมเมนต์มาเลยครับ ว่ามีเครื่องอะไรอยู่บ้านครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#เครื่องดนตรี</span>
+      <span class="day-tag">#Activate</span>
+      <button class="copy-btn" onclick="copyText(this, 'คุณมีเครื่องดนตรีอยู่ที่บ้านไหมครับ?\n\nถ้ามี — เครื่องดนตรีนั้นยังไม่ได้ Activate ครับ\n\nมันมาพร้อมภาษาดนตรีในตัวอยู่แล้วครับ\nแต่ไม่มีใครบอก Activation Code ให้คุณครับ\n\nคอมเมนต์มาเลยครับ ว่ามีเครื่องอะไรอยู่บ้านครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">4</div><div class="day-label">พฤหัส</div></div>
+  <div class="day-body">
+    <div class="day-type t-proof">PROOF</div>
+    <div class="day-hook">1 ชั่วโมง เปลี่ยนอะไรได้บ้างครับ</div>
+    <div class="day-caption">เมื่อวานนี้ผมสอนคุณผู้หญิงอายุ 38 ปีครับ
+
+เธอไม่เคยเรียนดนตรีมาก่อนครับ
+
+หลังจาก 1 ชั่วโมงครับ
+เธอเข้าใจระบบก้อนเสียงครับ
+และอยากนำไปใช้ต่อครับ
+
+ไม่ใช่เพราะเธอเก่งเป็นพิเศษครับ
+แต่เพราะระบบถูกต้องครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#ผลลัพธ์จริง</span>
+      <span class="day-tag">#EchoProgram</span>
+      <button class="copy-btn" onclick="copyText(this, '1 ชั่วโมง เปลี่ยนอะไรได้บ้างครับ\n\nเมื่อวานนี้ผมสอนคุณผู้หญิงอายุ 38 ปีครับ\n\nเธอไม่เคยเรียนดนตรีมาก่อนครับ\n\nหลังจาก 1 ชั่วโมงครับ\nเธอเข้าใจระบบก้อนเสียงครับ\nและอยากนำไปใช้ต่อครับ\n\nไม่ใช่เพราะเธอเก่งเป็นพิเศษครับ\nแต่เพราะระบบถูกต้องครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">5</div><div class="day-label">ศุกร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-cta">CTA</div>
+    <div class="day-hook">ทดลองนาฬิกาเสียงได้ฟรีครับ</div>
+    <div class="day-caption">ผมเปิดให้ทดลองใช้ระบบได้เลยครับ
+
+นาฬิกาเสียง + ก้อนเสียง + สูตรคูณดนตรี
+
+ไม่ต้องสมัคร ไม่ต้องจ่ายครับ
+
+skecho.org/activate ครับ
+
+ถ้าอยากเรียนต่อ ทัก LINE @musicsupport ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#ทดลองฟรี</span>
+      <span class="day-link">→ skecho.org/activate</span>
+      <button class="copy-btn" onclick="copyText(this, 'ทดลองนาฬิกาเสียงได้ฟรีครับ\n\nผมเปิดให้ทดลองใช้ระบบได้เลยครับ\n\nนาฬิกาเสียง + ก้อนเสียง + สูตรคูณดนตรี\n\nไม่ต้องสมัคร ไม่ต้องจ่ายครับ\n\nskecho.org/activate ครับ\n\nถ้าอยากเรียนต่อ ทัก LINE @musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">6</div><div class="day-label">เสาร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">TEACH</div>
+    <div class="day-hook">Melody Trap — กับดักที่ทุกคนตกครับ</div>
+    <div class="day-caption">ทำไมเรียนดนตรีมา 2 ปี แล้วยังอ่านโน้ตไม่ออกครับ?
+
+เพราะสมองมนุษย์ถูกออกแบบมาให้จำทำนองครับ
+ไม่ใช่จำจังหวะครับ
+
+มันคือกับดักที่ทุกคนตกครับ
+และไม่มีครูคนไหนบอกครับ
+
+Echo Program คือทางออกเดียวครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#MelodyTrap</span>
+      <span class="day-tag">#กับดักดนตรี</span>
+      <button class="copy-btn" onclick="copyText(this, 'Melody Trap — กับดักที่ทุกคนตกครับ\n\nทำไมเรียนดนตรีมา 2 ปี แล้วยังอ่านโน้ตไม่ออกครับ?\n\nเพราะสมองมนุษย์ถูกออกแบบมาให้จำทำนองครับ\nไม่ใช่จำจังหวะครับ\n\nมันคือกับดักที่ทุกคนตกครับ\nและไม่มีครูคนไหนบอกครับ\n\nEcho Program คือทางออกเดียวครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">7</div><div class="day-label">อาทิตย์</div></div>
+  <div class="day-body">
+    <div class="day-type t-rest">REST / REPOST</div>
+    <div class="day-hook">วันพักครับ — Repost โพสต์ที่ Engagement ดีที่สุดในสัปดาห์</div>
+    <div class="day-caption">ให้ Cowork ดูว่าโพสต์ไหน Like/Comment มากที่สุด
+แล้ว Share หรือ Repost ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">AUTO REPOST</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="week-head">
+  <div class="wh-num">WEEK 2</div>
+  <div class="wh-theme">🎵 สร้างความเชื่อ — ระบบทำงานจริง</div>
+  <div class="wh-goal">สร้าง Trust ครับ</div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">8</div><div class="day-label">จันทร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK DEMO</div>
+    <div class="day-hook">คอร์ด G อยู่ตรงไหนบนนาฬิกาครับ?</div>
+    <div class="day-caption">C = 12·4·7 ครับ
+G = 7·11·2 ครับ
+
+รูปสามเหลี่ยมเดิมครับ
+แค่หมุนไป 7 ชั่วโมงครับ
+
+นั่นคือทำไมดนตรีถึงมีระบบครับ
+ไม่ใช่การท่องจำครับ
+
+ทดลองหมุนเองได้ที่ skecho.org/activate ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#คอร์ด G</span>
+      <span class="day-tag">#นาฬิกาเสียง</span>
+      <button class="copy-btn" onclick="copyText(this, 'คอร์ด G อยู่ตรงไหนบนนาฬิกาครับ?\n\nC = 12·4·7 ครับ\nG = 7·11·2 ครับ\n\nรูปสามเหลี่ยมเดิมครับ\nแค่หมุนไป 7 ชั่วโมงครับ\n\nนั่นคือทำไมดนตรีถึงมีระบบครับ\nไม่ใช่การท่องจำครับ\n\nทดลองหมุนเองได้ที่ skecho.org/activate ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">9</div><div class="day-label">อังคาร</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">EFFORT PARADOX</div>
+    <div class="day-hook">ยิ่งพยายามมาก ยิ่งเล่นดนตรีไม่ได้ครับ</div>
+    <div class="day-caption">ฟังดูย้อนแย้งครับ
+
+แต่นี่คือความจริงที่ครูดนตรี 99%
+ไม่เคยบอกคุณครับ
+
+ดนตรีต้องการความผ่อนคลายครับ
+ไม่ใช่ความพยายามครับ
+
+เราเรียกมันว่า Effort Paradox ครับ
+และมันเปลี่ยนทุกอย่างครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#EffortParadox</span>
+      <button class="copy-btn" onclick="copyText(this, 'ยิ่งพยายามมาก ยิ่งเล่นดนตรีไม่ได้ครับ\n\nฟังดูย้อนแย้งครับ\n\nแต่นี่คือความจริงที่ครูดนตรี 99%\nไม่เคยบอกคุณครับ\n\nดนตรีต้องการความผ่อนคลายครับ\nไม่ใช่ความพยายามครับ\n\nเราเรียกมันว่า Effort Paradox ครับ\nและมันเปลี่ยนทุกอย่างครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">10</div><div class="day-label">พุธ</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">QUESTION</div>
+    <div class="day-hook">ได้ยิน กับ ฟัง ต่างกันอย่างไรครับ?</div>
+    <div class="day-caption">ได้ยิน — เสียงผ่านหูครับ
+ฟัง — สมองแปลความหมายได้ครับ
+
+คนที่เรียนดนตรีมาหลายปี
+ส่วนใหญ่ยังแค่ได้ยินอยู่ครับ
+
+Echo Program สอนให้ฟังเป็นก่อนทุกอย่างครับ
+
+คุณได้ยิน หรือฟังดนตรีครับ?
+คอมเมนต์บอกผมได้เลยครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#ฟังดนตรี</span>
+      <button class="copy-btn" onclick="copyText(this, 'ได้ยิน กับ ฟัง ต่างกันอย่างไรครับ?\n\nได้ยิน — เสียงผ่านหูครับ\nฟัง — สมองแปลความหมายได้ครับ\n\nคนที่เรียนดนตรีมาหลายปี\nส่วนใหญ่ยังแค่ได้ยินอยู่ครับ\n\nEcho Program สอนให้ฟังเป็นก่อนทุกอย่างครับ\n\nคุณได้ยิน หรือฟังดนตรีครับ?\nคอมเมนต์บอกผมได้เลยครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">11</div><div class="day-label">พฤหัส</div></div>
+  <div class="day-body">
+    <div class="day-type t-proof">16 ปี</div>
+    <div class="day-hook">16 ปีที่ค้นพบโดยคนไทย สำหรับคนไทยครับ</div>
+    <div class="day-caption">ไม่ใช่แฟรนไชส์จากต่างประเทศครับ
+ไม่ต้องจ่ายหลายล้านครับ
+
+Effort Paradox
+Melody Trap  
+สูตรคูณเสียง
+นาฬิกาเสียง
+
+สิ่งเหล่านี้ค้นพบที่สกลนครครับ
+และวันนี้พร้อมส่งมอบแล้วครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#MadeInThailand</span>
+      <span class="day-tag">#16ปี</span>
+      <button class="copy-btn" onclick="copyText(this, '16 ปีที่ค้นพบโดยคนไทย สำหรับคนไทยครับ\n\nไม่ใช่แฟรนไชส์จากต่างประเทศครับ\nไม่ต้องจ่ายหลายล้านครับ\n\nEffort Paradox\nMelody Trap\nสูตรคูณเสียง\nนาฬิกาเสียง\n\nสิ่งเหล่านี้ค้นพบที่สกลนครครับ\nและวันนี้พร้อมส่งมอบแล้วครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">12</div><div class="day-label">ศุกร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-cta">CTA</div>
+    <div class="day-hook">เริ่มต้นที่ 990 บาทครับ</div>
+    <div class="day-caption">Echo Note Starter Kit ครับ
+
+คีย์บอร์ด + App จำกัด + QR สอน
+ส่งฟรีทั่วประเทศครับ
+
+สำหรับคนที่มีเครื่องดนตรีแล้ว
+หรือกำลังจะซื้อครับ
+
+พิมพ์ "KIT" ใน LINE ได้เลยครับ
+@musicsupport ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#StarterKit</span>
+      <span class="day-tag">990฿</span>
+      <span class="day-link">LINE: @musicsupport</span>
+      <button class="copy-btn" onclick="copyText(this, 'เริ่มต้นที่ 990 บาทครับ\n\nEcho Note Starter Kit ครับ\n\nคีย์บอร์ด + App จำกัด + QR สอน\nส่งฟรีทั่วประเทศครับ\n\nสำหรับคนที่มีเครื่องดนตรีแล้ว\nหรือกำลังจะซื้อครับ\n\nพิมพ์ "KIT" ใน LINE ได้เลยครับ\n@musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">13</div><div class="day-label">เสาร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK QUIZ</div>
+    <div class="day-hook">Quiz ครับ — Am อยู่ตรงไหนบนนาฬิกา?</div>
+    <div class="day-caption">C major = 12·4·7 ครับ
+G major = 7·11·2 ครับ
+
+แล้ว A minor ล่ะครับ?
+
+ตอบในคอมเมนต์ได้เลยครับ
+พรุ่งนี้เฉลยครับ 🕐</div>
+    <div class="day-meta">
+      <span class="day-tag">#Quiz</span>
+      <span class="day-tag">#นาฬิกาเสียง</span>
+      <button class="copy-btn" onclick="copyText(this, 'Quiz ครับ — Am อยู่ตรงไหนบนนาฬิกา?\n\nC major = 12·4·7 ครับ\nG major = 7·11·2 ครับ\n\nแล้ว A minor ล่ะครับ?\n\nตอบในคอมเมนต์ได้เลยครับ\nพรุ่งนี้เฉลยครับ 🕐')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">14</div><div class="day-label">อาทิตย์</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">เฉลย Quiz</div>
+    <div class="day-hook">เฉลย — Am = 9·12·4 ครับ</div>
+    <div class="day-caption">A minor = 9·12·4 ครับ
+
+สังเกตไหมครับ?
+12 และ 4 ซ้ำกับ C major เลยครับ
+
+นั่นคือทำไม C กับ Am ถึงฟังดูเข้ากันครับ
+มีโน้ตร่วมกันอยู่บนนาฬิกาครับ
+
+ระบบนี้อธิบายทุกอย่างครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#เฉลย</span>
+      <span class="day-tag">#ทฤษฎีดนตรี</span>
+      <button class="copy-btn" onclick="copyText(this, 'เฉลย — Am = 9·12·4 ครับ\n\nA minor = 9·12·4 ครับ\n\nสังเกตไหมครับ?\n12 และ 4 ซ้ำกับ C major เลยครับ\n\nนั่นคือทำไม C กับ Am ถึงฟังดูเข้ากันครับ\nมีโน้ตร่วมกันอยู่บนนาฬิกาครับ\n\nระบบนี้อธิบายทุกอย่างครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="week-head">
+  <div class="wh-num">WEEK 3</div>
+  <div class="wh-theme">🎯 ดึงสองกลุ่มเป้าหมาย</div>
+  <div class="wh-goal">Convert ครับ</div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">15</div><div class="day-label">จันทร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">GROUP A</div>
+    <div class="day-hook">คุณซื้อกีตาร์มากี่ปีแล้วครับ?</div>
+    <div class="day-caption">แล้วยังเล่นได้แค่คอร์ด C อยู่ไหมครับ?
+
+ไม่ใช่ความผิดของคุณครับ
+มันคือกับดักที่ทุกคนตกครับ
+
+คุณสมบัติเดียวที่ต้องมีครับ
+อ่านนาฬิกาเป็นครับ
+
+เครื่องดนตรีของคุณรอคุณอยู่ครับ 🔓
+skecho.org/activate ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#มีเครื่องดนตรีแล้ว</span>
+      <button class="copy-btn" onclick="copyText(this, 'คุณซื้อกีตาร์มากี่ปีแล้วครับ?\n\nแล้วยังเล่นได้แค่คอร์ด C อยู่ไหมครับ?\n\nไม่ใช่ความผิดของคุณครับ\nมันคือกับดักที่ทุกคนตกครับ\n\nเครื่องดนตรีของคุณรอคุณอยู่ครับ\nมันแค่ยังไม่ได้ Activate ครับ\n\nskecho.org/activate ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">16</div><div class="day-label">อังคาร</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">GROUP B</div>
+    <div class="day-hook">ก่อนซื้อเครื่องดนตรีครับ อ่านนี้ก่อนครับ</div>
+    <div class="day-caption">หลายคนซื้อมาแล้วไม่ได้ใช้ครับ
+
+ไม่ใช่เพราะขี้เกียจครับ
+แต่เพราะไม่รู้ภาษาดนตรีก่อนครับ
+
+คุณสมบัติเดียวที่ต้องมีครับ
+อ่านนาฬิกาเป็นครับ
+
+ถ้าใช่ — ซื้อได้เลยครับ
+Echo Note 990 บาท ส่งฟรีครับ
+พิมพ์ "KIT" ใน LINE @musicsupport ครับ 🔓</div>
+    <div class="day-meta">
+      <span class="day-tag">#กำลังจะซื้อ</span>
+      <span class="day-tag">#StarterKit</span>
+      <button class="copy-btn" onclick="copyText(this, 'ก่อนซื้อเครื่องดนตรีครับ อ่านนี้ก่อนครับ\n\nหลายคนซื้อมาแล้วไม่ได้ใช้ครับ\n\nไม่ใช่เพราะขี้เกียจครับ\nแต่เพราะไม่รู้ภาษาดนตรีก่อนครับ\n\nถ้าจะซื้อครับ\nเริ่มที่ Echo Note 990 บาทก่อนครับ\n\nได้ทั้งเครื่องดนตรีและภาษาพร้อมกันครับ\nพิมพ์ "KIT" ใน LINE @musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">17</div><div class="day-label">พุธ</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">DEEP TEACH</div>
+    <div class="day-hook">ก้อน กลุ่ม เม็ด — ภาษาที่ไม่มีพรมแดนครับ</div>
+    <div class="day-caption">ก้อน = 4 ห้อง = หนึ่งประโยคครับ
+กลุ่ม = 1 ห้อง = หนึ่งคำครับ
+เม็ด = 1 เสียง = หนึ่งตัวอักษรครับ
+
+เรียนรู้ 3 คำนี้ครับ
+แล้วอ่านโน้ตได้ทั่วโลกครับ
+
+นักดนตรีไทยกับญี่ปุ่น
+เล่นด้วยกันได้ทันทีครับ
+เพราะภาษาเดียวกันครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#ก้อนเสียง</span>
+      <span class="day-tag">#ภาษาดนตรี</span>
+      <button class="copy-btn" onclick="copyText(this, 'ก้อน กลุ่ม เม็ด — ภาษาที่ไม่มีพรมแดนครับ\n\nก้อน = 4 ห้อง = หนึ่งประโยคครับ\nกลุ่ม = 1 ห้อง = หนึ่งคำครับ\nเม็ด = 1 เสียง = หนึ่งตัวอักษรครับ\n\nเรียนรู้ 3 คำนี้ครับ\nแล้วอ่านโน้ตได้ทั่วโลกครับ\n\nนักดนตรีไทยกับญี่ปุ่น\nเล่นด้วยกันได้ทันทีครับ\nเพราะภาษาเดียวกันครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">18</div><div class="day-label">พฤหัส</div></div>
+  <div class="day-body">
+    <div class="day-type t-proof">VIENNA</div>
+    <div class="day-hook">อันดับ 2 IYMMC Vienna 2026 ครับ</div>
+    <div class="day-caption">นักเรียนของ Echo Program ครับ
+Classical Piano Grade 5
+ระดับนานาชาติครับ
+
+ไม่ใช่แค่ทฤษฎีครับ
+ระบบนี้ผ่านการพิสูจน์แล้วครับ
+
+ดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#Vienna2026</span>
+      <span class="day-tag">#ผลลัพธ์จริง</span>
+      <button class="copy-btn" onclick="copyText(this, 'อันดับ 2 IYMMC Vienna 2026 ครับ\n\nนักเรียนของ Echo Program ครับ\nClassical Piano Grade 5\nระดับนานาชาติครับ\n\nไม่ใช่แค่ทฤษฎีครับ\nระบบนี้ผ่านการพิสูจน์แล้วครับ\n\nดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">19</div><div class="day-label">ศุกร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-cta">CTA STRONG</div>
+    <div class="day-hook">เอาใจ หรือ ใจเอา ครับ?</div>
+    <div class="day-caption">ก่อนสมัครเรียนครับ ถามตัวเองก่อนครับ
+
+เอาใจ = สนใจแต่ยังไม่พร้อมครับ
+ใจเอา = พร้อมและอยากเริ่มทันทีครับ
+
+ถ้าใจเอาจริงครับ
+
+Inter Musician Program รอคุณอยู่ครับ
+เริ่มที่ 2,500 บาทครับ
+ทัก LINE @musicsupport ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#InterMusician</span>
+      <span class="day-link">LINE: @musicsupport</span>
+      <button class="copy-btn" onclick="copyText(this, 'เอาใจ หรือ ใจเอา ครับ?\n\nก่อนสมัครเรียนครับ ถามตัวเองก่อนครับ\n\nเอาใจ = สนใจแต่ยังไม่พร้อมครับ\nใจเอา = พร้อมและอยากเริ่มทันทีครับ\n\nถ้าใจเอาจริงครับ\n\nInter Musician Program รอคุณอยู่ครับ\nเริ่มที่ 2,500 บาทครับ\nทัก LINE @musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">20</div><div class="day-label">เสาร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK ADVANCED</div>
+    <div class="day-hook">Scale และ Mode อยู่บนนาฬิกาด้วยครับ</div>
+    <div class="day-caption">ไม่ใช่แค่คอร์ดครับ
+
+C major scale = เดินจาก 12 ตามเข็มครับ
+Dorian mode = เริ่มจาก 2 ครับ
+Mixolydian = เริ่มจาก 7 ครับ
+
+นาฬิกาหนึ่งใบ
+สอนได้ทั้งชีวิตครับ
+
+ทดลองที่ skecho.org/activate ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#Scale</span>
+      <span class="day-tag">#Mode</span>
+      <button class="copy-btn" onclick="copyText(this, 'Scale และ Mode อยู่บนนาฬิกาด้วยครับ\n\nไม่ใช่แค่คอร์ดครับ\n\nC major scale = เดินจาก 12 ตามเข็มครับ\nDorian mode = เริ่มจาก 2 ครับ\nMixolydian = เริ่มจาก 7 ครับ\n\nนาฬิกาหนึ่งใบ\nสอนได้ทั้งชีวิตครับ\n\nทดลองที่ skecho.org/activate ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">21</div><div class="day-label">อาทิตย์</div></div>
+  <div class="day-body">
+    <div class="day-type t-rest">REST / REPOST</div>
+    <div class="day-hook">Repost โพสต์ที่ดีที่สุดในสัปดาห์ครับ</div>
+    <div class="day-caption">ให้ Cowork เลือกโพสต์ที่ Engagement สูงสุดครับ</div>
+    <div class="day-meta"><span class="day-tag">AUTO REPOST</span></div>
+  </div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="week-head">
+  <div class="wh-num">WEEK 4</div>
+  <div class="wh-theme">🏆 ปิดการขายและขยายฐานครับ</div>
+  <div class="wh-goal">Close + Referral ครับ</div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">22</div><div class="day-label">จันทร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">URGENCY</div>
+    <div class="day-hook">เหลือช่องเรียนไม่มากแล้วครับ</div>
+    <div class="day-caption">รับนักเรียนได้จำกัดต่อ Batch ครับ
+
+เพราะต้องการให้ดูแลได้ครบทุกคนครับ
+
+ถ้าสนใจ Inter Musician Program ครับ
+พิมพ์ "จอง" ใน LINE ได้เลยครับ
+
+@musicsupport ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#จำนวนจำกัด</span>
+      <span class="day-link">LINE: @musicsupport</span>
+      <button class="copy-btn" onclick="copyText(this, 'เหลือช่องเรียนไม่มากแล้วครับ\n\nรับนักเรียนได้จำกัดต่อ Batch ครับ\n\nเพราะต้องการให้ดูแลได้ครบทุกคนครับ\n\nถ้าสนใจ Inter Musician Program ครับ\nพิมพ์ "จอง" ใน LINE ได้เลยครับ\n\n@musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">23</div><div class="day-label">อังคาร</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK STORY</div>
+    <div class="day-hook">ทำไมผมถึงใช้นาฬิกาสอนดนตรีครับ</div>
+    <div class="day-caption">ผมสอนมา 16 ปีครับ
+ลองวิธีต่างๆ มาหมดแล้วครับ
+
+วันหนึ่งผมเห็นว่า
+โน้ต 12 ตัวในดนตรีสากล
+ตรงกับ 12 ชั่วโมงบนนาฬิกาพอดีครับ
+
+ตั้งแต่นั้น ทุกอย่างเปลี่ยนครับ
+
+นักเรียนเข้าใจได้เร็วขึ้น 4 เท่าครับ
+เพราะสมองรู้จักนาฬิกาอยู่แล้วครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#เบื้องหลัง</span>
+      <span class="day-tag">#นาฬิกาเสียง</span>
+      <button class="copy-btn" onclick="copyText(this, 'ทำไมผมถึงใช้นาฬิกาสอนดนตรีครับ\n\nผมสอนมา 16 ปีครับ\nลองวิธีต่างๆ มาหมดแล้วครับ\n\nวันหนึ่งผมเห็นว่า\nโน้ต 12 ตัวในดนตรีสากล\nตรงกับ 12 ชั่วโมงบนนาฬิกาพอดีครับ\n\nตั้งแต่นั้น ทุกอย่างเปลี่ยนครับ\n\nนักเรียนเข้าใจได้เร็วขึ้น 4 เท่าครับ\nเพราะสมองรู้จักนาฬิกาอยู่แล้วครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">24</div><div class="day-label">พุธ</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">REFERRAL</div>
+    <div class="day-hook">มีคนรู้จักที่มีเครื่องดนตรีอยู่บ้านไหมครับ?</div>
+    <div class="day-caption">Tag มาในคอมเมนต์ได้เลยครับ
+
+ถ้าเขาสมัครเรียนผ่านคุณครับ
+คุณได้ส่วนลด 10% สำหรับคอร์สถัดไปครับ
+
+ดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ
+แชร์ความรู้คือการกตัญญูครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#Referral</span>
+      <span class="day-tag">#แนะนำเพื่อน</span>
+      <button class="copy-btn" onclick="copyText(this, 'มีคนรู้จักที่มีเครื่องดนตรีอยู่บ้านไหมครับ?\n\nTag มาในคอมเมนต์ได้เลยครับ\n\nถ้าเขาสมัครเรียนผ่านคุณครับ\nคุณได้ส่วนลด 10% สำหรับคอร์สถัดไปครับ\n\nดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ\nแชร์ความรู้คือการกตัญญูครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">25</div><div class="day-label">พฤหัส</div></div>
+  <div class="day-body">
+    <div class="day-type t-proof">TESTIMONIAL</div>
+    <div class="day-hook">นักเรียนพูดว่าอะไรหลังเรียน Session แรกครับ</div>
+    <div class="day-caption">"เข้าใจหลักการ
+อยากนำไปใช้ต่อครับ"
+
+นักเรียนหญิง อายุ 38 ปี
+ไม่มีพื้นฐานดนตรีมาก่อนครับ
+หลังจาก 1 ชั่วโมงครับ
+
+นี่คือสิ่งที่ระบบที่ถูกต้องทำได้ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#Testimonial</span>
+      <button class="copy-btn" onclick="copyText(this, 'นักเรียนพูดว่าอะไรหลังเรียน Session แรกครับ\n\n"เข้าใจหลักการ\nอยากนำไปใช้ต่อครับ"\n\nนักเรียนหญิง อายุ 38 ปี\nไม่มีพื้นฐานดนตรีมาก่อนครับ\nหลังจาก 1 ชั่วโมงครับ\n\nนี่คือสิ่งที่ระบบที่ถูกต้องทำได้ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">26</div><div class="day-label">ศุกร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-cta">FINAL CTA</div>
+    <div class="day-hook">สรุป 3 ทางเลือกครับ</div>
+    <div class="day-caption">ลองก่อน — skecho.org/activate ฟรีครับ
+
+เริ่มต้น — Echo Note 990฿
+พิมพ์ "KIT" ใน LINE ครับ
+
+จริงจัง — Inter Musician 2,500–6,600฿
+พิมพ์ "จอง" ใน LINE ครับ
+
+@musicsupport ครับ
+ดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#สรุป</span>
+      <span class="day-link">LINE: @musicsupport</span>
+      <button class="copy-btn" onclick="copyText(this, 'สรุป 3 ทางเลือกครับ\n\nลองก่อน — skecho.org/activate ฟรีครับ\n\nเริ่มต้น — Echo Note 990฿\nพิมพ์ "KIT" ใน LINE ครับ\n\nจริงจัง — Inter Musician 2,500–6,600฿\nพิมพ์ "จอง" ใน LINE ครับ\n\n@musicsupport ครับ\nดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">27</div><div class="day-label">เสาร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-clock">CLOCK QUIZ 2</div>
+    <div class="day-hook">Quiz รอบสองครับ — F major = ?</div>
+    <div class="day-caption">คุณได้เรียนรู้นาฬิกาเสียงมาสามสัปดาห์แล้วครับ
+
+ทดสอบตัวเองครับ
+F major อยู่ตรงไหนบนนาฬิกาครับ?
+
+ตอบในคอมเมนต์ได้เลยครับ 🕐</div>
+    <div class="day-meta">
+      <span class="day-tag">#Quiz2</span>
+      <button class="copy-btn" onclick="copyText(this, 'Quiz รอบสองครับ — F major = ?\n\nคุณได้เรียนรู้นาฬิกาเสียงมาสามสัปดาห์แล้วครับ\n\nทดสอบตัวเองครับ\nF major อยู่ตรงไหนบนนาฬิกาครับ?\n\nตอบในคอมเมนต์ได้เลยครับ 🕐')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">28</div><div class="day-label">อาทิตย์</div></div>
+  <div class="day-body">
+    <div class="day-type t-teach">เฉลย + สรุปเดือน</div>
+    <div class="day-hook">F major = 5·9·12 ครับ + สรุปเดือนนี้ครับ</div>
+    <div class="day-caption">F major = 5·9·12 ครับ
+
+เดือนนี้เราคุยกันเรื่องครับ
+นาฬิกาเสียง · ก้อนเสียง · Melody Trap
+Effort Paradox · ภาษาดนตรีสากลครับ
+
+เดือนหน้ายังมีอีกมากครับ
+ติดตามไว้นะครับ
+
+ดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#สรุปเดือน</span>
+      <button class="copy-btn" onclick="copyText(this, 'F major = 5·9·12 ครับ + สรุปเดือนนี้ครับ\n\nF major = 5·9·12 ครับ\n\nเดือนนี้เราคุยกันเรื่องครับ\nนาฬิกาเสียง · ก้อนเสียง · Melody Trap\nEffort Paradox · ภาษาดนตรีสากลครับ\n\nเดือนหน้ายังมีอีกมากครับ\nติดตามไว้นะครับ\n\nดนตรี กตัญญู ผู้ผลิต มิตร AI ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">29</div><div class="day-label">จันทร์</div></div>
+  <div class="day-body">
+    <div class="day-type t-hook">MONTH 2 TEASER</div>
+    <div class="day-hook">เดือนหน้า เราจะพูดถึงอะไรครับ?</div>
+    <div class="day-caption">64 ก้อนเสียงครับ
+Double · Triple · Quadruple ครับ
+
+สูตรคูณดนตรีขั้นสูงครับ
+
+ถ้าอยากได้รับก่อนใครครับ
+ติดตามหน้านี้ไว้ครับ
+
+หรือทัก LINE @musicsupport ครับ</div>
+    <div class="day-meta">
+      <span class="day-tag">#Teaser</span>
+      <button class="copy-btn" onclick="copyText(this, 'เดือนหน้า เราจะพูดถึงอะไรครับ?\n\n64 ก้อนเสียงครับ\nDouble · Triple · Quadruple ครับ\n\nสูตรคูณดนตรีขั้นสูงครับ\n\nถ้าอยากได้รับก่อนใครครับ\nติดตามหน้านี้ไว้ครับ\n\nหรือทัก LINE @musicsupport ครับ')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<div class="day-card">
+  <div><div class="day-num">30</div><div class="day-label">อังคาร</div></div>
+  <div class="day-body">
+    <div class="day-type t-cta">FINAL DAY</div>
+    <div class="day-hook">วันสุดท้ายของเดือนครับ ยังไม่สายครับ</div>
+    <div class="day-caption">ถ้าคุณอ่านมาถึงตรงนี้ครับ
+แสดงว่าคุณสนใจดนตรีจริงๆ ครับ
+
+อย่าปล่อยให้เครื่องดนตรีที่บ้าน
+รอคุณต่อไปครับ
+
+Activation Code ของคุณคือครับ
+@musicsupport ครับ
+
+ทักมาได้เลยครับ 🔓</div>
+    <div class="day-meta">
+      <span class="day-tag">#วันสุดท้าย</span>
+      <span class="day-link">LINE: @musicsupport</span>
+      <button class="copy-btn" onclick="copyText(this, 'วันสุดท้ายของเดือนครับ ยังไม่สายครับ\n\nถ้าคุณอ่านมาถึงตรงนี้ครับ\nแสดงว่าคุณสนใจดนตรีจริงๆ ครับ\n\nอย่าปล่อยให้เครื่องดนตรีที่บ้าน\nรอคุณต่อไปครับ\n\nActivation Code ของคุณคือครับ\n@musicsupport ครับ\n\nทักมาได้เลยครับ 🔓')">COPY ครับ</button>
+    </div>
+  </div>
+</div>
+
+<!-- COWORK BOX -->
+<div class="cowork-box">
+  <div class="cb-title">คำสั่ง COWORK — รัน Content Pack นี้ครับ</div>
+  <div class="cb-cmd">ภารกิจ: โพสต์ Content วันละ 1 โพสต์บน Facebook ส่วนตัวครับ
+
+เปิด Facebook ที่ Login ไว้บนเครื่องแล้วครับ
+ไปที่หน้า Timeline ส่วนตัวครับ
+กด "สร้างโพสต์" ครับ
+
+วันที่ [ระบุวัน] โพสต์ข้อความนี้ครับ
+[Copy Caption จากไฟล์ echo_content_30days.html]
+
+เพิ่ม Hashtag ตามที่กำหนดครับ
+กด "โพสต์" ครับ
+
+ข้อควรระวังครับ
+- โพสต์วันละ 1 ครั้งเท่านั้นครับ
+- เว้นช่วง 22-26 ชั่วโมงระหว่างโพสต์ครับ
+- ไม่โพสต์ซ้ำ Caption เดิมครับ</div>
+</div>
+
+<footer>ECHO PROJECT · CONTENT PACK 30 วัน · ดนตรี กตัญญู ผู้ผลิต มิตร AI</footer>
+
+<script>
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'COPIED ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPY ครับ';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    btn.textContent = 'COPY ครับ';
+  });
+}
+</script>
+</body>
+</html>
