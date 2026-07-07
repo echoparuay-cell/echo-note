@@ -61,7 +61,7 @@
 <div class="wrap">
   <p class="eyebrow">เสียงสะท้อนจากโมงยาม · A + B รวมแกน</p>
   <h1>เสียงสะท้อนจากโมงยาม</h1>
-  <p class="sub">จังหวะ (บน) ป้อนเข้า → ระดับเสียง + เชป (ล่าง)</p>
+  <p class="sub">ทุกเม็ดตั้งหลักที่ ซอล → ห้องสุดท้ายคือการเคลื่อนไหวของเสียง</p>
 
   <div class="secLabel">▲ แกนจังหวะ · นับเม็ด</div>
   <div class="staffwrap"><svg id="staff" viewBox="0 0 680 120"></svg></div>
@@ -70,6 +70,14 @@
       <div class="vt">กลุ่มสุดท้าย (สลับ 8 แบบ)</div>
       <div class="vv" id="vName"></div>
       <div class="arrows"><button id="prevV">◀</button><button id="nextV">▶</button></div>
+    </div>
+    <div class="vbox">
+      <div class="vt">การเคลื่อนไหว · ห้องสุดท้าย</div>
+      <div class="tempo" style="justify-content:center;margin-top:6px">
+        <button class="pill" data-move="up">↗ Up</button>
+        <button class="pill" data-move="same">→ Same</button>
+        <button class="pill" data-move="down">↘ Down</button>
+      </div>
     </div>
     <div class="vbox" style="border-color:#2a3458">
       <div class="vt">Tempo</div>
@@ -80,9 +88,9 @@
     </div>
   </div>
 
-  <div class="pipe">⬇ จำนวนเม็ด = เวลาโมง <small>(สายส่งจากบนลงล่าง)</small> ⬇</div>
+  <div class="pipe">⬇ ซอล คือบ้าน (7 โมง) · ห้องสุดท้ายพาเสียงเดินทาง <small>(ขึ้น · ลง · คงที่ — ไกลเท่าจำนวนเม็ด)</small> ⬇</div>
 
-  <div class="secLabel">▼ แกนระดับเสียง · เวลา → โน้ต → เชป</div>
+  <div class="secLabel">▼ แกนระดับเสียง · การเคลื่อนไหว → โน้ต → เชป</div>
   <div id="clock"></div>
   <div class="nowplay" id="nowplay"></div>
 
@@ -92,7 +100,7 @@
   </div>
 
   <div class="panel" id="panel"></div>
-  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ตั้งหลัก · กลุ่ม 4 สลับได้)</p>
+  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ซอลตั้งหลัก · กลุ่ม 4 เคลื่อนไหว Up / Down / Same ตามจำนวนเม็ด)</p>
 </div>
 
 <script>
@@ -101,6 +109,13 @@ var THAI=["โด","โด#","เร","เร#","มี","ฟา","ฟา#","ซ
 var CLOCK=["12","1","2","3","4","5","6","7","8","9","10","11"];
 var COLORS=["#E11D2A","#E0218A","#8A2BE2","#2E4FD4","#15A6E8","#36C03F","#F2D02C","#F5901E","#EE5A24","#E8312A","#E0479E","#F178B6"];
 
+/* ── บ้านของเสียง: ซอล (index 7 = 7 โมง) ── */
+var SOL=7;
+/* บันไดเสียงเดินทีละขั้น (diatonic) จากซอล
+   ขึ้น: ซอล → ลา → ที → โด(สูง)   ลง: ซอล → ฟา → มี → เร */
+var LADDER_UP=[7,9,11,12];      /* 12 = โดสูง (แสดงบนนาฬิกาที่ 12 โมง) */
+var LADDER_DOWN=[7,5,4,2];
+
 /* กลุ่ม 1-3 ตั้งหลัก (ค่าจังหวะของแต่ละเม็ด: 1=ดำ 2=ขาว 3=ขาวจุด 4=กลม) */
 var FIXED=[[1,1,2],[1,1,2],[1,1,1,1]];
 /* กลุ่ม 4: 8 แบบ */
@@ -108,10 +123,24 @@ var VARIANTS=[
   {p:[4],name:"4"},{p:[3,1],name:"3+1"},{p:[2,2],name:"2+2"},{p:[1,3],name:"1+3"},
   {p:[1,1,2],name:"1+1+2"},{p:[1,2,1],name:"1+2+1"},{p:[2,1,1],name:"2+1+1"},{p:[1,1,1,1],name:"1+1+1+1"}
 ];
-var S={variant:0,bpm:60};
+var MOVES={up:"Going Up ↗",down:"Going Down ↘",same:"Same Note →"};
+var S={variant:0,bpm:60,move:"up"};
 function dur2type(d){return d===4?"w":d===3?"hd":d===2?"h":"q";}
 function groups(){return FIXED.concat([VARIANTS[S.variant].p]);}
-function beadHour(beadCount){return beadCount%12;} /* จำนวนเม็ด -> โมง */
+
+/* ── ระดับเสียงของแต่ละเม็ดในกลุ่ม ──
+   กลุ่ม 1-3: ทุกเม็ดคือ ซอล
+   กลุ่ม 4: เดินตามหลักการเคลื่อนไหว ไกลเท่าจำนวนเม็ดในห้องนั้น */
+function pitchesFor(gi){
+  var n=groups()[gi].length,out=[],i;
+  if(gi<3){for(i=0;i<n;i++)out.push(SOL);return out;}
+  var lad=S.move==="up"?LADDER_UP:S.move==="down"?LADDER_DOWN:null;
+  for(i=0;i<n;i++)out.push(lad?lad[Math.min(i,lad.length-1)]:SOL);
+  return out;
+}
+function pHour(p){return ((p%12)+12)%12;}          /* pitch -> ตำแหน่งโมงบนนาฬิกา */
+function pName(p){return p===12?"โด(สูง)":THAI[pHour(p)];}
+function pEn(p){return p===12?"C↑":NOTES[pHour(p)];}
 
 /* ── หัวโน้ต SVG ── */
 function noteGlyph(x,y,type,color){
@@ -121,6 +150,10 @@ function noteGlyph(x,y,type,color){
   if(type==="hd")s+='<circle cx="'+(x+16)+'" cy="'+(y-2)+'" r="2.4" fill="'+(color||"#111")+'"/>';
   return s;
 }
+/* ตำแหน่ง y บนสแตฟตามระดับเสียง (ซอล=G4 อยู่เส้นที่ 2 จากล่าง y=68) */
+var PITCH_Y={7:68, 9:63, 11:58, 12:53, 5:73, 4:78, 2:83};
+function pitchY(p){return PITCH_Y[p]!==undefined?PITCH_Y[p]:68;}
+
 /* ── วาดสแตฟ (A) ── highlightGroup = ดัชนีกลุ่มที่กำลังเล่น (-1=ไม่มี) */
 function drawStaff(highlightGroup){
   var W=680,x0=18,gap=10,top=38,s="",i;
@@ -128,17 +161,25 @@ function drawStaff(highlightGroup){
   s+='<text x="'+(x0+4)+'" y="76" font-size="56" fill="#111" font-family="serif">\uD834\uDD1E</text>';
   var gs=groups(),startX=78,endX=W-26,per=(endX-startX)/4,g;
   for(g=0;g<4;g++){
-    var gx=startX+g*per, hour=beadHour(gs[g].length), col=COLORS[hour];
+    var gx=startX+g*per, pits=pitchesFor(g);
+    var col=COLORS[pHour(pits[pits.length-1])]; /* สีของกลุ่ม = โน้ตปลายทาง */
     if(g>0)s+='<line x1="'+(gx-6)+'" y1="'+top+'" x2="'+(gx-6)+'" y2="'+(top+4*gap)+'" stroke="#999" stroke-width="1"/>';
     if(highlightGroup===g)s+='<rect x="'+(gx-6)+'" y="'+(top-6)+'" width="'+per+'" height="'+(4*gap+12)+'" fill="'+col+'" fill-opacity="0.18"/>';
     var notes=gs[g],acc=0,n;
     for(n=0;n<notes.length;n++){
-      var nx=gx+(acc/4)*per+16;
-      s+=noteGlyph(nx,70,dur2type(notes[n]), highlightGroup===g?col:"#111");
+      var nx=gx+(acc/4)*per+16, py=pitchY(pits[n]);
+      var ncol=highlightGroup===g?COLORS[pHour(pits[n])]:"#111";
+      s+=noteGlyph(nx,py,dur2type(notes[n]),ncol);
       acc+=notes[n];
     }
-    // ป้ายจำนวนเม็ด -> โมง ใต้ห้อง
-    s+='<text x="'+(gx+per/2-6)+'" y="'+(top+4*gap+22)+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+col+'">'+notes.length+' เม็ด → '+CLOCK[hour]+' โมง</text>';
+    /* ป้ายใต้ห้อง: กลุ่ม 1-3 = ซอล · กลุ่ม 4 = เส้นทางการเคลื่อนไหว */
+    var label;
+    if(g<3){label="ซอล";}
+    else{
+      var names=[];for(n=0;n<pits.length;n++)names.push(pName(pits[n]));
+      label=(pits.length===1||S.move==="same")?("ซอล · Same"):names.join("→");
+    }
+    s+='<text x="'+(gx+per/2-6)+'" y="'+(top+4*gap+22)+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+(g<3?COLORS[SOL]:col)+'">'+label+'</text>';
   }
   s+='<line x1="'+endX+'" y1="'+top+'" x2="'+endX+'" y2="'+(top+4*gap)+'" stroke="#111" stroke-width="3"/>';
   document.getElementById("staff").innerHTML='<svg viewBox="0 0 680 140" style="width:100%;max-width:680px;height:auto;display:block;margin:0 auto">'+s.replace('viewBox="0 0 680 120"','')+'</svg>';
@@ -154,21 +195,25 @@ function drawClock(activeHours,handHour){
   s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
   for(i=0;i<12;i++){
     var on=activeHours.indexOf(i)>=0, p=xy(i*30,(RO+RI)/2);
-    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(on?1:0.16)+'" stroke="'+(on?"#E8C547":"#05070f")+'" stroke-width="'+(on?3:1.4)+'"/>';
+    var isHome=(i===SOL);
+    s+='<path d="'+sec(i)+'" fill="'+COLORS[i]+'" fill-opacity="'+(on?1:0.16)+'" stroke="'+(on?(isHome?"#36C03F":"#E8C547"):"#05070f")+'" stroke-width="'+(on?3:1.4)+'"/>';
     var pNum=xy(i*30,RO-14),pEn=xy(i*30,(RO+RI)/2),pTh=xy(i*30,RI+15);
     var cNum=on?"#ffffff":"#7a86a8",cEn=on?"#ffffff":"#aeb8d0",cTh=on?"#ffe9b8":"#7f8aac";
     s+='<text x="'+pNum[0]+'" y="'+(pNum[1]+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+cNum+'" pointer-events="none">'+CLOCK[i]+'</text>';
     s+='<text x="'+pEn[0]+'" y="'+(pEn[1]+6)+'" text-anchor="middle" font-size="18" font-weight="800" fill="'+cEn+'" pointer-events="none">'+NOTES[i]+'</text>';
     s+='<text x="'+pTh[0]+'" y="'+(pTh[1]+3)+'" text-anchor="middle" font-size="9" font-weight="600" fill="'+cTh+'" pointer-events="none">'+THAI[i]+'</text>';
   }
-  // เชป
+  /* ป้ายบ้าน ซอล */
+  var hb=xy(SOL*30,RO+22);
+  s+='<text x="'+hb[0]+'" y="'+(hb[1]+3)+'" text-anchor="middle" font-size="10" font-weight="800" fill="#36C03F">🏠 บ้าน</text>';
+  /* เชป */
   if(activeHours.length>=2){
     if(activeHours.length===2){var q0=xy(activeHours[0]*30,RI-8),q1=xy(activeHours[1]*30,RI-8);
       s+='<line x1="'+q0[0]+'" y1="'+q0[1]+'" x2="'+q1[0]+'" y2="'+q1[1]+'" stroke="#E8C547" stroke-width="3"/>';}
     else{var pts="";for(i=0;i<activeHours.length;i++){var q=xy(activeHours[i]*30,RI-8);pts+=q[0]+","+q[1]+" ";}
       s+='<polygon points="'+pts+'" fill="#E8C547" fill-opacity="0.13" stroke="#E8C547" stroke-width="2.5" stroke-linejoin="round"/>';}
   }
-  // เข็ม
+  /* เข็ม */
   for(i=0;i<activeHours.length;i++){var h=activeHours[i],isH=(h===handHour),e=xy(h*30,RI-8);
     s+='<line x1="200" y1="200" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#E8C547" stroke-width="'+(isH?5:2.5)+'" stroke-linecap="round" stroke-opacity="'+(isH?1:0.75)+'"/>';
     s+='<circle cx="'+e[0]+'" cy="'+e[1]+'" r="'+(isH?5:3.5)+'" fill="#E8C547"/>';}
@@ -176,10 +221,15 @@ function drawClock(activeHours,handHour){
   document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:380px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
 }
 
-function uniqueHours(){var gs=groups(),u=[],i;for(i=0;i<4;i++){var h=beadHour(gs[i].length);if(u.indexOf(h)<0)u.push(h);}return u;}
+/* โมงทั้งหมดที่ก้อนนี้แตะ (ซอลเสมอ + เส้นทางห้องสุดท้าย) */
+function uniqueHours(){
+  var u=[SOL],pits=pitchesFor(3),i;
+  for(i=0;i<pits.length;i++){var h=pHour(pits[i]);if(u.indexOf(h)<0)u.push(h);}
+  return u;
+}
 function analyze(hrs){
   var u=hrs.slice().sort(function(a,b){return a-b;}),n=u.length,i;
-  if(n<=1)return{name:"จุดเดียว",sym:null};
+  if(n<=1)return{name:"จุดเดียว — อยู่บ้าน",sym:null};
   if(n===2){var g=Math.abs(u[0]-u[1]);if(g>6)g=12-g;return g===6?{name:"เส้น — ไทรโทน",sym:true}:{name:"เส้นเชื่อม",sym:false};}
   var gaps=[];for(i=0;i<n;i++)gaps.push((u[(i+1)%n]-u[i]+12)%12);
   var eq=true;for(i=0;i<gaps.length;i++)if(gaps[i]!==gaps[0])eq=false;
@@ -192,18 +242,22 @@ function refreshStatic(){
   document.getElementById("vName").textContent="แบบ "+(S.variant+1)+"/8 · "+VARIANTS[S.variant].name;
   drawStaff(-1);
   var u=uniqueHours();
-  drawClock(u,null);
-  var gs=groups(), melody=[];for(var i=0;i<4;i++)melody.push(NOTES[beadHour(gs[i].length)]);
+  drawClock(u,SOL);
+  var pits=pitchesFor(3),names=[],i;
+  for(i=0;i<pits.length;i++)names.push(pName(pits[i]));
   var a=analyze(u);
   var html='<div class="shapeName '+(a.sym===true?"sym":a.sym===false?"home":"")+'">◆ '+a.name+'</div>';
-  html+='<div style="margin-top:8px"><b style="color:#E8C547">ทำนองจากก้อนนี้:</b> '+melody.join(" · ")+'</div>';
+  html+='<div style="margin-top:8px"><b style="color:#E8C547">ทำนองจากก้อนนี้:</b> ซอล · ซอล · ซอล · <b>'+names.join("→")+'</b></div>';
+  html+='<div style="margin-top:4px;color:#9aa6c2">ห้องสุดท้าย '+pits.length+' เม็ด → '+MOVES[S.move]+(S.move!=="same"&&pits.length>1?(' เดินทาง '+(pits.length-1)+' ขั้น'):' อยู่ที่ ซอล')+'</div>';
   html+='<div class="ivlist">';
-  for(i=0;i<u.length;i++)html+='<span class="ivchip" style="border-color:'+COLORS[u[i]]+'">'+NOTES[u[i]]+' · '+CLOCK[u[i]]+'โมง</span>';
+  for(i=0;i<u.length;i++)html+='<span class="ivchip" style="border-color:'+COLORS[u[i]]+'">'+NOTES[u[i]]+' · '+CLOCK[u[i]]+'โมง'+(u[i]===SOL?' 🏠':'')+'</span>';
   html+='</div>';
   document.getElementById("panel").innerHTML=html;
-  // tempo pills
+  /* pills */
   var tp=document.querySelectorAll("[data-bpm]");
   for(i=0;i<tp.length;i++){tp[i].className="pill"+(parseInt(tp[i].getAttribute("data-bpm"),10)===S.bpm?" on":"");}
+  var mp=document.querySelectorAll("[data-move]");
+  for(i=0;i<mp.length;i++){mp[i].className="pill"+(mp[i].getAttribute("data-move")===S.move?" on":"");}
 }
 
 /* ── เสียง ── */
@@ -214,7 +268,7 @@ function tone(idx,dur){if(!ac)ac=new(window.AudioContext||window.webkitAudioCont
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
   o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);}
 
-/* ── เล่น: playhead วิ่งบนสแตฟ + เข็มนาฬิกาเต้นตามกลุ่ม ── */
+/* ── เล่น: playhead วิ่งบนสแตฟ + เข็มนาฬิกาเดินทางตามเสียง ── */
 var timers=[],playing=false;
 function stop(){playing=false;for(var i=0;i<timers.length;i++)clearTimeout(timers[i]);timers=[];
   document.getElementById("nowplay").textContent="";refreshStatic();}
@@ -223,18 +277,27 @@ function play(){
   var spb=60/S.bpm, gs=groups(), t=0, acc=[];
   for(var g=0;g<4;g++){
     (function(gi){
-      var notes=gs[gi], hour=beadHour(notes.length);
-      // ตอนกลุ่มเริ่ม: ไฮไลต์สแตฟ + เพิ่มเข็ม
+      var notes=gs[gi], pits=pitchesFor(gi);
+      /* ตอนกลุ่มเริ่ม: ไฮไลต์สแตฟ */
       timers.push(setTimeout(function(){
         if(!playing)return;
-        if(acc.indexOf(hour)<0)acc.push(hour);
-        drawStaff(gi); drawClock(acc,hour);
-        document.getElementById("nowplay").textContent=notes.length+" เม็ด → "+CLOCK[hour]+" โมง → "+NOTES[hour]+" ("+THAI[hour]+")";
+        if(acc.indexOf(SOL)<0)acc.push(SOL);
+        drawStaff(gi); drawClock(acc,SOL);
+        if(gi<3)document.getElementById("nowplay").textContent="กลุ่ม "+(gi+1)+" · ซอล (ตั้งหลัก 🏠)";
       }, t*1000));
-      // เล่นเสียงแต่ละเม็ดตามค่าจังหวะ (โน้ตเดียวกันทั้งกลุ่ม)
+      /* เล่นเสียงแต่ละเม็ด — ห้องสุดท้ายเข็มเดินทางตามโน้ต */
       var localT=t;
       for(var n=0;n<notes.length;n++){
-        (function(at,val){timers.push(setTimeout(function(){if(playing)tone(hour,val*spb*0.9);},at*1000));})(localT,notes[n]);
+        (function(at,val,p,isLast){timers.push(setTimeout(function(){
+          if(!playing)return;
+          tone(p,val*spb*0.9);
+          if(isLast){
+            var h=pHour(p);
+            if(acc.indexOf(h)<0)acc.push(h);
+            drawClock(acc,h);
+            document.getElementById("nowplay").textContent="ห้องสุดท้าย · "+MOVES[S.move]+" → "+pName(p);
+          }
+        },at*1000));})(localT,notes[n],pits[n],gi===3);
         localT+=notes[n]*spb;
       }
     })(g);
@@ -249,6 +312,8 @@ document.getElementById("prevV").onclick=function(){S.variant=(S.variant+7)%8;re
 document.getElementById("nextV").onclick=function(){S.variant=(S.variant+1)%8;refreshStatic();};
 var tps=document.querySelectorAll("[data-bpm]");
 for(var ti=0;ti<tps.length;ti++){tps[ti].onclick=function(){S.bpm=parseInt(this.getAttribute("data-bpm"),10);refreshStatic();};}
+var mps=document.querySelectorAll("[data-move]");
+for(var mi=0;mi<mps.length;mi++){mps[mi].onclick=function(){S.move=this.getAttribute("data-move");refreshStatic();};}
 document.getElementById("play").onclick=play;
 document.getElementById("stop").onclick=stop;
 
