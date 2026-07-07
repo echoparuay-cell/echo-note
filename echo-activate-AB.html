@@ -100,7 +100,7 @@
   </div>
 
   <div class="panel" id="panel"></div>
-  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ซอลตั้งหลัก · กลุ่ม 4 เคลื่อนไหว Up / Down / Same ตามจำนวนเม็ด)</p>
+  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ซอลตั้งหลัก · กลุ่ม 4 เคลื่อนไหว Up / Down / Same ตามจำนวนเม็ด · 𝄇 เล่นซ้ำ 2 รอบเสมอ)</p>
 </div>
 
 <script>
@@ -181,7 +181,11 @@ function drawStaff(highlightGroup){
     }
     s+='<text x="'+(gx+per/2-6)+'" y="'+(top+4*gap+22)+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+(g<3?COLORS[SOL]:col)+'">'+label+'</text>';
   }
-  s+='<line x1="'+endX+'" y1="'+top+'" x2="'+endX+'" y2="'+(top+4*gap)+'" stroke="#111" stroke-width="3"/>';
+  /* เครื่องหมาย repeat ปิดท้ายก้อน: จุดคู่ + เส้นบาง + เส้นหนา */
+  s+='<circle cx="'+(endX-12)+'" cy="'+(top+1.5*gap)+'" r="2.6" fill="#111"/>';
+  s+='<circle cx="'+(endX-12)+'" cy="'+(top+2.5*gap)+'" r="2.6" fill="#111"/>';
+  s+='<line x1="'+(endX-5)+'" y1="'+top+'" x2="'+(endX-5)+'" y2="'+(top+4*gap)+'" stroke="#111" stroke-width="1.5"/>';
+  s+='<line x1="'+endX+'" y1="'+top+'" x2="'+endX+'" y2="'+(top+4*gap)+'" stroke="#111" stroke-width="4"/>';
   document.getElementById("staff").innerHTML='<svg viewBox="0 0 680 140" style="width:100%;max-width:680px;height:auto;display:block;margin:0 auto">'+s.replace('viewBox="0 0 680 120"','')+'</svg>';
 }
 
@@ -274,37 +278,44 @@ function stop(){playing=false;for(var i=0;i<timers.length;i++)clearTimeout(timer
   document.getElementById("nowplay").textContent="";refreshStatic();}
 function play(){
   if(playing)return;playing=true;for(var i=0;i<timers.length;i++)clearTimeout(timers[i]);timers=[];
-  var spb=60/S.bpm, gs=groups(), t=0, acc=[];
-  for(var g=0;g<4;g++){
-    (function(gi){
-      var notes=gs[gi], pits=pitchesFor(gi);
-      /* ตอนกลุ่มเริ่ม: ไฮไลต์สแตฟ */
-      timers.push(setTimeout(function(){
-        if(!playing)return;
-        if(acc.indexOf(SOL)<0)acc.push(SOL);
-        drawStaff(gi); drawClock(acc,SOL);
-        if(gi<3)document.getElementById("nowplay").textContent="กลุ่ม "+(gi+1)+" · ซอล (ตั้งหลัก 🏠)";
-      }, t*1000));
-      /* เล่นเสียงแต่ละเม็ด — ห้องสุดท้ายเข็มเดินทางตามโน้ต */
-      var localT=t;
-      for(var n=0;n<notes.length;n++){
-        (function(at,val,p,isLast){timers.push(setTimeout(function(){
+  var spb=60/S.bpm, gs=groups(), acc=[];
+  /* ความยาว 1 รอบ */
+  var total=0,g0,n0;
+  for(g0=0;g0<4;g0++)for(n0=0;n0<gs[g0].length;n0++)total+=gs[g0][n0]*spb;
+  /* เครื่องหมาย repeat: เล่น 2 รอบเสมอ */
+  for(var rep=0;rep<2;rep++){
+    var t=rep*total;
+    for(var g=0;g<4;g++){
+      (function(gi,rp){
+        var notes=gs[gi], pits=pitchesFor(gi);
+        /* ตอนกลุ่มเริ่ม: ไฮไลต์สแตฟ */
+        timers.push(setTimeout(function(){
           if(!playing)return;
-          tone(p,val*spb*0.9);
-          if(isLast){
-            var h=pHour(p);
-            if(acc.indexOf(h)<0)acc.push(h);
-            drawClock(acc,h);
-            document.getElementById("nowplay").textContent="ห้องสุดท้าย · "+MOVES[S.move]+" → "+pName(p);
-          }
-        },at*1000));})(localT,notes[n],pits[n],gi===3);
-        localT+=notes[n]*spb;
-      }
-    })(g);
-    for(var n2=0;n2<gs[g].length;n2++)t+=gs[g][n2]*spb;
+          if(acc.indexOf(SOL)<0)acc.push(SOL);
+          drawStaff(gi); drawClock(acc,SOL);
+          if(gi<3)document.getElementById("nowplay").textContent="รอบ "+(rp+1)+"/2 · กลุ่ม "+(gi+1)+" · ซอล (ตั้งหลัก 🏠)";
+        }, t*1000));
+        /* เล่นเสียงแต่ละเม็ด — ห้องสุดท้ายเข็มเดินทางตามโน้ต */
+        var localT=t;
+        for(var n=0;n<notes.length;n++){
+          (function(at,val,p,isLast){timers.push(setTimeout(function(){
+            if(!playing)return;
+            tone(p,val*spb*0.9);
+            if(isLast){
+              var h=pHour(p);
+              if(acc.indexOf(h)<0)acc.push(h);
+              drawClock(acc,h);
+              document.getElementById("nowplay").textContent="รอบ "+(rp+1)+"/2 · ห้องสุดท้าย · "+MOVES[S.move]+" → "+pName(p);
+            }
+          },at*1000));})(localT,notes[n],pits[n],gi===3);
+          localT+=notes[n]*spb;
+        }
+      })(g,rep);
+      for(var n2=0;n2<gs[g].length;n2++)t+=gs[g][n2]*spb;
+    }
   }
   timers.push(setTimeout(function(){if(playing){playing=false;refreshStatic();
-    document.getElementById("nowplay").textContent="จบก้อนเสียง · เชปรวม = "+analyze(uniqueHours()).name;}}, t*1000+200));
+    document.getElementById("nowplay").textContent="จบก้อนเสียง (เล่นซ้ำ 2 รอบ) · เชปรวม = "+analyze(uniqueHours()).name;}}, total*2*1000+200));
 }
 
 /* ── ปุ่ม ── */
