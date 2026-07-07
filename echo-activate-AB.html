@@ -67,7 +67,7 @@
   <div class="staffwrap"><svg id="staff" viewBox="0 0 680 120"></svg></div>
   <div class="ctrlA">
     <div class="vbox">
-      <div class="vt">กลุ่มสุดท้าย (สลับ 8 แบบ)</div>
+      <div class="vt">แม่สูตรคูณ (สลับ 8 แม่)</div>
       <div class="vv" id="vName"></div>
       <div class="arrows"><button id="prevV">◀</button><button id="nextV">▶</button></div>
     </div>
@@ -100,7 +100,7 @@
   </div>
 
   <div class="panel" id="panel"></div>
-  <p class="foot">เดโมรวมแกน · ก้อนเสียง = แม่ ๑ (กลุ่ม 1-3 ซอลตั้งหลัก · กลุ่ม 4 เคลื่อนไหว Up / Down / Same ตามจำนวนเม็ด · 𝄇 เล่นซ้ำ 2 รอบเสมอ)</p>
+  <p class="foot">เดโมรวมแกน · สลับได้ครบ 8 แม่ — ห้องสุดท้ายคือลายเซ็นของแต่ละแม่ (กลุ่ม 1-3 ซอลตั้งหลัก · กลุ่ม 4 เคลื่อนไหว Up / Down / Same ตามจำนวนเม็ด · 𝄇 เล่นซ้ำ 2 รอบเสมอ)</p>
 </div>
 
 <script>
@@ -124,7 +124,11 @@ var VARIANTS=[
   {p:[1,1,2],name:"1+1+2"},{p:[1,2,1],name:"1+2+1"},{p:[2,1,1],name:"2+1+1"},{p:[1,1,1,1],name:"1+1+1+1"}
 ];
 var MOVES={up:"Going Up ↗",down:"Going Down ↘",same:"Same Note →"};
-var S={variant:0,bpm:60,move:"up"};
+var MAE=["๑","๒","๓","๔","๕","๖","๗","๘"]; /* แบบจังหวะห้องสุดท้ายทั้ง 8 = แม่สูตรคูณ ๑–๘ */
+var S={variant:2,bpm:60,move:"up"};        /* เปิดมาที่ แม่ ๓ (ขาว-ขาว 2+2) */
+/* เข้าผ่านลิงก์ ?mae=1..8 เพื่อเปิดแม่ที่ต้องการได้ทันที (ใช้กับ CTA ท้ายคลิป) */
+(function(){var m=parseInt((location.search.match(/[?&]mae=(\d+)/)||[])[1],10);
+  if(m>=1&&m<=8)S.variant=m-1;})();
 function dur2type(d){return d===4?"w":d===3?"hd":d===2?"h":"q";}
 function groups(){return FIXED.concat([VARIANTS[S.variant].p]);}
 
@@ -243,14 +247,15 @@ function analyze(hrs){
 }
 
 function refreshStatic(){
-  document.getElementById("vName").textContent="แบบ "+(S.variant+1)+"/8 · "+VARIANTS[S.variant].name;
+  document.getElementById("vName").textContent="แม่ "+MAE[S.variant]+" · ห้องสุดท้าย "+VARIANTS[S.variant].name;
   drawStaff(-1);
   var u=uniqueHours();
   drawClock(u,SOL);
   var pits=pitchesFor(3),names=[],i;
   for(i=0;i<pits.length;i++)names.push(pName(pits[i]));
   var a=analyze(u);
-  var html='<div class="shapeName '+(a.sym===true?"sym":a.sym===false?"home":"")+'">◆ '+a.name+'</div>';
+  var html='<div style="text-align:center;font-size:14px;font-weight:900;color:#E8C547;margin-bottom:4px">กำลังแสดง: สูตรคูณเสียง แม่ '+MAE[S.variant]+'</div>';
+  html+='<div class="shapeName '+(a.sym===true?"sym":a.sym===false?"home":"")+'">◆ '+a.name+'</div>';
   html+='<div style="margin-top:8px"><b style="color:#E8C547">ทำนองจากก้อนนี้:</b> ซอล · ซอล · ซอล · <b>'+names.join("→")+'</b></div>';
   html+='<div style="margin-top:4px;color:#9aa6c2">ห้องสุดท้าย '+pits.length+' เม็ด → '+MOVES[S.move]+(S.move!=="same"&&pits.length>1?(' เดินทาง '+(pits.length-1)+' ขั้น'):' อยู่ที่ ซอล')+'</div>';
   html+='<div class="ivlist">';
@@ -315,7 +320,7 @@ function play(){
     }
   }
   timers.push(setTimeout(function(){if(playing){playing=false;refreshStatic();
-    document.getElementById("nowplay").textContent="จบก้อนเสียง (เล่นซ้ำ 2 รอบ) · เชปรวม = "+analyze(uniqueHours()).name;}}, total*2*1000+200));
+    document.getElementById("nowplay").textContent="จบก้อนเสียง แม่ "+MAE[S.variant]+" (เล่นซ้ำ 2 รอบ) · เชปรวม = "+analyze(uniqueHours()).name;}}, total*2*1000+200));
 }
 
 /* ── ปุ่ม ── */
