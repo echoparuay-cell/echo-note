@@ -888,14 +888,14 @@ Music Support Shop
 
 <div>
 
-1. เลือกหมายเลขกีตาร์
+1. ดูกริดสถานะด้านล่าง — กดช่องสีเขียวที่ต้องการ
 
 </div>
 
 
 <div>
 
-2. ตรวจสอบสถานะหมายเลข
+2. LINE เปิดอัตโนมัติพร้อมข้อความจองให้เลย
 
 </div>
 
@@ -932,74 +932,56 @@ Music Support Shop
 
 
 
-<section class="section">
+<style>
+.booking-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0;}
+.slot{padding:16px 8px;border-radius:10px;text-align:center;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s;border:2px solid transparent;}
+.slot.available{background:#22c55e;color:#fff;border-color:#16a34a;}
+.slot.available:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(34,197,94,.4);}
+.slot.pending{background:#eab308;color:#fff;border-color:#ca8a04;}
+.slot.booked{background:#1e3a8a;color:#fff;border-color:#1e40af;}
+.slot.inactive{background:#d1d5db;color:#6b7280;cursor:default;border-color:#9ca3af;}
+#grid-summary{margin:10px 0;font-weight:bold;color:var(--blue-deep);}
+#grid-fallback{display:none;background:#FFF4D6;color:#6B5416;padding:14px;border-radius:10px;margin-top:10px;}
+#refresh-btn{background:var(--blue);color:#fff;border:none;padding:8px 20px;border-radius:20px;cursor:pointer;margin-top:10px;font-size:14px;}
+</style>
 
-
-<h2>
-
-สถานะหมายเลข
-
-</h2>
-
-
-<table>
-
-<tr>
-
-<th>
-หมายเลข
-</th>
-
-<th>
-สถานะ
-</th>
-
-</tr>
-
-
-<tr>
-
-<td>
-PH001
-</td>
-
-<td>
-ว่าง
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>
-PH002
-</td>
-
-<td>
-ว่าง
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>
-PH003
-</td>
-
-<td>
-จองแล้ว
-</td>
-
-</tr>
-
-
-</table>
-
-
+<section class="section" id="booking-grid-section">
+<h2>สถานะหมายเลข</h2>
+<div id="grid-summary">กำลังโหลด...</div>
+<div class="booking-grid" id="booking-grid-container"></div>
+<div id="grid-fallback">เช็กสถานะล่าสุดได้ทาง LINE @musicsupport</div>
+<button id="refresh-btn" onclick="loadGrid()">🔄 รีเฟรช</button>
 </section>
+
+<script>
+(function(){
+const W='PLACEHOLDER_WEBAPP_URL';
+function loadGrid(){
+  var c=document.getElementById('booking-grid-container');
+  var s=document.getElementById('grid-summary');
+  var f=document.getElementById('grid-fallback');
+  c.innerHTML='';f.style.display='none';s.textContent='กำลังโหลด...';
+  fetch(W).then(function(r){if(!r.ok)throw 0;return r.json();})
+  .then(function(data){
+    if(!Array.isArray(data))throw 0;
+    var av=0,rd=1;
+    data.forEach(function(x){if(x.status==='available')av++;if(x.round>rd&&x.status!=='inactive')rd=x.round;});
+    s.textContent='รอบที่ '+rd+' — เหลือ '+av+' หมายเลข';
+    data.forEach(function(x){
+      var d=document.createElement('div');
+      d.className='slot '+(x.status||'inactive');
+      d.textContent=x.id;
+      if(x.status==='available'){
+        d.onclick=function(){window.open('https://line.me/R/ti/p/@musicsupport?text='+encodeURIComponent('สนใจจองหมายเลข '+x.id),'_blank');};
+      }
+      c.appendChild(d);
+    });
+  }).catch(function(){c.innerHTML='';s.textContent='';f.style.display='block';});
+}
+window.loadGrid=loadGrid;
+document.addEventListener('DOMContentLoaded',loadGrid);
+})();
+</script>
 
 
 
