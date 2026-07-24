@@ -1,0 +1,16 @@
+{
+  "name": "Echo Note · นาฬิกาเสียง",
+  "short_name": "Echo Note",
+  "description": "เส้นทางเรียนดนตรี Echo Note — สูตรคูณเสียง นาฬิกาเสียง สอดคล้องกับ syllabus ABRSM/Trinity",
+  "lang": "th",
+  "start_url": "./echo-hub.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B1020",
+  "theme_color": "#0B1020",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
