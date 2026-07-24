@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<!-- Google tag (gtag.js) — Music Support Shop -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17894568140"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-17894568140');
-  gtag('config', 'G-46HW0169HW');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>เส้นทางการเรียน · Echo Project</title>
@@ -98,7 +89,6 @@
     <div class="eyebrow">Learning Path</div>
     <h1 class="disp">เส้นทางการเรียน</h1>
     <div class="htag">ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
-    <div class="htag" style="font-size:11px;opacity:.75">สอดคล้องกับ syllabus ABRSM/Trinity · เรียงตามบันไดเกรดสอบ</div>
     <div class="prog">
       <div class="progrow"><span>ความคืบหน้า</span><b><span id="pdone">0</span>/<span id="ptotal">8</span> บท</b></div>
       <div class="bar"><div id="pbar" style="width:0%"></div></div>
@@ -132,21 +122,19 @@ var UNLOCK_CODES={
 var PREMIUM_STAGE=3;
 /* ============================================================ */
 var STAGES=[
-  {n:1,title:"Pre-Grade · รากฐานจังหวะ",sub:"ก่อนเข้าสนามสอบ — สูตรคูณเสียง กันกับดักเมโลดี้",weeks:"ฟรี",color:"#E85D1C"},
-  {n:2,title:"Grade 1–3 · นาฬิกาเสียง",sub:"คอร์ด คีย์ สเกล และรูปทรง",weeks:"ฟรี",color:"#E8851C"},
-  {n:3,title:"Grade 4–5 · เชื่อมสองแกน",sub:"โหมด เมโลดี้ อ่านโน้ตจริง",weeks:"พรีเมียม",color:"#A8390C"}
+  {n:1,title:"สูตรคูณเสียง · จังหวะ",sub:"ด่านแรก — รากฐานที่กันกับดักเมโลดี้",weeks:"สัปดาห์ 1–2",color:"#E85D1C"},
+  {n:2,title:"นาฬิกาเสียง · ระดับเสียง",sub:"คอร์ด คีย์ และรูปทรง",weeks:"สัปดาห์ 3–5",color:"#E8851C"},
+  {n:3,title:"เชื่อมสองแกน · อ่านโน้ตจริง",sub:"จังหวะ + เสียง รวมกัน",weeks:"สัปดาห์ 6–8",color:"#A8390C"}
 ];
 var LESSONS=[
   {id:1,stage:1,title:"พจนานุกรมค่าโน้ต",desc:"นับ 1-2-3-4 · เม็ด/กลุ่ม/ก้อน",file:"echo-notevalues.html"},
   {id:2,stage:1,title:"เกลี่ยเม็ด",desc:"Double / Triple / Quadruple",file:"echo-subdivide.html"},
   {id:3,stage:2,title:"นาฬิกาเสียง — คอร์ดนี้กี่โมง",desc:"เวลา↔ชื่อ↔เสียง + คีย์",file:"echo-clock.html"},
   {id:4,stage:2,title:"เวลา → Interval → เชป",desc:"คอร์ดเป็นรูปทรงเรขาคณิต",file:"echo-activate-pageB-v2.html"},
-  {id:5,stage:2,title:"Key Signature + 5 เส้น",desc:"เลือกคีย์ ระดับเสียงจริง",file:"echo-v2.1keysig.html"},
-  {id:9,stage:2,title:"นาฬิกาเสียงหมุนคีย์ — สเกล 4 ชนิด",desc:"โทนิกขึ้นเลข 12 · เมเจอร์–ไมเนอร์ครบ",file:"echo-clock-rotate.html"},
+  {id:5,stage:2,title:"Key Signature + 5 เส้น",desc:"เลือกคีย์ ระดับเสียงจริง",file:"echo-v2-keysig.html"},
   {id:6,stage:3,title:"กับดักเมโลดี้ — ทิศ + ระยะ",desc:"อ่านเสียงเป็นทิศ ไม่ใช่ชื่อ",file:"echo-direction-stepA.html"},
   {id:7,stage:3,title:"กับดักเมโลดี้ — 5 เส้น",desc:"เส้นเดียวสู่บรรทัด 5 เส้น",file:"echo-direction-stepB.html"},
-  {id:8,stage:3,title:"รวมจังหวะ + เสียง",desc:"สองแกนทำงานพร้อมกันเรียลไทม์",file:"echo-activate-AB.html"},
-  {id:10,stage:3,title:"โหมด 7 โหมด",desc:"ลายพิกัดเดียว หมุนจุดเริ่ม · โดเรียนถึงโลเครียน",file:"echo-modes.html"}
+  {id:8,stage:3,title:"รวมจังหวะ + เสียง",desc:"สองแกนทำงานพร้อมกันเรียลไทม์",file:"echo-activate-AB.html"}
 ];
 
 function load(){try{return JSON.parse(localStorage.getItem("echo_progress")||"[]");}catch(e){return [];}}
@@ -176,9 +164,8 @@ function unlocked(id){
   if(isTeacher())return true;
   var L=lessonById(id);
   if(L&&L.stage===PREMIUM_STAGE)return premiumValid();
-  var idx=-1;for(var k=0;k<LESSONS.length;k++)if(LESSONS[k].id===id){idx=k;break;}
-  if(idx<=0)return true;
-  return isDone(LESSONS[idx-1].id);
+  if(id===1)return true;
+  return isDone(id-1);
 }
 function firstCurrent(){for(var i=0;i<LESSONS.length;i++){var L=LESSONS[i];if(!isDone(L.id)&&unlocked(L.id))return L.id;}return -1;}
 
@@ -190,7 +177,7 @@ function premiumPanelHTML(){
   }
   var exp=(p&&p.expired)?'<div class="pd2" style="color:#c0392b">⚠ รหัสหมดอายุแล้ว ('+p.label+') — ต่ออายุที่แพ็กเกจ</div>':'';
   return '<div class="prem"><div class="pt2">🔒 ช่วงพรีเมียม</div>'+
-    '<div class="pd2">บทเรียนขั้น Grade 4–5 เปิดด้วยรหัสจากแพ็กเกจเต็ม (หรือเปิดลิงก์ที่มีรหัส)</div>'+exp+
+    '<div class="pd2">บท 6·7·8 เปิดด้วยรหัสจากแพ็กเกจเต็ม (หรือเปิดลิงก์ที่มีรหัส)</div>'+exp+
     '<div class="premrow"><input id="unlockInput" type="text" inputmode="numeric" placeholder="กรอกรหัสปลดล็อก" autocomplete="off"><button class="btn go" id="unlockBtn">ปลดล็อก</button></div>'+
     '<a class="btn pkg" href="'+SHOP_URL+'" target="_blank" rel="noopener">ดูแพ็กเกจ ›</a></div>';
 }
@@ -224,15 +211,6 @@ function render(){
     }
     html+='</div>';
   }
-  /* ===== ห้องทดลอง Custom — ฟรี อยู่นอกบันได เข้าเมื่อไหร่ก็ได้ ===== */
-  html+='<div class="stage" style="border:1.5px dashed #E8851C"><div class="stagehead">';
-  html+='<div class="stagenum" style="background:#2E7D32">🧪</div>';
-  html+='<div><div class="st">ห้องทดลอง Custom</div><div class="ss">สนามเด็กเล่น — เลือกคีย์ สเกล โหมดอิสระ หรือแต้มลายพิกัดสร้างสเกลของตัวเอง</div></div>';
-  html+='<div class="weeks">ฟรี · ไม่ล็อก</div></div>';
-  html+='<div class="lesson"><div class="status">∞</div>';
-  html+='<div class="lmid"><div class="lt">จิ้มเอง ฟังเอง เห็นเอง</div><div class="ld">แต้มลายตรงกับสเกลจริง ระบบบอกชื่อให้เอง</div></div>';
-  html+='<div class="lacts"><a class="btn go" href="echo-custom.html" target="_blank" rel="noopener">เข้าห้องทดลอง</a></div></div>';
-  html+='</div>';
   document.getElementById("roadmap").innerHTML=html;
   var tb=document.getElementById("teacherBtn");
   tb.className="mini"+(isTeacher()?" on":"");

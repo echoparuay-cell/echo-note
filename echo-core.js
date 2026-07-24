@@ -1,5 +1,5 @@
 /* ============================================================
-   echo-core.js · v1.1
+   echo-core.js · v1.2
    แก่นคณิตศาสตร์ mod-12 ของนาฬิกาเสียง Echo Note
    คิดที่เดียว — ทุกหน้าเรียกใช้ผ่าน <script src="echo-core.js">
    ครอบคลุม: สี/ชื่อโน้ต · สเกล 4 ชนิด · โหมด 7 โหมด ·
@@ -78,15 +78,18 @@ function createWheel(container){
     var pN=xy(i*30,RO-12);
     s+='<text x="'+pN[0]+'" y="'+(pN[1]+4)+'" text-anchor="middle" font-size="12" font-weight="800" fill="'+(i===0?"#E8C547":"#7a86a8")+'" pointer-events="none">'+(i===0?12:i)+'</text>';
   }
+  s+='<g class="ec-holegrp" style="transition:opacity .5s">';
   s+='<polygon class="ec-hole" fill="#05070f" fill-opacity="0.88" stroke="#E8C547" stroke-width="3" stroke-linejoin="round" pointer-events="none"/>';
   var top=xy(0,RI);
   s+='<circle cx="'+top[0]+'" cy="'+top[1]+'" r="7" fill="#E8C547" pointer-events="none"/>';
+  s+='</g>';
   s+='<circle cx="200" cy="200" r="7" fill="#E8C547" pointer-events="none"/>';
   s+='</svg>';
   container.innerHTML=s;
 
   var ring=container.querySelector(".ec-ring"),
       hole=container.querySelector(".ec-hole"),
+      holegrp=container.querySelector(".ec-holegrp"),
       segs=container.querySelectorAll(".ec-seg"),
       lbls=container.querySelectorAll(".ec-lbl"),
       rot=0, holeIv=null, tapCb=null;
@@ -111,8 +114,13 @@ function createWheel(container){
     }
     requestAnimationFrame(step);
   }
-  function set(tonic,iv){
-    var target=-tonic*30,best=target;
+  /* opts (ไม่บังคับ): {rotate:true/false, showHole:true/false}
+     rotate=false → ล้อนิ่ง (โหมดตรึง) · showHole=false → ซ่อนพิกัด */
+  function set(tonic,iv,opts){
+    opts=opts||{};
+    var doRotate=(opts.rotate!==false), showHole=(opts.showHole!==false);
+    holegrp.style.opacity=showHole?1:0;
+    var target=doRotate?(-tonic*30):0,best=target;
     while(best-rot>180)best-=360;
     while(best-rot<-180)best+=360;
     rot=best;
@@ -130,7 +138,17 @@ function createWheel(container){
       lbls[j].style.opacity=lit?1:0.4;
     }
   }
-  return {set:set,onTap:function(cb){tapCb=cb;}};
+  /* map: {pc:{big:"A♭",small:"ลา♭"}} · pc ที่ไม่ระบุกลับเป็นชื่อมาตรฐาน */
+  function relabel(map){
+    for(var j=0;j<lbls.length;j++){
+      var pcv=parseInt(lbls[j].getAttribute("data-pc"),10),
+          texts=lbls[j].querySelectorAll("text"),
+          m=map&&map[pcv];
+      texts[0].textContent=m?m.big:NOTE_EN[pcv];
+      texts[1].textContent=(m&&m.small!==undefined)?m.small:NOTE_TH[pcv];
+    }
+  }
+  return {set:set,onTap:function(cb){tapCb=cb;},relabel:relabel};
 }
 
 /* ---------- เสียง: ไล่สเกลขาขึ้น + ปิดอ็อกเทฟ ---------- */

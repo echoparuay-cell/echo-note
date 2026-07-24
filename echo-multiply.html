@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <!-- Echo Note metadata · Curriculum Spine v1 · L1 สูตรคูณเสียง (พจนานุกรม+เกลี่ยเม็ด) -->
+  <meta name="echo:level" content="1">
+  <meta name="echo:grade" content="pre">
+  <meta name="echo:track" content="both">
+  <meta name="echo:syllabus" content="สอดคล้องกับ syllabus ABRSM/Trinity">
+
+  <!-- Echo Note metadata · Curriculum Spine v1 · L1 พจนานุกรมค่าโน้ต -->
+  <meta name="echo:level" content="2">
+  <meta name="echo:grade" content="pre-1">
+  <meta name="echo:track" content="both">
+  <meta name="echo:syllabus" content="สอดคล้องกับ syllabus ABRSM/Trinity">
+
+<!-- Google tag (gtag.js) — Music Support Shop -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17894568140"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17894568140');
+  gtag('config', 'G-46HW0169HW');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สูตรคูณเสียง · v3</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:720px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:23px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:8px}
+  .ask{text-align:center;color:#fff;font-size:14px;font-weight:700;margin:10px 0 16px}
+  .ask b{color:#E8C547}
+
+  .cards{display:flex;flex-direction:column;gap:12px}
+  .card{background:#0e1530;border:1.5px solid #1f2a4d;border-radius:16px;padding:14px 16px}
+  .card.three{border-color:#2E4FD4;box-shadow:0 0 0 2px #2E4FD433}
+  .card.gap{border-style:dashed;border-color:#56607f;background:#0a0f22}
+  .cardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+  .cardhead .cnt{font-size:15px;font-weight:900;color:#fff}
+  .cardhead .cnt .num{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#E8C547;color:#0B1020;margin-right:8px;font-weight:900}
+  .card.three .cardhead .cnt .num{background:#2E4FD4;color:#fff}
+  .cardhead .nm{font-size:13px;color:#cdd6ee}
+  .measure{background:#fbfbf7;border-radius:12px;padding:8px;margin:6px 0 10px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+  .chip{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;background:#0a0f22;border:1px solid #1f2a4d;color:#cdd6ee}
+  .chip.bead{border-color:#E8C547;color:#E8C547}
+  .chip.fam{border-color:#36C03F;color:#36C03F}
+  .chip.fam3{border-color:#2E4FD4;color:#79c0ff}
+  .btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:9px 18px;border-radius:999px;cursor:pointer;font-size:13.5px;font-weight:800;border:1.5px solid #2a3458;background:transparent;color:#cdd6ee}
+  .btn.gold{background:#E8C547;color:#0B1020;border:none}
+  .btn.blue{background:#2E4FD4;color:#fff;border:none}
+
+  .gapbox{text-align:center;color:#9aa6c2;font-size:14px;line-height:1.7;padding:14px 0}
+  .gapbox b{color:#E0479E}
+
+  .axis{margin-top:10px;background:#0a1430;border:1px solid #2E4FD4;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;font-size:13px;color:#cdd6ee}
+  .axis b{color:#79c0ff}
+  .axis .clk{display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:#2E4FD4;color:#fff;font-weight:900;font-size:12px}
+
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:18px;line-height:1.8}
+  .vocab{background:#0e1530;border:1px solid #1f2a4d;border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .vocab .vh{font-size:12px;color:#E8C547;font-weight:800;text-align:center;margin-bottom:9px;letter-spacing:1px}
+  .vrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .vchip{flex:1 1 150px;background:#0a0f22;border:1px solid #1f2a4d;border-radius:10px;padding:9px 10px;text-align:center}
+  .vchip .vn{font-size:15px;font-weight:900}
+  .vchip .vd{font-size:11px;color:#9aa6c2;margin-top:3px;line-height:1.5}
+  .illus{background:#fbfbf7;border-radius:14px;padding:14px 8px;margin-top:16px}
+  .illus svg{display:block;margin:0 auto;width:100%;max-width:480px;height:auto}
+  .illuscap{text-align:center;font-size:12px;color:#9aa6c2;margin-top:6px}
+  .illuscap b{color:#E8C547}
+  .illushead{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-align:center;margin:16px 0 6px;text-transform:uppercase}
+
+  /* ===== ส่วนที่ 2 · เกลี่ยเม็ด ===== */
+  .sect{margin:26px 0 6px;text-align:center}
+  .sect .sh{font-size:11px;letter-spacing:2px;color:#E8C547;font-weight:800;text-transform:uppercase}
+  .sect .st2{font-size:19px;font-weight:900;color:#fff;margin-top:4px}
+  .sect .sd{font-size:12.5px;color:#9aa6c2;margin-top:4px;line-height:1.6}
+  .def{text-align:center;color:#E8C547;font-size:12.5px;font-weight:700;margin:6px 0 12px}
+  .lane{background:#fbfbf7;border-radius:12px;padding:8px 6px;margin:8px 0}
+  .lane svg{display:block;margin:0 auto;width:100%;max-width:330px;height:auto}
+  .laneInfo{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .tag{font-size:12.5px;font-weight:800;padding:4px 11px;border-radius:8px}
+  .medbadge{font-size:13px;font-weight:900}
+  .cardhead .en{font-size:18px;font-weight:900}
+  .cardhead .th{font-size:13px;color:#9aa6c2;font-weight:700}
+  .compare{text-align:center;margin:8px 0 4px}
+  .btn.big{padding:11px 22px;font-size:14px;background:#E8C547;color:#0B1020;border:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v3 · สูตรคูณเสียง</p>
+  <h1>สูตรคูณเสียง — ใน 1 ห้อง มีโน้ตเท่ากันกี่ตัว?</h1>
+  <p class="sub">ห้อง 4/4 · ทุกตัวในชุดเดียวกันยาวเท่ากันเป๊ะ</p>
+  <p class="ask">นับ <b>1 → 2 → 3 → 4</b> · กดฟังแต่ละชุดเทียบกัน</p>
+
+  <div class="vocab">
+    <div class="vh">โครงสร้าง เม็ด · กลุ่ม · ก้อน</div>
+    <div class="vrow">
+      <div class="vchip"><div class="vn" style="color:#E8C547">เม็ด</div><div class="vd">1 โน้ตในจังหวะ<br>หน่วยย่อย (subdivision)</div></div>
+      <div class="vchip"><div class="vn" style="color:#79c0ff">กลุ่ม</div><div class="vd">1 ห้องเพลง<br>(1 measure)</div></div>
+      <div class="vchip"><div class="vn" style="color:#5fe07a">ก้อน</div><div class="vd">4 ห้องต่อเนื่อง<br>= 1 แม่สูตรคูณ</div></div>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="illushead">ภาพรวม · แม่ ๑ บนบรรทัด 5 เส้น</div>
+  <div class="illus"><div id="mae1"></div></div>
+  <div class="illuscap">โน้ตแต่ละตัว = <b style="color:#E8C547">เม็ด</b> · แต่ละห้อง = <b style="color:#79c0ff">กลุ่ม</b> · ทั้ง 4 ห้อง = <b style="color:#5fe07a">ก้อน</b> (แม่ ๑)</div>
+
+  <div class="sect">
+    <div class="sh">ส่วนที่ 2 · ซอยต่อจากตัวดำ</div>
+    <div class="st2">เกลี่ยเม็ด — ตัวดำคือประตู ซอยได้อีก</div>
+    <div class="sd">เอา 1 จังหวะ (ตัวดำ 1 ตัว) มาเกลี่ยให้ทุกเม็ดยาวเท่ากัน</div>
+  </div>
+  <p class="def">เกลี่ยเม็ด = แบ่งเวลาให้ทุกเม็ดยาวเท่ากัน</p>
+
+  <div id="ways"></div>
+
+  <div class="compare"><button class="btn big" id="cmpAll">▶ ฟังเทียบทั้งสาม</button></div>
+
+  <p class="foot">สูตรคูณเสียง v3 · ส่วนที่ 1 พจนานุกรมค่าโน้ต + ส่วนที่ 2 เกลี่ยเม็ด · เม็ด = หน่วยนับ · Double = เขบ็ตหนึ่งชั้น · Quadruple = เขบ็ตสองชั้น</p>
+</div>
+
+<script>
+var COL3="#2E4FD4"; /* สีของ 3 โมง */
+var S={revealed:false};
+
+var CARDS=[
+  {count:1,name:"ตัวกลม",kind:"whole",beads:1,value:"4 จังหวะ",fam:"ยาวสุด",famcls:"fam"},
+  {count:2,name:"ตัวขาว",kind:"half",beads:2,value:"2 จังหวะ/ตัว",fam:"หารสอง",famcls:"fam"},
+  {count:3,name:"ทริปเพล็ตของตัวขาว",kind:"half",beads:3,value:"หารห้องเป็น 3",fam:"หารสาม",famcls:"fam3",triplet:true},
+  {count:4,name:"ตัวดำ",kind:"quarter",beads:4,value:"1 จังหวะ/ตัว",fam:"หารสอง",famcls:"fam"}
+];
+
+/* ── วาดหัวโน้ต ── */
+function noteSVG(x,y,kind,color){
+  color=color||"#1a1a2e";
+  var open=(kind==="whole"||kind==="half"), s="";
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="8.5" ry="6.2" fill="'+(open?"#fbfbf7":color)+'" stroke="'+color+'" stroke-width="2.4" transform="rotate(-20 '+x+' '+y+')"/>';
+  if(kind!=="whole")s+='<line x1="'+(x+8)+'" y1="'+(y-2)+'" x2="'+(x+8)+'" y2="'+(y-36)+'" stroke="'+color+'" stroke-width="2.4"/>';
+  return s;
+}
+/* ── วาด 1 ห้อง พร้อม n โน้ต ── */
+function measureSVG(n,kind,triplet,accent){
+  var W=300,H=100,by=58,s="",i;
+  s+='<line x1="22" y1="'+by+'" x2="'+(W-22)+'" y2="'+by+'" stroke="#d8d8cf" stroke-width="1.5"/>';
+  s+='<line x1="22" y1="'+(by-24)+'" x2="22" y2="'+(by+22)+'" stroke="#999" stroke-width="2"/>';
+  s+='<line x1="'+(W-22)+'" y1="'+(by-24)+'" x2="'+(W-22)+'" y2="'+(by+22)+'" stroke="#999" stroke-width="2"/>';
+  var startX=46,endX=W-46,span=endX-startX,xs=[];
+  for(i=0;i<n;i++)xs.push(startX+span*((i+0.5)/n));
+  var col=accent||"#1a1a2e";
+  for(i=0;i<n;i++)s+=noteSVG(xs[i],by,kind,col);
+  if(triplet){
+    var bx0=xs[0]-11,bx1=xs[n-1]+11,byb=by-46,mx=(bx0+bx1)/2;
+    s+='<line x1="'+bx0+'" y1="'+byb+'" x2="'+bx1+'" y2="'+byb+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<line x1="'+bx0+'" y1="'+byb+'" x2="'+bx0+'" y2="'+(byb+6)+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<line x1="'+bx1+'" y1="'+byb+'" x2="'+bx1+'" y2="'+(byb+6)+'" stroke="'+(accent||COL3)+'" stroke-width="2"/>';
+    s+='<rect x="'+(mx-10)+'" y="'+(byb-12)+'" width="20" height="17" fill="#fbfbf7"/>';
+    s+='<text x="'+mx+'" y="'+(byb+2)+'" text-anchor="middle" font-size="16" font-weight="800" fill="'+(accent||COL3)+'">3</text>';
+  }
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function cardHTML(c){
+  var three=c.triplet?" three":"";
+  var numbg=c.triplet?'style="background:'+COL3+';color:#fff"':'';
+  var accent=c.triplet?COL3:"#1a1a2e";
+  var h='<div class="card'+three+'">';
+  h+='<div class="cardhead"><span class="cnt"><span class="num" '+numbg+'>'+c.count+'</span>'+c.count+' ตัวเท่ากัน</span><span class="nm">'+c.name+'</span></div>';
+  h+='<div class="measure">'+measureSVG(c.count,c.kind,c.triplet,accent)+'</div>';
+  h+='<div class="meta"><span class="chip bead">'+c.beads+' เม็ด</span><span class="chip">'+c.value+'</span><span class="chip '+c.famcls+'">'+c.fam+'</span></div>';
+  if(c.triplet){
+    h+='<div class="axis"><span>เลข 3 เชื่อมสามแกน:</span> <b>3 ตัว</b> (จังหวะ) = <span class="clk">3</span> <b>3 โมง</b> (เสียง) = <svg width="22" height="20" viewBox="0 0 22 20" style="vertical-align:middle"><polygon points="11,3 19,17 3,17" fill="none" stroke="#79c0ff" stroke-width="2"/></svg> <b>สามเหลี่ยม</b> (เชป)</div>';
+    h+='<div class="btnrow" style="margin-top:10px"><button class="btn blue" data-play="3">▶ ฟังทริปเพล็ต</button><button class="btn" data-play="3" data-beats="1">▶ เทียบ 4 จังหวะ</button></div>';
+  }else{
+    h+='<div class="btnrow"><button class="btn gold" data-play="'+c.count+'">▶ ฟัง</button></div>';
+  }
+  h+='</div>';
+  return h;
+}
+function gapHTML(){
+  return '<div class="card gap"><div class="cardhead"><span class="cnt"><span class="num" style="background:#56607f;color:#fff">?</span>นับ 3 — ?</span></div>'+
+    '<div class="gapbox">ทำไมข้ามจาก <b>2</b> ไป <b>4</b> เลย?<br>แล้ว <b>เลข 3</b> หายไปไหน?</div>'+
+    '<div class="btnrow"><button class="btn blue" id="reveal3">🔓 เติมเต็มเลข 3</button></div></div>';
+}
+
+function renderCards(){
+  var html="",i;
+  for(i=0;i<CARDS.length;i++){
+    if(CARDS[i].triplet && !S.revealed){ html+=gapHTML(); }
+    else { html+=cardHTML(CARDS[i]); }
+  }
+  document.getElementById("cards").innerHTML=html;
+}
+
+/* ── เสียง ── */
+var ac=null;
+function noteTone(when,dur){
+  var t=ac.currentTime+when,f=523.25,o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur);
+}
+function clickTone(when){
+  var t=ac.currentTime+when,o=ac.createOscillator(),g=ac.createGain();
+  o.type="square";o.frequency.value=1600;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.004);g.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.06);
+}
+function playCount(n,withBeats){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var dur=2.4,nd=dur/n,i;
+  for(i=0;i<n;i++)noteTone(i*nd,nd*0.9);
+  if(withBeats){for(i=0;i<4;i++)clickTone(i*(dur/4));}
+}
+
+/* ── คลิก (delegation) ── */
+document.getElementById("cards").addEventListener("click",function(e){
+  var pb=e.target.closest("[data-play]");
+  if(pb){ playCount(parseInt(pb.getAttribute("data-play"),10), pb.getAttribute("data-beats")==="1"); return; }
+  var rv=e.target.closest("#reveal3");
+  if(rv){ S.revealed=true; renderCards(); return; }
+});
+
+/* ===== ภาพแม่ ๑ บนบรรทัด 5 เส้น (นิ่ง) ===== */
+/* ---- ชั้นภาษา (แยกข้อความไว้ที่เดียว เผื่อแปลภาษาอื่น) ---- */
+var MAE1_TXT={med:"เม็ด", group:"1 กลุ่ม", chunk:"1 ก้อน = แม่ ๑"};
+/* ---- แก่นสากล: โครงจังหวะแม่ ๑ (q=ดำ h=ขาว w=กลม) ---- */
+var MAE1=[["q","q","h"],["q","q","h"],["q","q","q","q"],["w"]];
+var COL_MED="#E8C547",COL_GROUP="#2E4FD4",COL_CHUNK="#36C03F";
+
+function durBeats(k){return k==="w"?4:(k==="h"?2:1);}
+function mNoteSVG(x,y,kind){
+  var open=(kind==="w"||kind==="h"),s="";
+  s+='<ellipse cx="'+x+'" cy="'+y+'" rx="8" ry="6" fill="'+(open?"#fbfbf7":"#1a1a2e")+'" stroke="#1a1a2e" stroke-width="2.2" transform="rotate(-20 '+x+' '+y+')"/>';
+  if(kind!=="w") s+='<line x1="'+(x-7.5)+'" y1="'+(y+1)+'" x2="'+(x-7.5)+'" y2="'+(y+34)+'" stroke="#1a1a2e" stroke-width="2.2"/>'; /* เส้นกลางขึ้นไป = หางลง */
+  return s;
+}
+function drawMae1(){
+  var W=480,GAP=11,topY=44,midY=topY+2*GAP,s="",i;
+  for(i=0;i<5;i++){var yy=topY+i*GAP;s+='<line x1="18" y1="'+yy+'" x2="'+(W-14)+'" y2="'+yy+'" stroke="#222" stroke-width="1.3"/>';}
+  /* กุญแจซอล รอบเส้น G (เส้นที่ 2 จากล่าง = topY+3*GAP) */
+  var gY=topY+3*GAP;
+  s+='<line x1="40" y1="'+(gY-34)+'" x2="40" y2="'+(gY+28)+'" stroke="#111" stroke-width="3"/>';
+  s+='<circle cx="40" cy="'+gY+'" r="11" fill="none" stroke="#111" stroke-width="3"/><circle cx="40" cy="'+gY+'" r="3.4" fill="#111"/>';
+  var mStart=62,mEnd=W-16,mW=(mEnd-mStart)/4,m,n;
+  for(m=0;m<4;m++){
+    var mx=mStart+m*mW;
+    if(m>0)s+='<line x1="'+mx+'" y1="'+topY+'" x2="'+mx+'" y2="'+(topY+4*GAP)+'" stroke="#bbb" stroke-width="1"/>';
+    var notes=MAE1[m],acc=0;
+    for(n=0;n<notes.length;n++){
+      var nx=mx+((acc+durBeats(notes[n])/2)/4)*mW;
+      s+=mNoteSVG(nx,midY,notes[n]); /* ทุกเม็ดวางเส้นกลาง (เน้นค่าจังหวะ ไม่เน้นระดับเสียง) */
+      acc+=durBeats(notes[n]);
+    }
+  }
+  s+='<line x1="'+mEnd+'" y1="'+topY+'" x2="'+mEnd+'" y2="'+(topY+4*GAP)+'" stroke="#111" stroke-width="3"/>';
+  /* ป้าย เม็ด (ชี้โน้ตตัวแรก) */
+  var firstX=mStart+((0+0.5)/4)*mW, by=topY+4*GAP;
+  s+='<line x1="'+firstX+'" y1="'+(midY-14)+'" x2="'+firstX+'" y2="'+(topY-8)+'" stroke="'+COL_MED+'" stroke-width="1.5"/>';
+  s+='<rect x="'+(firstX-16)+'" y="'+(topY-26)+'" width="32" height="16" rx="4" fill="'+COL_MED+'"/>';
+  s+='<text x="'+firstX+'" y="'+(topY-14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#0B1020">'+MAE1_TXT.med+'</text>';
+  /* วงเล็บ กลุ่ม (ห้องแรก) */
+  var g0=mStart+4,g1=mStart+mW-4,gy2=by+12;
+  s+='<line x1="'+g0+'" y1="'+gy2+'" x2="'+g1+'" y2="'+gy2+'" stroke="'+COL_GROUP+'" stroke-width="2"/>';
+  s+='<line x1="'+g0+'" y1="'+gy2+'" x2="'+g0+'" y2="'+(gy2-5)+'" stroke="'+COL_GROUP+'" stroke-width="2"/><line x1="'+g1+'" y1="'+gy2+'" x2="'+g1+'" y2="'+(gy2-5)+'" stroke="'+COL_GROUP+'" stroke-width="2"/>';
+  s+='<text x="'+((g0+g1)/2)+'" y="'+(gy2+14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+COL_GROUP+'">'+MAE1_TXT.group+'</text>';
+  /* วงเล็บ ก้อน (ทั้ง 4 ห้อง) */
+  var k0=mStart,k1=mEnd,ky=by+34;
+  s+='<line x1="'+k0+'" y1="'+ky+'" x2="'+k1+'" y2="'+ky+'" stroke="'+COL_CHUNK+'" stroke-width="2"/>';
+  s+='<line x1="'+k0+'" y1="'+ky+'" x2="'+k0+'" y2="'+(ky-5)+'" stroke="'+COL_CHUNK+'" stroke-width="2"/><line x1="'+k1+'" y1="'+ky+'" x2="'+k1+'" y2="'+(ky-5)+'" stroke="'+COL_CHUNK+'" stroke-width="2"/>';
+  s+='<text x="'+((k0+k1)/2)+'" y="'+(ky+14)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+COL_CHUNK+'">'+MAE1_TXT.chunk+'</text>';
+  document.getElementById("mae1").innerHTML='<svg viewBox="0 0 480 150" style="width:100%;max-width:480px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+drawMae1();
+
+renderCards();
+
+/* ===================== ส่วนที่ 2 · เกลี่ยเม็ด (ซอยต่อจากตัวดำ) ===================== */
+var WAYS=[
+  {en:"Double",    th:"ดับเบิล",     note:"เขบ็ตหนึ่งชั้น", n:2, color:"#36C03F", tuplet:false},
+  {en:"Triple",    th:"ทริปเปิล",    note:"ทริปเพล็ต",      n:3, color:"#2E4FD4", tuplet:true},
+  {en:"Quadruple", th:"ควอดรูเพิล", note:"เขบ็ตสองชั้น",   n:4, color:"#F5901E", tuplet:false}
+];
+
+/* ── วาด 1 หน่วยเวลา เกลี่ยเป็น n เม็ดเท่ากัน ──
+   คานเชื่อม: n=2,3 → 1 เส้น (เขบ็ตหนึ่งชั้น) · n=4 → 2 เส้น (เขบ็ตสองชั้น) */
+function laneSVG(n,color,tuplet){
+  var W=330,H=112,x0=50,x1=280,span=x1-x0,by=78,stemTop=44,s="",i;
+  var bracketY=16;
+  s+='<line x1="'+x0+'" y1="'+bracketY+'" x2="'+x1+'" y2="'+bracketY+'" stroke="#9aa6c2" stroke-width="1.5"/>';
+  s+='<line x1="'+x0+'" y1="'+bracketY+'" x2="'+x0+'" y2="'+(bracketY+5)+'" stroke="#9aa6c2" stroke-width="1.5"/>';
+  s+='<line x1="'+x1+'" y1="'+bracketY+'" x2="'+x1+'" y2="'+(bracketY+5)+'" stroke="#9aa6c2" stroke-width="1.5"/>';
+  s+='<text x="'+((x0+x1)/2)+'" y="'+(bracketY-4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#888">1 หน่วยเวลา (เท่ากันทุกแบบ)</text>';
+  s+='<line x1="'+(x0-14)+'" y1="'+by+'" x2="'+(x1+14)+'" y2="'+by+'" stroke="#d8d8cf" stroke-width="1.4"/>';
+  for(i=0;i<=n;i++){var xb=x0+span*(i/n);s+='<line x1="'+xb+'" y1="'+(by-4)+'" x2="'+xb+'" y2="'+(by+9)+'" stroke="#c9c9c0" stroke-width="'+((i===0||i===n)?"1.6":"1")+'"/>';}
+  var xs=[];for(i=0;i<n;i++)xs.push(x0+span*((i+0.5)/n));
+  for(i=0;i<n;i++)s+='<line x1="'+(xs[i]+6.2)+'" y1="'+(by-1)+'" x2="'+(xs[i]+6.2)+'" y2="'+stemTop+'" stroke="'+color+'" stroke-width="2"/>';
+  var beams=(n>=4)?2:1,b;
+  for(b=0;b<beams;b++)s+='<rect x="'+(xs[0]+6.2)+'" y="'+(stemTop+b*8)+'" width="'+(xs[n-1]-xs[0])+'" height="4.6" fill="'+color+'"/>';
+  for(i=0;i<n;i++)s+='<ellipse cx="'+xs[i]+'" cy="'+by+'" rx="6.8" ry="5" fill="'+color+'" stroke="'+color+'" stroke-width="2" transform="rotate(-20 '+xs[i]+' '+by+')"/>';
+  if(tuplet){
+    var a=xs[0]-9, b2=xs[n-1]+9, ty=30, mx=(a+b2)/2;
+    s+='<line x1="'+a+'" y1="'+ty+'" x2="'+b2+'" y2="'+ty+'" stroke="'+color+'" stroke-width="1.8"/>';
+    s+='<line x1="'+a+'" y1="'+ty+'" x2="'+a+'" y2="'+(ty+6)+'" stroke="'+color+'" stroke-width="1.8"/>';
+    s+='<line x1="'+b2+'" y1="'+ty+'" x2="'+b2+'" y2="'+(ty+6)+'" stroke="'+color+'" stroke-width="1.8"/>';
+    s+='<rect x="'+(mx-9)+'" y="'+(ty-10)+'" width="18" height="17" fill="#fbfbf7"/>';
+    s+='<text x="'+mx+'" y="'+(ty+3)+'" text-anchor="middle" font-size="14" font-weight="900" fill="'+color+'">'+n+'</text>';
+  }
+  s+='<circle cx="'+(x1+30)+'" cy="'+by+'" r="14" fill="'+color+'"/>';
+  s+='<text x="'+(x1+30)+'" y="'+(by+5)+'" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">'+n+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:330px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+}
+
+function renderWays(){
+  var html="",i;
+  for(i=0;i<WAYS.length;i++){
+    var w=WAYS[i];
+    html+='<div class="card">';
+    html+='<div class="cardhead"><span class="en" style="color:'+w.color+'">'+w.en+'</span><span class="th">'+w.th+' · '+w.note+'</span></div>';
+    html+='<div class="lane">'+laneSVG(w.n,w.color,w.tuplet)+'</div>';
+    html+='<div class="laneInfo">';
+    html+='<span class="tag" style="background:'+w.color+'22;color:'+w.color+';border:1px solid '+w.color+'">เกลี่ยเป็น '+w.n+' ส่วนเท่ากัน</span>';
+    html+='<span class="medbadge" style="color:'+w.color+'">'+w.n+' เม็ด</span>';
+    html+='<button class="btn" data-n="'+w.n+'" style="border-color:'+w.color+';color:'+w.color+'">▶ ฟัง</button>';
+    html+='</div></div>';
+  }
+  document.getElementById("ways").innerHTML=html;
+}
+
+function ensureAC(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();}
+function playEqual(n,start,dur){
+  var nd=dur/n,i;
+  clickTone(start);
+  for(i=0;i<n;i++)noteTone(start+i*nd,nd*0.9);
+}
+function playOne(n){ensureAC();playEqual(n,0,1.3);}
+function playCompare(){
+  ensureAC();
+  var dur=1.2,gap=0.5,i,start=0;
+  for(i=0;i<WAYS.length;i++){playEqual(WAYS[i].n,start,dur);start+=dur+gap;}
+}
+document.getElementById("ways").addEventListener("click",function(e){
+  var pb=e.target.closest("[data-n]");
+  if(pb)playOne(parseInt(pb.getAttribute("data-n"),10));
+});
+document.getElementById("cmpAll").onclick=playCompare;
+renderWays();
+</script>
+
+<!-- ===== ปุ่มแบบฝึกหัด YouTube · แก้ลิงก์ที่ตัวแปร YT_URL ด้านล่าง ===== -->
+<div style="text-align:center;margin:22px auto 6px;padding:0 16px">
+  <a id="ytBtn" href="#" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;background:#FF0033;color:#fff;font-family:'Trebuchet MS','Segoe UI',sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:999px;box-shadow:0 6px 18px rgba(255,0,51,.35)">
+    <span style="font-size:15px">&#9654;</span> ดูแบบฝึกหัดบน YouTube
+  </a>
+</div>
+<script>
+/* === ลิงก์คลิปแบบฝึกหัดของบทนี้ — เปลี่ยนตรงนี้ === */
+var YT_URL="https://youtube.com/shorts/g0nSov2OHAQ";
+/* ============================================== */
+(function(){var b=document.getElementById("ytBtn");if(b)b.href=YT_URL;})();
+</script>
+
+</body>
+</html>
