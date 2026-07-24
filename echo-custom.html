@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <!-- Echo Note metadata · Curriculum Spine v1 · L3 ห้องทดลอง Custom -->
+  <meta name="echo:level" content="3">
+  <meta name="echo:grade" content="1-5">
+  <meta name="echo:track" content="both">
+  <meta name="echo:syllabus" content="สอดคล้องกับ syllabus ABRSM/Trinity">
+
+<!-- Google tag (gtag.js) — Music Support Shop -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17894568140"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17894568140');
+  gtag('config', 'G-46HW0169HW');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>นาฬิกาเสียง · ห้องทดลอง Custom · v1</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:radial-gradient(120% 65% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
+       color:#EAEef7;font-family:'Trebuchet MS','Segoe UI',system-ui,sans-serif;padding:22px 16px 46px}
+  .wrap{max-width:680px;margin:0 auto}
+  .eyebrow{letter-spacing:3px;font-size:11px;color:#E8C547;text-transform:uppercase;text-align:center}
+  h1{font-size:22px;font-weight:800;color:#fff;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#9aa6c2;font-size:13px;margin-bottom:12px;line-height:1.6}
+
+  .modeTab{display:flex;gap:8px;justify-content:center;margin:4px 0 10px}
+  .tab{flex:1;max-width:190px;padding:11px 10px;border-radius:14px;cursor:pointer;font-size:14px;font-weight:800;
+       border:1.5px solid #2a3458;background:transparent;color:#cdd6ee;transition:all .25s;text-align:center}
+  .tab.on{background:#E8C547;color:#0B1020;border-color:#E8C547;box-shadow:0 4px 14px rgba(232,197,71,.3)}
+
+  .grp{margin:2px 0 6px}
+  .grplabel{text-align:center;font-size:11px;letter-spacing:1px;color:#7a86a8;font-weight:800;text-transform:uppercase;margin-bottom:5px}
+  .masks{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+  .mbtn{padding:7px 11px;border-radius:999px;cursor:pointer;font-size:12px;font-weight:800;
+        border:1.5px solid #2a3458;background:transparent;color:#cdd6ee;transition:all .25s}
+  .mbtn.on{background:#E8C547;color:#0B1020;border-color:#E8C547}
+
+  .tonics{display:flex;gap:5px;justify-content:center;flex-wrap:wrap}
+  .tch{width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:12px;font-weight:800;
+       border:1.5px solid #2a3458;background:transparent;color:#cdd6ee;transition:all .2s}
+  .tch.on{color:#0B1020;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+
+  #clock{width:100%;max-width:300px;margin:6px auto 4px}
+  .hint{text-align:center;font-size:12px;color:#9aa6c2;margin-bottom:8px;line-height:1.6}
+  .hint b{color:#E8C547}
+
+  .mover{display:flex;gap:8px;justify-content:center;align-items:center;margin:6px 0}
+  .btn{padding:10px 20px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:800;border:none;background:#E8C547;color:#0B1020}
+  .btn.ghost{background:transparent;border:1.5px solid #2a3458;color:#cdd6ee}
+
+  .ans{background:#0e1530;border:1.5px solid #1f2a4d;border-radius:14px;padding:12px 14px;margin:10px 0}
+  .ansno{font-size:11px;letter-spacing:1px;color:#E8C547;font-weight:800;text-transform:uppercase;margin-bottom:6px}
+  .scname{text-align:center;font-size:20px;font-weight:900;color:#fff}
+  .scname small{display:block;font-size:13px;color:#9aa6c2;font-weight:600;margin-top:2px}
+  .notesrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .np{padding:5px 10px;border-radius:9px;font-size:13px;font-weight:800;color:#fff}
+  .np.tonic{outline:2.5px solid #fff}
+  .timecode{text-align:center;font-size:22px;font-weight:900;letter-spacing:2px;margin-top:2px}
+  .timecode small{display:block;font-size:12px;color:#9aa6c2;font-weight:600;letter-spacing:0;margin-top:4px}
+
+  .bridge{text-align:center;font-size:12.5px;color:#9aa6c2;margin:10px 0;line-height:1.7}
+  .bridge b{color:#E8C547}
+  .foot{text-align:center;color:#56607f;font-size:11px;margin-top:16px;line-height:1.8}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">เสียงสะท้อนจากโมงยาม · v1 · ห้องทดลอง</p>
+  <h1>ห้อง Custom — จิ้มเอง ฟังเอง เห็นเอง</h1>
+  <p class="sub">โหมดสำเร็จรูป: เลือกคีย์ + สเกล/โหมดได้อิสระ · โหมดแต้มเอง: สร้างลายพิกัดของตัวเองทีละจุด</p>
+
+  <div class="modeTab">
+    <button class="tab on" id="tabPreset">สำเร็จรูป</button>
+    <button class="tab" id="tabCustom">แต้มเอง</button>
+  </div>
+
+  <div id="panelPreset">
+    <div class="grp"><div class="grplabel">สเกล</div><div class="masks" id="scaleBtns"></div></div>
+    <div class="grp"><div class="grplabel">โหมด</div><div class="masks" id="modeBtns"></div></div>
+  </div>
+
+  <div id="panelCustom" class="hidden">
+    <div class="grp"><div class="grplabel">เลือกคีย์ (โทนิก)</div><div class="tonics" id="tonicChips"></div></div>
+  </div>
+
+  <div id="clock"></div>
+  <p class="hint" id="hint"></p>
+
+  <div class="mover">
+    <button class="btn" id="play">▶ ฟังลายนี้</button>
+    <button class="btn ghost hidden" id="reset">ล้างพิกัด</button>
+  </div>
+
+  <div class="ans">
+    <div class="ansno">ลายพิกัดนี้คือ</div>
+    <div class="scname" id="scname"></div>
+    <div class="notesrow" id="notesrow"></div>
+  </div>
+
+  <div class="ans">
+    <div class="ansno">รหัสพิกัด · ลายเวลา</div>
+    <div class="timecode" id="timecode"></div>
+  </div>
+
+  <div class="bridge"><b>ทุกสเกล ทุกโหมด ทุกลายที่แต้มเอง — คณิตศาสตร์ชุดเดียวกัน</b><br>วง 12 ช่อง + ลายพิกัด + มุมหมุน</div>
+  <p class="foot">ห้องทดลอง v1 · ขับเคลื่อนด้วย echo-core.js · ลายที่แต้มตรงกับสเกลจริง ระบบจะบอกชื่อให้เอง</p>
+</div>
+
+<script src="echo-core.js"></script>
+<script>
+var C=EchoCore;
+var S={mode:"preset", tonic:0, kind:"scale", idx:0, customIv:[0,2,4,5,7,9,11]};
+
+var W=C.createWheel(document.getElementById("clock"));
+
+/* ---------- ปุ่มสเกล + โหมด ---------- */
+function buildPills(){
+  var h="",i;
+  for(i=0;i<C.SCALES.length;i++)h+='<button class="mbtn" id="sb'+i+'">'+C.SCALES[i].th+'</button>';
+  document.getElementById("scaleBtns").innerHTML=h;
+  h="";
+  for(i=0;i<C.MODES.length;i++)h+='<button class="mbtn" id="mb'+i+'">'+C.MODES[i].th+'</button>';
+  document.getElementById("modeBtns").innerHTML=h;
+  for(i=0;i<C.SCALES.length;i++)(function(k){
+    document.getElementById("sb"+k).onclick=function(){S.kind="scale";S.idx=k;render();C.playScale(S.tonic,curIv());};
+  })(i);
+  for(i=0;i<C.MODES.length;i++)(function(k){
+    document.getElementById("mb"+k).onclick=function(){S.kind="mode";S.idx=k;render();C.playScale(S.tonic,curIv());};
+  })(i);
+}
+function buildTonics(){
+  var h="",i;
+  for(i=0;i<12;i++)h+='<button class="tch" id="tc'+i+'" style="border-color:'+C.COLORS[i]+'">'+C.NOTE_EN[i]+'</button>';
+  document.getElementById("tonicChips").innerHTML=h;
+  for(i=0;i<12;i++)(function(pc){
+    document.getElementById("tc"+pc).onclick=function(){S.tonic=pc;render();C.playScale(S.tonic,curIv());};
+  })(i);
+}
+
+/* ---------- ลายพิกัดปัจจุบัน ---------- */
+function curIv(){
+  if(S.mode==="custom")return S.customIv.slice();
+  return (S.kind==="scale"?C.SCALES[S.idx]:C.MODES[S.idx]).iv.slice();
+}
+
+/* ---------- ตรวจว่าลายตรงกับสเกล/โหมดที่รู้จักไหม ---------- */
+function detectName(iv){
+  var key=JSON.stringify(iv),names=[],i;
+  for(i=0;i<C.SCALES.length;i++)if(JSON.stringify(C.SCALES[i].iv)===key)names.push(C.SCALES[i].th);
+  for(i=0;i<C.MODES.length;i++)if(JSON.stringify(C.MODES[i].iv)===key)names.push(C.MODES[i].th);
+  return names;
+}
+
+/* ---------- แตะวงล้อ ---------- */
+W.onTap(function(pc){
+  if(S.mode==="preset"){
+    if(pc===S.tonic)return;
+    S.tonic=pc;render();C.playScale(S.tonic,curIv());
+  }else{
+    var interval=C.mod12(pc-S.tonic);
+    if(interval===0)return; /* โทนิกเปิดตลอด */
+    var at=S.customIv.indexOf(interval);
+    if(at>=0){if(S.customIv.length<=2)return;S.customIv.splice(at,1);}
+    else{S.customIv.push(interval);S.customIv.sort(function(a,b){return a-b;});C.playNote(interval);}
+    render();
+  }
+});
+
+/* ---------- สลับโหมด ---------- */
+document.getElementById("tabPreset").onclick=function(){S.mode="preset";render();};
+document.getElementById("tabCustom").onclick=function(){
+  if(S.mode!=="custom")S.customIv=curIv(); /* พกลายปัจจุบันไปแต้มต่อ */
+  S.mode="custom";render();
+};
+document.getElementById("reset").onclick=function(){S.customIv=[0];render();};
+document.getElementById("play").onclick=function(){C.playScale(S.tonic,curIv());};
+
+/* ---------- วาดทั้งหน้า ---------- */
+function render(){
+  var isC=(S.mode==="custom"),iv=curIv(),i;
+  document.getElementById("tabPreset").classList.toggle("on",!isC);
+  document.getElementById("tabCustom").classList.toggle("on",isC);
+  document.getElementById("panelPreset").classList.toggle("hidden",isC);
+  document.getElementById("panelCustom").classList.toggle("hidden",!isC);
+  document.getElementById("reset").classList.toggle("hidden",!isC);
+  document.getElementById("hint").innerHTML=isC?
+    'แตะช่องบนวงล้อเพื่อ <b>เปิด/ปิดพิกัด</b> · โทนิก (เลข 12) เปิดตลอด':
+    'แตะช่องโน้ตเพื่อเลือกคีย์ · <b>พิกัดไม่ขยับ — วงหมุนแทน</b>';
+
+  for(i=0;i<C.SCALES.length;i++)document.getElementById("sb"+i).classList.toggle("on",!isC&&S.kind==="scale"&&S.idx===i);
+  for(i=0;i<C.MODES.length;i++)document.getElementById("mb"+i).classList.toggle("on",!isC&&S.kind==="mode"&&S.idx===i);
+  for(i=0;i<12;i++){
+    var ch=document.getElementById("tc"+i),on=(S.tonic===i);
+    ch.classList.toggle("on",on);
+    ch.style.background=on?C.COLORS[i]:"transparent";
+  }
+
+  W.set(S.tonic,iv);
+
+  var names=detectName(iv),title;
+  if(names.length)title=C.noteLabel(S.tonic)+" — "+names.join(" / ");
+  else title=C.noteLabel(S.tonic)+" — ลายพิกัดของฉัน ("+iv.length+" เสียง)";
+  document.getElementById("scname").innerHTML=title+"<small>"+C.NOTE_TH[S.tonic]+(names.length?" "+names[0]:" · สเกลที่คุณสร้างเอง")+"</small>";
+
+  var h="";
+  for(i=0;i<iv.length;i++){
+    var pc=C.mod12(S.tonic+iv[i]);
+    h+='<span class="np'+(i===0?' tonic':'')+'" style="background:'+C.COLORS[pc]+'">'+C.noteLabel(pc)+'</span>';
+  }
+  document.getElementById("notesrow").innerHTML=h;
+
+  var tc=[];
+  for(i=0;i<iv.length;i++)tc.push(iv[i]===0?12:iv[i]);
+  document.getElementById("timecode").innerHTML=tc.join(" · ")+'<small>ตำแหน่งพิกัด (โทนิกอยู่เลข 12 เสมอ)</small>';
+}
+
+buildPills();buildTonics();render();
+</script>
+
+<!-- ===== ปุ่มแบบฝึกหัด YouTube · แก้ลิงก์ที่ตัวแปร YT_URL ด้านล่าง ===== -->
+<div style="text-align:center;margin:22px auto 6px;padding:0 16px">
+  <a id="ytBtn" href="#" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;background:#FF0033;color:#fff;font-family:'Trebuchet MS','Segoe UI',sans-serif;font-weight:800;font-size:14px;text-decoration:none;padding:12px 22px;border-radius:999px;box-shadow:0 6px 18px rgba(255,0,51,.35)">
+    <span style="font-size:15px">&#9654;</span> ดูแบบฝึกหัดบน YouTube
+  </a>
+</div>
+<script>
+/* === ลิงก์คลิปแบบฝึกหัดของบทนี้ — เปลี่ยนตรงนี้ === */
+var YT_URL="https://youtube.com/shorts/g0nSov2OHAQ";
+/* ============================================== */
+(function(){var b=document.getElementById("ytBtn");if(b)b.href=YT_URL;})();
+</script>
+
+</body>
+</html>

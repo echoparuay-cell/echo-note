@@ -1,5 +1,5 @@
 /* ============================================================
-   echo-core.js · v1
+   echo-core.js · v1.1
    แก่นคณิตศาสตร์ mod-12 ของนาฬิกาเสียง Echo Note
    คิดที่เดียว — ทุกหน้าเรียกใช้ผ่าน <script src="echo-core.js">
    ครอบคลุม: สี/ชื่อโน้ต · สเกล 4 ชนิด · โหมด 7 โหมด ·
@@ -100,7 +100,7 @@ function createWheel(container){
   function morph(toIv){
     if(!holeIv){holeIv=toIv.slice();hole.setAttribute("points",holePts(toIv));return;}
     var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if(reduce){holeIv=toIv.slice();hole.setAttribute("points",holePts(toIv));return;}
+    if(reduce||holeIv.length!==toIv.length){holeIv=toIv.slice();hole.setAttribute("points",holePts(toIv));return;}
     var from=holeIv.slice(),t0=null,DUR=380;
     function step(ts){
       if(!t0)t0=ts;
@@ -149,10 +149,20 @@ function playScale(tonic,iv){
   }
 }
 
+/* ---------- เสียงโน้ตเดี่ยว (feedback ตอนแต้มพิกัด) ---------- */
+function playNote(semitoneAboveC4){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  var t=ac.currentTime,f=440*Math.pow(2,(60+semitoneAboveC4-69)/12);
+  var o=ac.createOscillator(),g=ac.createGain();
+  o.type="triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.16,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+  o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.55);
+}
+
 return {
   COLORS:COLORS,NOTE_EN:NOTE_EN,NOTE_TH:NOTE_TH,DUAL:DUAL,
   SCALES:SCALES,MODES:MODES,MAJOR_IV:MAJOR_IV,
   mod12:mod12,noteLabel:noteLabel,relativeMajor:relativeMajor,
-  createWheel:createWheel,playScale:playScale
+  createWheel:createWheel,playScale:playScale,playNote:playNote
 };
 })();
