@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <!-- Echo Note metadata · Curriculum Spine v1 · L2 Key Signature -->
+  <meta name="echo:level" content="2">
+  <meta name="echo:grade" content="1-3">
+  <meta name="echo:track" content="both">
+  <meta name="echo:syllabus" content="สอดคล้องกับ syllabus ABRSM/Trinity">
+
+  <!-- Echo Note metadata · Curriculum Spine v1 · L5 Key Signature + 5 เส้น -->
+  <meta name="echo:level" content="5">
+  <meta name="echo:grade" content="1-3">
+  <meta name="echo:track" content="both">
+  <meta name="echo:syllabus" content="สอดคล้องกับ syllabus ABRSM/Trinity">
+
+<!-- Google tag (gtag.js) — Music Support Shop -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17894568140"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17894568140');
+  gtag('config', 'G-46HW0169HW');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เสียงสะท้อนจากโมงยาม · v2.0 Key Signature</title>
+<title>Key Signature · นาฬิกาเสียง · v2.2</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;background:radial-gradient(120% 70% at 50% 0%, #16203d 0%, #0B1020 55%, #05070f 100%);
@@ -66,9 +87,10 @@
   </div>
 
   <div class="panel" id="panel"></div>
-  <p class="foot">เดโม v2.0 · โน้ตในสเกลไม่ต้องเขียนเครื่องหมายซ้ำ เพราะ Key Signature คุมให้แล้ว</p>
+  <p class="foot">เดโม v2.2 · นาฬิกาขับเคลื่อนด้วย echo-core · โน้ตในสเกลไม่ต้องเขียนเครื่องหมายซ้ำ เพราะ Key Signature คุมให้แล้ว</p>
 </div>
 
+<script src="echo-core.js"></script>
 <script>
 /* ── ข้อมูลโน้ต ── */
 var LETTER_PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
@@ -138,33 +160,26 @@ function buildStaff(){
   document.getElementById("staff").innerHTML='<svg viewBox="0 0 440 180" style="width:100%;max-width:440px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
 }
 
-/* ── นาฬิกา ── */
-var CX=200,CY=200,RO=185,RI=120;
-function xy(deg,r){var t=(deg-90)*Math.PI/180;return [CX+r*Math.cos(t),CY+r*Math.sin(t)];}
-function sec(i){var a0=i*30-15,a1=i*30+15,o0=xy(a0,RO),o1=xy(a1,RO),n1=xy(a1,RI),n0=xy(a0,RI);
-  return "M "+o0[0]+" "+o0[1]+" A "+RO+" "+RO+" 0 0 1 "+o1[0]+" "+o1[1]+" L "+n1[0]+" "+n1[1]+" A "+RI+" "+RI+" 0 0 0 "+n0[0]+" "+n0[1]+" Z";}
-
+/* ── นาฬิกา (ขับเคลื่อนด้วย echo-core v1.2) ── */
+var TH_LETTER={C:"โด",D:"เร",E:"มี",F:"ฟา",G:"ซอล",A:"ลา",B:"ที"};
+var W=EchoCore.createWheel(document.getElementById("clock"));
+W.onTap(function(pcTap){
+  /* แตะช่องเพื่อกระโดดไปคีย์ที่มีรูตตรงนั้น (ถ้ามีในชุด) */
+  for(var k=0;k<KEYS.length;k++){
+    if(pc(KEYS[k].scale[0])===pcTap){ if(S.key!==k){S.key=k;renderAll();playScale();} return; }
+  }
+});
 function buildClock(){
   var key=KEYS[S.key], rootPc=pc(key.scale[0]);
-  /* map pc -> ชื่อโน้ตในสเกล (สำหรับโน้ตในคีย์) */
-  var nameOf={}; for(var j=0;j<7;j++){nameOf[pc(key.scale[j])]=key.scale[j][0]+accGly(key.scale[j][1]);}
-  var scalePcs=[]; for(j=0;j<7;j++)scalePcs.push(pc(key.scale[j]));
-  var s="", i;
-  s+='<circle cx="200" cy="200" r="'+(RO+8)+'" fill="none" stroke="#1b2547" stroke-width="3"/>';
-  for(i=0;i<12;i++){
-    /* hour = ตำแหน่งบนหน้าปัด · note pc ที่อยู่ตรงนั้น */
-    var notePc = (S.mode==="fixed") ? i : (rootPc+i)%12;
-    var hour = i; /* เลขโมงเป็นกรอบคงที่ */
-    var on = scalePcs.indexOf(notePc)>=0;
-    var isRoot = (notePc===rootPc);
-    var p=xy(hour*30,(RO+RI)/2);
-    var stroke=isRoot?"#fff":(on?"#E8C547":"#05070f");
-    s+='<path d="'+sec(hour)+'" fill="'+COLORS[notePc]+'" fill-opacity="'+(on?1:0.15)+'" stroke="'+stroke+'" stroke-width="'+(isRoot?4:(on?3:1.4))+'"/>';
-    s+='<text x="'+p[0]+'" y="'+(p[1]-2)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+(on?"#fff":"#5a6488")+'" pointer-events="none">'+CLOCK[hour]+'</text>';
-    if(on){s+='<text x="'+p[0]+'" y="'+(p[1]+13)+'" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,0.9)" pointer-events="none">'+(nameOf[notePc]||"")+'</text>';}
+  var labels={};
+  for(var j=0;j<7;j++){
+    var p=pc(key.scale[j]);
+    labels[p]={big:key.scale[j][0]+accGly(key.scale[j][1]),
+               small:TH_LETTER[key.scale[j][0]]+accGly(key.scale[j][1])};
   }
-  s+='<circle cx="200" cy="200" r="7" fill="#E8C547"/>';
-  document.getElementById("clock").innerHTML='<svg viewBox="0 0 400 400" style="width:100%;max-width:360px;height:auto;display:block;margin:0 auto">'+s+'</svg>';
+  W.relabel(labels);
+  /* โหมดหมุน: วงหมุนพารูตขึ้นเลข 12 + โชว์พิกัด · โหมดตรึง: ล้อนิ่ง 12=C ซ่อนพิกัด */
+  W.set(rootPc, EchoCore.MAJOR_IV, {rotate:S.mode==="movable", showHole:S.mode==="movable"});
 }
 
 /* ── เสียง ── */
