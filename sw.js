@@ -1,6 +1,6 @@
 /* Echo Note Service Worker · v1 — ออฟไลน์เต็มระบบ
    อัปเดตเว็บครั้งใด ให้ขยับเลข CACHE_VERSION ทีละ 1 เสมอ */
-var CACHE_VERSION = "echo-note-v1";
+var CACHE_VERSION = "echo-note-v2";
 var PRECACHE = [
   "./echo-hub.html",
   "./echo-core.js",
@@ -14,6 +14,7 @@ var PRECACHE = [
   "./echo-v2.1keysig.html",
   "./echo-clock-rotate.html",
   "./echo-modes.html",
+  "./echo-camp-modes.html",
   "./echo-notevalues.html",
   "./echo-subdivide.html",
   "./echo-landing.html",
