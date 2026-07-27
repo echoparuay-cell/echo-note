@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Project — Activate</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17894568140"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'AW-17894568140');
+gtag('config', 'G-46HW0169HW');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#161616;
+  --or:#FF6B00;--or2:#FF8C00;
+  --wh:#FFFFFF;--tx:#D0D0D0;--mt:#707070;
+  --bd:rgba(255,255,255,0.08);
+  --gn:#00C853;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;min-height:100vh}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(8,8,8,0.97);backdrop-filter:blur(16px);
+  border-bottom:2px solid var(--or);
+  height:54px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+}
+.tb-logo{font-family:'Kanit',sans-serif;font-size:16px;font-weight:800;color:var(--wh);letter-spacing:2px}
+.tb-logo span{color:var(--or)}
+.tb-right{display:flex;gap:10px;align-items:center}
+.tb-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mt);letter-spacing:2px}
+.tb-cta{
+  background:var(--or);color:#fff;
+  font-family:'Kanit',sans-serif;font-size:11px;font-weight:600;
+  padding:6px 16px;border-radius:2px;text-decoration:none;letter-spacing:1px;transition:all .2s;
+}
+.tb-cta:hover{background:var(--or2)}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,#0f0f0f,#1a0800);
+  border-bottom:2px solid var(--or);
+  padding:70px 28px 60px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(255,107,0,0.1),transparent);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-block;
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:4px;color:var(--or);
+  background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);
+  padding:5px 16px;border-radius:2px;margin-bottom:20px;
+  position:relative;z-index:2;
+}
+.hero h1{
+  font-family:'Kanit',sans-serif;
+  font-size:clamp(30px,6vw,56px);font-weight:900;
+  color:var(--wh);line-height:1.1;margin-bottom:12px;
+  position:relative;z-index:2;
+}
+.hero h1 em{color:var(--or);font-style:normal}
+.hero-sub{
+  font-size:15px;color:var(--mt);
+  position:relative;z-index:2;line-height:1.8;
+  max-width:540px;margin:0 auto 32px;
+}
+
+/* BIG LINE BUTTON */
+.line-big{
+  display:inline-flex;align-items:center;gap:12px;
+  background:#06C755;color:#fff;
+  font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;
+  padding:18px 40px;border-radius:4px;text-decoration:none;
+  letter-spacing:1px;transition:all .25s;
+  box-shadow:0 8px 24px rgba(6,199,85,.35);
+  position:relative;z-index:2;
+}
+.line-big:hover{background:#05A847;transform:translateY(-2px);box-shadow:0 12px 32px rgba(6,199,85,.45)}
+.line-icon{font-size:22px}
+
+/* STEPS */
+.steps-sec{padding:60px 28px;background:var(--bg)}
+.container{max-width:960px;margin:0 auto}
+.sec-tag{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:4px;color:var(--or);
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.sec-tag::before{content:'';width:16px;height:2px;background:var(--or)}
+.sec-title{
+  font-family:'Kanit',sans-serif;font-size:clamp(20px,3vw,30px);
+  font-weight:800;color:var(--wh);margin-bottom:6px;
+}
+.sec-sub{font-size:13px;color:var(--mt);margin-bottom:32px;line-height:1.7}
+
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+@media(max-width:680px){.steps-grid{grid-template-columns:1fr}}
+.step-card{
+  background:var(--bg3);border:1px solid var(--bd);
+  padding:28px 24px;position:relative;overflow:hidden;
+}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--or)}
+.step-num{
+  font-family:'Kanit',sans-serif;font-size:42px;font-weight:900;
+  color:rgba(255,107,0,0.15);line-height:1;margin-bottom:8px;
+}
+.step-icon{font-size:28px;margin-bottom:10px}
+.step-title{
+  font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;
+  color:var(--wh);margin-bottom:6px;
+}
+.step-desc{font-size:12px;color:var(--mt);line-height:1.7}
+
+/* PLANS */
+.plans-sec{padding:60px 28px;background:var(--bg2)}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:32px}
+@media(max-width:600px){.plans-grid{grid-template-columns:1fr}}
+
+.plan-card{
+  background:var(--bg3);border:1px solid var(--bd);
+  padding:32px 28px;position:relative;overflow:hidden;
+  transition:transform .2s;
+}
+.plan-card:hover{transform:translateY(-3px)}
+.plan-card.featured{
+  background:linear-gradient(135deg,rgba(255,107,0,0.07),var(--bg3));
+  border-color:rgba(255,107,0,0.35);
+}
+.plan-card.featured::before{
+  content:'แนะนำครับ';
+  position:absolute;top:0;right:0;
+  background:var(--or);color:#fff;
+  font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;
+  padding:4px 14px;letter-spacing:1px;
+}
+.plan-tag{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:2px;color:var(--mt);margin-bottom:10px;
+}
+.plan-name{
+  font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;
+  color:var(--wh);margin-bottom:6px;
+}
+.plan-desc{font-size:12px;color:var(--mt);line-height:1.7;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bd)}
+.plan-price{
+  font-family:'Kanit',sans-serif;font-size:40px;font-weight:900;
+  line-height:1;margin-bottom:4px;color:var(--or);
+}
+.plan-period{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  color:var(--mt);margin-bottom:20px;
+}
+.plan-feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+.plan-feats li{font-size:12px;color:var(--tx);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.feat-dot{width:4px;height:4px;border-radius:50%;background:var(--or);flex-shrink:0;margin-top:5px}
+.plan-btn{
+  display:block;text-align:center;
+  font-family:'Kanit',sans-serif;font-size:13px;font-weight:700;
+  padding:11px;border-radius:2px;text-decoration:none;letter-spacing:1px;
+  transition:all .2s;border:1.5px solid;
+}
+.plan-card.featured .plan-btn{background:var(--or);color:#fff;border-color:var(--or)}
+.plan-card.featured .plan-btn:hover{background:var(--or2);border-color:var(--or2)}
+.plan-card:not(.featured) .plan-btn{border-color:rgba(255,107,0,0.3);color:var(--or)}
+.plan-card:not(.featured) .plan-btn:hover{background:rgba(255,107,0,0.08)}
+
+/* ACTIVATE CTA */
+.cta-sec{
+  background:var(--bg);
+  border-top:2px solid var(--or);
+  padding:70px 28px;text-align:center;
+}
+.cta-code{
+  font-family:'Share Tech Mono',monospace;font-size:11px;
+  color:var(--or);letter-spacing:3px;
+  background:rgba(255,107,0,0.08);border:1px solid rgba(255,107,0,0.25);
+  padding:6px 16px;border-radius:2px;display:inline-block;margin-bottom:16px;
+}
+.cta-h2{
+  font-family:'Kanit',sans-serif;font-size:clamp(24px,4vw,40px);
+  font-weight:900;color:var(--wh);margin-bottom:10px;
+}
+.cta-h2 em{color:var(--or);font-style:normal}
+.cta-sub{font-size:13px;color:var(--mt);margin-bottom:28px;line-height:1.8}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-line{
+  display:inline-flex;align-items:center;gap:9px;
+  background:#06C755;color:#fff;
+  font-family:'Kanit',sans-serif;font-size:16px;font-weight:700;
+  padding:16px 36px;border-radius:3px;text-decoration:none;
+  letter-spacing:1px;transition:all .2s;
+  box-shadow:0 6px 20px rgba(6,199,85,.3);
+}
+.btn-line:hover{background:#05A847;transform:translateY(-2px)}
+.btn-web{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;border:1.5px solid rgba(255,255,255,0.18);
+  color:var(--wh);font-family:'Kanit',sans-serif;font-size:14px;
+  padding:16px 24px;border-radius:3px;text-decoration:none;transition:all .2s;
+}
+.btn-web:hover{border-color:var(--or);color:var(--or)}
+.cta-note{font-size:11px;color:var(--mt);margin-top:14px}
+
+/* FOOTER */
+footer{
+  background:rgba(0,0,0,0.6);padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+  border-top:1px solid var(--bd);
+}
+.ft{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1px}
+.ft a{color:rgba(255,107,0,0.5);text-decoration:none}
+.ft a:hover{color:var(--or)}
+
+@media(max-width:500px){
+  .topbar{padding:0 16px}
+  .hero{padding:48px 16px 40px}
+  .steps-sec,.plans-sec,.cta-sec{padding:44px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">ECHO <span>PROJECT</span></div>
+  <div class="tb-right">
+    <div class="tb-tag">ACTIVATE 2569</div>
+    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="tb-cta">LINE ครับ</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">ECHO PROJECT · ACTIVATION</div>
+  <h1>เริ่ม Activate<br><em>ทักษะดนตรีของคุณ</em></h1>
+  <p class="hero-sub">เลือก Package ที่เหมาะกับคุณ แล้วทักมาได้เลยครับ ทีมงานช่วยเลือกแผนที่ใช่ที่สุดให้ครับ</p>
+  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="line-big">
+    <span class="line-icon">💬</span> LINE: @musicsupport
+  </a>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="steps-sec">
+  <div class="container">
+    <div class="sec-tag">HOW IT WORKS</div>
+    <div class="sec-title">3 ขั้นตอนง่าย ๆ ครับ</div>
+    <div class="sec-sub">เริ่มได้ทันทีครับ ไม่ต้องรอ</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">💬</div>
+        <div class="step-title">ทักมาที่ LINE ครับ</div>
+        <div class="step-desc">พิมพ์ "Activate" หรือบอกว่าสนใจครับ ทีมงานตอบภายใน 1 ชั่วโมงครับ (09:00–19:00 น.)</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🎯</div>
+        <div class="step-title">เลือก Package ครับ</div>
+        <div class="step-desc">ทีมงานช่วยแนะนำ Package ที่เหมาะกับระดับและเป้าหมายของคุณครับ</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">🚀</div>
+        <div class="step-title">เริ่มเรียนได้เลยครับ</div>
+        <div class="step-desc">เข้าถึง Echo Hub App · คลิปสอน · และ Live Session ได้ทันทีครับ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-sec">
+  <div class="container">
+    <div class="sec-tag">PACKAGES</div>
+    <div class="sec-title">เลือก Package ที่ใช่ครับ</div>
+    <div class="sec-sub">ทุก Package นำไปสู่ Echo Hub Program ครับ</div>
+    <div class="plans-grid">
+
+      <div class="plan-card featured">
+        <div class="plan-tag">HERO PRODUCT · แนะนำ</div>
+        <div class="plan-name">Echo Hub Program ครับ</div>
+        <div class="plan-desc">เต็มระบบครับ App + Hall Leonard + Zoom 12 ครั้ง · พัฒนาการก้าวกระโดดใน 1 คอร์สครับ</div>
+        <div class="plan-price">7,900<span style="font-size:18px">฿</span></div>
+        <div class="plan-period">FULL PROGRAM · 12 WEEKS</div>
+        <ul class="plan-feats">
+          <li><span class="feat-dot"></span>Echo Hub App — ระบบการสอนดิจิทัล 3 Phase 8 บทเรียน</li>
+          <li><span class="feat-dot"></span>หนังสือ Hall Leonard เล่ม 1–2</li>
+          <li><span class="feat-dot"></span>Zoom 12 ครั้ง · 50 นาที · สัปดาห์ละ 1 ครั้ง</li>
+          <li><span class="feat-dot"></span>Milestone Assessment ทุกระยะ</li>
+          <li><span class="feat-dot"></span>คลิปวิดีโอแนะนำทุก Module</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="plan-btn">💬 สมัครได้เลยครับ</a>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-tag">STARTER · เริ่มต้น</div>
+        <div class="plan-name">Echo Note Starter Kit ครับ</div>
+        <div class="plan-desc">ลองดูก่อนครับ เริ่ม Activate ที่บ้านได้เลยครับ ส่งฟรีทั่วประเทศครับ</div>
+        <div class="plan-price">990<span style="font-size:18px">฿</span></div>
+        <div class="plan-period">ENTRY LEVEL · ส่งฟรีทั่วประเทศ</div>
+        <ul class="plan-feats">
+          <li><span class="feat-dot"></span>คีย์บอร์ด Little Pianist 37 คีย์</li>
+          <li><span class="feat-dot"></span>Echo App — เข้าถึงแบบจำกัด (แม่ 1–4)</li>
+          <li><span class="feat-dot"></span>Sticker ติดคีย์บอร์ด</li>
+          <li><span class="feat-dot"></span>QR Code วิดีโอสอน</li>
+        </ul>
+        <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="plan-btn">พิมพ์ "KIT" ใน LINE ครับ</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="cta-sec">
+  <div class="container">
+    <div class="cta-code">ACTIVATION CODE: @MUSICSUPPORT</div>
+    <div class="cta-h2">พร้อม Activate แล้ว<br><em>ทักมาได้เลยครับ</em></div>
+    <p class="cta-sub">ทีมงานช่วยเลือก Package ที่เหมาะที่สุดให้ครับ · ตอบภายใน 1 ชั่วโมงครับ</p>
+    <div class="cta-btns">
+      <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" class="btn-line">💬 LINE: @musicsupport</a>
+      <a href="https://www.skecho.org/shop" target="_blank" class="btn-web">🛒 ดู Products ทั้งหมด</a>
+    </div>
+    <div class="cta-note">ทีมงานตอบภายใน 1 ชั่วโมงครับ · ทุกวัน 09:00–19:00 น.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft">© 2569 ECHO PROJECT · SIAMSKOL MUSIC · ดนตรี กตัญญู ผู้ผลิต มิตร AI</div>
+  <div class="ft"><a href="https://www.skecho.org">skecho.org</a> · LINE: <a href="https://line.me/R/ti/p/@musicsupport">@musicsupport</a></div>
+</footer>
+
+</body>
+</html>
