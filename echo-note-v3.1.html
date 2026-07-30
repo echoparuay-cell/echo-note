@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Echo Note v3.1 : บทที่ 1-3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&family=Sarabun:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void:#0b0e14;
+    --ink:#f5f1e8;
+    --ink-dim:#a89f97;
+    --gold:#e8b04b;
+    --gold-soft:rgba(232,176,75,0.28);
+    --teal:#3fa9a0;
+    --teal-soft:rgba(63,169,160,0.22);
+    --danger:#d9705c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;background:#0b0e14;}
+  body{
+    background:var(--bg-void);color:var(--ink);font-family:'Sarabun',sans-serif;
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    height:100dvh;width:100vw;
+  }
+  .stage{position:relative;width:100%;max-width:520px;height:100dvh;overflow:hidden;}
+  .scene{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:28px 22px;text-align:center;
+    opacity:0;pointer-events:none;transition:opacity 0.9s ease;
+  }
+  .scene.active{opacity:1;pointer-events:auto;}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.18em;color:var(--gold);margin-bottom:14px;opacity:0.85;}
+  h1.title{font-family:'Kanit',sans-serif;font-weight:800;font-size:clamp(26px,7vw,38px);margin:0 0 8px;line-height:1.25;}
+
+  .caption{
+    font-family:'Sarabun',sans-serif;font-weight:700;font-size:clamp(16px,4.3vw,19px);
+    color:#ffffff;line-height:1.8;max-width:380px;min-height:3.4em;
+    background:rgba(6,8,12,0.8);padding:10px 20px;border-radius:16px;
+    text-shadow:0 1px 3px rgba(0,0,0,0.6);
+  }
+
+  /* buttons — every button carries its own solid fill, never relies on
+     the surrounding page background (learned the hard way in v1/v2). */
+  .startBtn,.nextBtn,.choiceBtn,.stopBtn{
+    font-family:'Kanit',sans-serif;font-weight:700;border-radius:999px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  }
+  .startBtn{
+    margin-top:26px;padding:16px 34px;font-size:17px;
+    background:rgba(6,8,12,0.75);border:1px solid var(--gold);color:var(--gold);
+  }
+  .startBtn:active{background:var(--gold-soft);}
+  .nextBtn{
+    margin-top:24px;padding:13px 30px;font-size:15px;
+    background:rgba(6,8,12,0.7);border:1px solid var(--teal);color:var(--teal);
+  }
+  .stopBtn{
+    margin-top:10px;padding:14px 40px;font-size:16px;border:none;
+    background:var(--gold);color:#231705;
+  }
+  .stopBtn:active{filter:brightness(0.9);}
+  .choiceRow{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;justify-content:center;}
+  .choiceBtn{
+    padding:13px 22px;font-size:15px;
+    background:rgba(6,8,12,0.7);border:1px solid rgba(255,255,255,0.4);color:#ffffff;
+  }
+  .choiceBtn.correct{border-color:var(--teal);color:#8fe0d8;background:rgba(19,58,55,0.9);}
+  .choiceBtn.wrong{border-color:var(--danger);color:#ffb3a3;background:rgba(58,25,19,0.9);}
+
+  /* the orb — signature element, sized per-scene below */
+  .orb-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin:16px 0;
+    width:min(58vw,240px);height:min(58vw,240px);}
+  #scene2-intro .orb-wrap{width:min(50vw,200px);height:min(50vw,200px);margin:14px 0;}
+  #scene3-intro .orb-wrap{width:min(46vw,180px);height:min(46vw,180px);margin:12px 0;}
+  .orb{
+    width:64%;height:64%;border-radius:50%;
+    background:radial-gradient(circle at 38% 32%, #ffe6ab, var(--gold) 45%, #8a5c1e 100%);
+    box-shadow:0 0 0 rgba(232,176,75,0);
+    transition:transform 0.09s ease-out, box-shadow 0.09s ease-out;
+  }
+  .orb.pulse{transform:scale(1.14);box-shadow:0 0 46px 14px var(--gold-soft);}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(232,176,75,0.22);}
+
+  /* tap zone (shared by บทที่ 1 and บทที่ 2) */
+  .tapzone{
+    width:min(64vw,260px);height:min(64vw,260px);border-radius:50%;
+    border:2px dashed rgba(255,255,255,0.4);background:rgba(6,8,12,0.45);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:14px;color:#f0ebe1;
+    letter-spacing:0.08em;user-select:none;margin:22px 0;
+    transition:background 0.08s ease, border-color 0.08s ease;
+  }
+  #scene-quarter .tapzone{width:min(56vw,220px);height:min(56vw,220px);font-size:13px;margin:20px 0;}
+  .tapzone.hit{background:rgba(63,169,160,0.35);border-color:var(--teal);}
+
+  /* บทที่ 1: reveal / fracture scene */
+  .blockstage{position:relative;width:100%;max-width:340px;height:280px;display:flex;align-items:center;justify-content:center;}
+  .group-row{display:flex;gap:22px;align-items:flex-end;justify-content:center;flex-wrap:wrap;max-width:320px;}
+  .group{display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.18;transform:translateY(6px);
+    transition:opacity 0.4s ease, transform 0.4s ease;}
+  .group.on{opacity:1;transform:translateY(0);}
+  .group .dots{display:flex;gap:6px;}
+  .dot{width:15px;height:15px;border-radius:50%;
+    background:rgba(120,110,95,0.45);border:1px solid rgba(255,255,255,0.2);
+    transition:background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;}
+  .dot.lit{background:var(--gold);transform:scale(1.15);box-shadow:0 0 10px 2px var(--gold-soft);}
+  .group .glabel{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);letter-spacing:0.06em;}
+
+  .labelrow{display:flex;gap:26px;margin-top:26px;flex-wrap:wrap;justify-content:center;}
+  .labelchip{
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14px;padding:8px 16px;border-radius:999px;
+    border:1px solid rgba(255,255,255,0.35);background:rgba(6,8,12,0.6);color:#f0ebe1;
+  }
+  .labelchip.strong{border-color:var(--gold);color:var(--gold);}
+
+  .bpmtag{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;color:rgba(245,241,232,0.28);}
+
+  /* บทที่ 2: time-value bars — width IS the multiplication (1x/2x/4x) */
+  .barRow{display:flex;align-items:center;gap:10px;margin:22px 0;flex-wrap:wrap;justify-content:center;max-width:400px;}
+  .bar{height:34px;border-radius:8px;background:rgba(120,110,95,0.4);border:1px solid rgba(255,255,255,0.2);
+    transition:background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;}
+  .bar.lit{background:var(--gold);box-shadow:0 0 16px 3px var(--gold-soft);}
+  .bar.grouped{outline:2px solid var(--teal);outline-offset:3px;}
+  .bar-q{width:38px;}
+  .bar-h{width:76px;}
+  .bar-w{width:152px;}
+
+  /* บทที่ 3: sound clock dial — 12-position chromatic wheel */
+  .dial-wrap{position:relative;width:min(58vw,230px);height:min(58vw,230px);margin:16px 0;}
+  .dial{width:100%;height:100%;border-radius:50%;border:2px solid rgba(255,255,255,0.25);
+    background:rgba(6,8,12,0.5);position:relative;}
+  .tick{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);top:50%;left:50%;margin:-3px;}
+  .tick.active{background:var(--gold);box-shadow:0 0 8px 2px var(--gold-soft);width:9px;height:9px;margin:-4.5px;}
+  .needle{position:absolute;left:50%;top:50%;width:3px;height:38%;background:var(--gold);transform-origin:top center;
+    transform:translateX(-50%) rotate(0deg);transition:transform 0.6s cubic-bezier(.34,1.56,.64,1);
+    border-radius:3px;box-shadow:0 0 10px 2px var(--gold-soft);}
+  .dial-center{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--ink);}
+  .dial-label{font-family:'Kanit',sans-serif;font-weight:700;font-size:15px;color:#fff;
+    position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+    background:rgba(6,8,12,0.7);padding:4px 14px;border-radius:999px;white-space:nowrap;}
+
+  .grid2d{position:relative;width:min(80vw,320px);height:150px;margin:20px 0;
+    border-left:2px solid rgba(255,255,255,0.25);border-bottom:2px solid rgba(255,255,255,0.25);}
+  .gdot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--gold);
+    box-shadow:0 0 10px 2px var(--gold-soft);opacity:0;transition:opacity 0.3s ease;}
+  .gdot.on{opacity:1;}
+  .gbar{position:absolute;height:3px;background:rgba(232,176,75,0.5);bottom:0;}
+
+  #masterPause{
+    position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(245,241,232,0.3);background:rgba(11,14,20,0.6);color:var(--ink);
+    font-size:16px;display:flex;align-items:center;justify-content:center;z-index:20;
+    opacity:0;pointer-events:none;transition:opacity 0.4s ease;
+  }
+  #masterPause.show{opacity:1;pointer-events:auto;}
+
+  @media (prefers-reduced-motion: reduce){
+    .orb,.dot,.group,.bar,.needle,.scene{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <button id="masterPause" aria-label="เล่น/หยุดชั่วคราว">⏸</button>
+
+  <!-- single start gate for the whole v3.1 set -->
+  <section class="scene active" id="scene-start">
+    <div class="eyebrow">ECHO NOTE • v3.1</div>
+    <h1 class="title">บทที่ 1–3<br>ชุดรวม</h1>
+    <p class="caption">แตะปุ่มด้านล่างเพื่อเปิดเสียงและเริ่มบทเรียน</p>
+    <button class="startBtn" id="btnStart">เริ่มเลย</button>
+  </section>
+
+  <!-- ============ บทที่ 1 : เสียงที่มองเห็น ============ -->
+  <section class="scene" id="scene-title">
+    <p class="caption" id="titleCaption">บทที่หนึ่ง… เสียงที่มองเห็น</p>
+  </section>
+
+  <section class="scene" id="scene-autoplay">
+    <div class="orb-wrap"><div class="ring"></div><div class="orb" id="orbAuto"></div></div>
+    <p class="caption" id="autoplayCaption">&nbsp;</p>
+    <div class="bpmtag">240 BPM</div>
+  </section>
+
+  <section class="scene" id="scene-mission">
+    <p class="caption" id="missionCaption">ลองหาอะไรก็ได้ที่อยู่ใกล้ตัว</p>
+    <div class="tapzone" id="tapZone">แตะที่นี่ตามจังหวะ<br>(หรือเคาะของจริงก็ได้)</div>
+    <button class="stopBtn" id="btnStop">หยุด</button>
+  </section>
+
+  <section class="scene" id="scene-reveal">
+    <p class="caption" id="revealCaption">เมื่อครู่… สิ่งที่คุณได้ยิน</p>
+    <div class="blockstage">
+      <div class="orb-wrap" id="revealOrbWrap" style="margin:0;">
+        <div class="ring"></div>
+        <div class="orb" id="orbReveal"></div>
+      </div>
+      <div class="group-row" id="groupRow" style="display:none;"></div>
+    </div>
+  </section>
+
+  <section class="scene" id="scene-summary">
+    <p class="caption" id="summaryCaption">เสียงที่เราได้ยิน เมื่อแปลงเป็นภาพ ก็จะกลายเป็นก้อนเสียงแบบนี้</p>
+    <div class="labelrow">
+      <span class="labelchip">เม็ด</span>
+      <span class="labelchip">กลุ่ม</span>
+      <span class="labelchip strong">ก้อน</span>
+    </div>
+  </section>
+
+  <section class="scene" id="scene-outro">
+    <p class="caption" id="outroCaption">ในแอปนี้ เราไม่ได้เริ่มจากการจำตัวโน้ต แต่เราเริ่มจากการมองเห็นเสียง</p>
+  </section>
+
+  <!-- ============ บทที่ 2 : สูตรคูณเสียง ============ -->
+  <section class="scene" id="scene2-intro">
+    <div class="orb-wrap"><div class="ring"></div><div class="orb" id="orbIntro2"></div></div>
+    <p class="caption" id="introCaption2">&nbsp;</p>
+  </section>
+
+  <section class="scene" id="scene-quarter">
+    <p class="caption" id="quarterCaption">ลองเคาะตาม "ดำ" 4 ครั้ง</p>
+    <div class="tapzone" id="tapZoneQ">แตะตามจังหวะ</div>
+  </section>
+
+  <section class="scene" id="scene-half">
+    <p class="caption" id="halfCaption">ฟังเสียงนี้ดูนะ</p>
+    <div class="barRow" id="halfBarRow"></div>
+    <div class="choiceRow" id="halfChoices"></div>
+  </section>
+
+  <section class="scene" id="scene-whole">
+    <p class="caption" id="wholeCaption">ฟังเสียงนี้ดูนะ</p>
+    <div class="barRow" id="wholeBarRow"></div>
+    <div class="choiceRow" id="wholeChoices"></div>
+  </section>
+
+  <section class="scene" id="scene-expand">
+    <p class="caption" id="expandCaption">มาลองอ่านเสียงกันใหม่</p>
+    <div class="barRow" id="expandBarRow"></div>
+  </section>
+
+  <section class="scene" id="scene2-game">
+    <p class="caption" id="gameCaption2">ลองเดาดูสิ นี่คือค่าไหน</p>
+    <div class="choiceRow" id="gameChoices2"></div>
+  </section>
+
+  <section class="scene" id="scene2-outro">
+    <p class="caption" id="outroCaption2">นี่คือสูตรคูณแม่หนึ่ง</p>
+  </section>
+
+  <!-- ============ บทที่ 3 : การเดินทางของเสียง ============ -->
+  <section class="scene" id="scene3-intro">
+    <div class="orb-wrap"><div class="ring"></div><div class="orb" id="orbIntro3"></div></div>
+    <p class="caption" id="introCaption3">&nbsp;</p>
+  </section>
+
+  <section class="scene" id="scene-up">
+    <p class="caption" id="upCaption">ฟังเสียงสองเสียงนี้</p>
+    <div class="choiceRow" id="upChoices"></div>
+  </section>
+
+  <section class="scene" id="scene-up-reveal">
+    <p class="caption" id="upRevealCaption">เสียงที่สอง… สูงขึ้น</p>
+    <div class="dial-wrap">
+      <div class="dial" id="dialUp"></div>
+      <div class="needle" id="needleUp"></div>
+      <div class="dial-center"></div>
+      <div class="dial-label" id="dialLabelUp">ซอ</div>
+    </div>
+  </section>
+
+  <section class="scene" id="scene-down">
+    <p class="caption" id="downCaption">แล้วสองเสียงนี้ล่ะ</p>
+    <div class="choiceRow" id="downChoices"></div>
+  </section>
+
+  <section class="scene" id="scene-down-reveal">
+    <p class="caption" id="downRevealCaption">เสียงที่สอง… ต่ำลง</p>
+    <div class="dial-wrap">
+      <div class="dial" id="dialDown"></div>
+      <div class="needle" id="needleDown"></div>
+      <div class="dial-center"></div>
+      <div class="dial-label" id="dialLabelDown">ซอ</div>
+    </div>
+  </section>
+
+  <section class="scene" id="scene-combine">
+    <p class="caption" id="combineCaption">ทีนี้ลองรวมสองแกนเข้าด้วยกัน</p>
+    <div class="grid2d" id="grid2d"></div>
+  </section>
+
+  <section class="scene" id="scene3-game">
+    <p class="caption" id="gameCaption3">ลองฟังแล้วเดาทิศทางดูสิ</p>
+    <div class="choiceRow" id="gameChoices3"></div>
+  </section>
+
+  <section class="scene" id="scene3-outro">
+    <p class="caption" id="outroCaption3">เสียงเดินทางได้ 3 ทาง: เหมือนเดิม ขึ้น หรือ ลง</p>
+    <button class="nextBtn" id="btnNext3">จบบทที่ 1–3 ✓</button>
+  </section>
+</div>
+
+<script>
+/* =========================================================================
+   Echo Note v3.1 — บทที่ 1, 2, 3 merged into one continuous experience.
+   One start gate, one audio context, one master pause control. Chapters
+   auto-advance into each other (narration-timed), matching the confirmed
+   transition rule from บทที่ 1 → บทที่ 2.
+
+   Scene/function naming: บทที่ 1 kept its original unprefixed ids/names
+   (built first). บทที่ 2 and บทที่ 3 elements/functions that collided
+   with another chapter were suffixed 2 / 3 respectively; anything already
+   unique across all three files was left as-is.
+
+   HANDOFF NOTE (carried over from each original file): speakOrCaption()
+   is a duration-based stand-in for real recorded narration — swap for
+   <audio>.onended when doing final production.
+   ========================================================================= */
+
+const BPM = 240;
+const BEAT_SEC = 60 / BPM;           // 0.25s per beat
+
+// บทที่ 1 rhythm pattern: ดำดำขาว | ดำดำขาว | ดำดำดำดำ | กลม :||
+const GROUPS = [3, 3, 4, 1];
+const PATTERN = [
+  {beats:1, label:'ดำ'},  {beats:1, label:'ดำ'},  {beats:2, label:'ขาว'},
+  {beats:1, label:'ดำ'},  {beats:1, label:'ดำ'},  {beats:2, label:'ขาว'},
+  {beats:1, label:'ดำ'},  {beats:1, label:'ดำ'},  {beats:1, label:'ดำ'},  {beats:1, label:'ดำ'},
+  {beats:4, label:'กลม'}
+];
+
+// บทที่ 2 reading-expansion groups (same rhythm as บทที่ 1)
+const READ_GROUPS = [
+  [{c:'bar-q',beats:1},{c:'bar-q',beats:1},{c:'bar-h',beats:2}],
+  [{c:'bar-q',beats:1},{c:'bar-q',beats:1},{c:'bar-h',beats:2}],
+  [{c:'bar-q',beats:1},{c:'bar-q',beats:1},{c:'bar-q',beats:1},{c:'bar-q',beats:1}],
+  [{c:'bar-w',beats:4}]
+];
+
+// บทที่ 3 hidden data model — real chromatic semitone positions (0–11),
+// not shown to the child yet, ready for future half-step lessons.
+const NOTE_POS  = {'โด':0,'เร':2,'มี':4,'ฟา':5,'ซอล':7,'ลา':9,'ที':11};
+const NOTE_FREQ = {'ฟา':349.23,'ซอล':392.00,'ลา':440.00};
+function semitoneDistance(a,b){ return Math.abs(NOTE_POS[b]-NOTE_POS[a]); }
+
+let ctx = null;
+let masterGain = null;
+let schedulerTimer = null;
+let nextNoteTime = 0;
+let notesPlayed = 0;
+let patternIndex = 0;
+let isRunning = false;
+let isPaused = false;
+
+const masterPauseBtn = document.getElementById('masterPause');
+
+function showScene(id){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ---------- shared audio engine ---------- */
+function initAudio(){
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = 0.9;
+  masterGain.connect(ctx.destination);
+}
+
+// plays one musical tone lasting durSec (its full note value) — quarter
+// notes are short plucks, half/whole notes are held so the duration
+// itself is audible. Used by all three chapters (freq varies in บทที่ 3).
+function playTone(freq, time, durSec){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  const attack = 0.012;
+  const release = Math.min(0.15, durSec * 0.35);
+  const sustainLevel = 0.5;
+  gain.gain.setValueAtTime(0.0001, time);
+  gain.gain.exponentialRampToValueAtTime(sustainLevel, time + attack);
+  gain.gain.setValueAtTime(sustainLevel, Math.max(time + attack, time + durSec - release));
+  gain.gain.exponentialRampToValueAtTime(0.0001, time + durSec);
+  osc.connect(gain).connect(masterGain);
+  osc.start(time);
+  osc.stop(time + durSec + 0.03);
+}
+
+function playPing(freq, dur){
+  if (!ctx) return;
+  dur = dur || 0.22;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(0.45, t + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain).connect(masterGain);
+  osc.start(t);
+  osc.stop(t + dur + 0.02);
+}
+function playConfirmChime(){
+  [523.25, 659.25, 784.0].forEach((f, idx) => setTimeout(() => playPing(f, 0.32), idx * 90));
+}
+function playGentleNudge(){ playPing(220, 0.25); }
+
+function pulseOrb(el, durSec){
+  const ms = Math.min(600, (durSec || 0.25) * 1000 * 0.8);
+  el.classList.add('pulse');
+  setTimeout(() => el.classList.remove('pulse'), ms);
+}
+
+function speakOrCaption(el, text, msPerChar, cb){
+  el.textContent = text;
+  const duration = Math.max(900, text.length * (msPerChar || 48));
+  setTimeout(cb, duration);
+}
+
+masterPauseBtn.addEventListener('click', () => {
+  if (!ctx) return;
+  if (ctx.state === 'running'){ ctx.suspend(); masterPauseBtn.textContent = '▶'; }
+  else { ctx.resume(); masterPauseBtn.textContent = '⏸'; }
+});
+
+/* ---------- บทที่ 3 sound-clock dial helpers ---------- */
+function buildDial(dialEl){
+  for (let i = 0; i < 12; i++){
+    const t = document.createElement('div');
+    t.className = 'tick';
+    const angle = (i / 12) * 2 * Math.PI - Math.PI/2;
+    t.style.left = (50 + 42 * Math.cos(angle)) + '%';
+    t.style.top  = (50 + 42 * Math.sin(angle)) + '%';
+    t.dataset.pos = i;
+    dialEl.appendChild(t);
+  }
+}
+function setNeedle(dialWrap, needleEl, labelEl, pos, label){
+  const angle = (pos / 12) * 360;
+  needleEl.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+  labelEl.textContent = label;
+  dialWrap.querySelectorAll('.tick').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.pos,10) === pos);
+  });
+}
+
+/* ---------- single start gate for all three chapters ---------- */
+document.getElementById('btnStart').addEventListener('click', () => {
+  if (!ctx) initAudio();
+  ctx.resume();
+  masterPauseBtn.classList.add('show');
+  buildDial(document.getElementById('dialUp'));
+  buildDial(document.getElementById('dialDown'));
+  showScene('scene-title');
+  speakOrCaption(document.getElementById('titleCaption'),
+    'บทที่หนึ่ง… เสียงที่มองเห็น', 55, () => {
+      showScene('scene-autoplay');
+      runAutoplay();
+    });
+});
+
+/* ==================== บทที่ 1 : เสียงที่มองเห็น ==================== */
+
+function scheduleClickTrack(onNote, limitNotes){
+  const LOOKAHEAD = 25;
+  const SCHEDULE_AHEAD = 0.15;
+  function tick(){
+    if (!isRunning || isPaused) return;
+    while (nextNoteTime < ctx.currentTime + SCHEDULE_AHEAD){
+      if (limitNotes !== null && notesPlayed >= limitNotes){
+        isRunning = false;
+        onNote('done', nextNoteTime, null);
+        return;
+      }
+      const note = PATTERN[patternIndex % PATTERN.length];
+      const durSec = note.beats * BEAT_SEC;
+      const t = nextNoteTime;
+      playTone(392, t, durSec);
+      const delay = Math.max(0, (t - ctx.currentTime) * 1000);
+      setTimeout(() => onNote('note', t, note), delay);
+      nextNoteTime += durSec;
+      patternIndex++;
+      notesPlayed++;
+    }
+    schedulerTimer = setTimeout(tick, LOOKAHEAD);
+  }
+  tick();
+}
+function startClickTrack(limit, onNote){
+  notesPlayed = 0;
+  patternIndex = 0;
+  isRunning = true;
+  isPaused = false;
+  nextNoteTime = ctx.currentTime + 0.1;
+  scheduleClickTrack(onNote, limit);
+}
+function stopClickTrack(){
+  isRunning = false;
+  clearTimeout(schedulerTimer);
+}
+
+function runAutoplay(){
+  const orb = document.getElementById('orbAuto');
+  startClickTrack(PATTERN.length, (kind, t, note) => {
+    if (kind === 'note'){
+      pulseOrb(orb, note.beats * BEAT_SEC);
+    } else if (kind === 'done'){
+      showScene('scene-mission');
+      runMission();
+    }
+  });
+}
+
+function runMission(){
+  const tapZone = document.getElementById('tapZone');
+  const missionLines = [
+    'ลองหาอะไรก็ได้ที่อยู่ใกล้ตัว',
+    'ใช้มือเคาะให้ตรงกับจังหวะที่ได้ยิน',
+    'เมื่อทำได้แล้ว… กด "หยุด"'
+  ];
+  const capEl = document.getElementById('missionCaption');
+  let i = 0;
+  (function nextLine(){
+    if (i >= missionLines.length) return;
+    speakOrCaption(capEl, missionLines[i], 45, nextLine);
+    i++;
+  })();
+
+  startClickTrack(null, (kind, t, note) => {
+    if (kind === 'note') pulseZone(note.beats * BEAT_SEC);
+  });
+  function pulseZone(durSec){
+    const ms = Math.min(500, durSec * 1000 * 0.8);
+    tapZone.classList.add('hit');
+    setTimeout(() => tapZone.classList.remove('hit'), ms);
+  }
+  tapZone.addEventListener('pointerdown', () => {
+    tapZone.classList.add('hit');
+    setTimeout(() => tapZone.classList.remove('hit'), 120);
+  });
+}
+
+document.getElementById('btnStop').addEventListener('click', () => {
+  stopClickTrack();
+  showScene('scene-reveal');
+  runReveal();
+});
+
+function runReveal(){
+  const capEl = document.getElementById('revealCaption');
+  const orbWrap = document.getElementById('revealOrbWrap');
+  const groupRow = document.getElementById('groupRow');
+
+  const lines = [
+    'เมื่อครู่… สิ่งที่คุณได้ยิน',
+    'ไม่ได้เป็นเพียงเสียง',
+    'แต่มันมีรูปร่าง'
+  ];
+  let i = 0;
+  (function nextLine(){
+    if (i < lines.length){
+      speakOrCaption(capEl, lines[i], 50, nextLine);
+      i++;
+      return;
+    }
+    speakOrCaption(capEl, 'เราเพิ่งวาดเสียงสำเร็จ', 55, () => {
+      orbWrap.style.transform = 'scale(1.25)';
+      orbWrap.style.transition = 'transform 0.7s ease';
+      setTimeout(() => {
+        orbWrap.style.display = 'none';
+        groupRow.style.display = 'flex';
+        speakOrCaption(capEl, 'ก้อนเสียงหนึ่งก้อน ประกอบด้วยหลายกลุ่ม', 50, () => {
+          buildGroups(groupRow, capEl, () => {
+            playConfirmChime();
+            speakOrCaption(capEl,
+              'เก่งมาก… คุณเพิ่งเคาะจังหวะตามสิ่งที่ได้ยินไปแล้ว', 50, () => {
+                speakOrCaption(capEl,
+                  'เสียงที่เราได้ยิน เมื่อแปลงเป็นภาพ ก็จะกลายเป็นก้อนเสียงแบบนี้',
+                  45, () => {
+                    showScene('scene-summary');
+                    runOutro1();
+                  });
+              });
+          });
+        });
+      }, 700);
+    });
+  })();
+}
+
+function buildGroups(container, capEl, onDone){
+  container.innerHTML = '';
+  const groupEls = GROUPS.map((count, gi) => {
+    const g = document.createElement('div');
+    g.className = 'group';
+    const label = document.createElement('div');
+    label.className = 'glabel';
+    label.textContent = 'กลุ่มที่ ' + (gi + 1);
+    const dots = document.createElement('div');
+    dots.className = 'dots';
+    for (let d = 0; d < count; d++){
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dots.appendChild(dot);
+    }
+    g.appendChild(dots);
+    g.appendChild(label);
+    container.appendChild(g);
+    return g;
+  });
+
+  let gi = 0;
+  const thaiNums = ['หนึ่ง','สอง','สาม','สี่','ห้า','หก'];
+  function nextGroup(){
+    if (gi >= groupEls.length){ onDone(); return; }
+    const g = groupEls[gi];
+    g.classList.add('on');
+    const dots = g.querySelectorAll('.dot');
+    let di = 0;
+    (function nextDot(){
+      if (di >= dots.length){
+        gi++;
+        setTimeout(nextGroup, 260);
+        return;
+      }
+      dots[di].classList.add('lit');
+      capEl.textContent = thaiNums[di] || (di+1);
+      playPing(392 + di * 60, 0.2);
+      di++;
+      setTimeout(nextDot, 380);
+    })();
+  }
+  nextGroup();
+}
+
+// end of บทที่ 1 — auto-advances into บทที่ 2 (confirmed: narration-timed,
+// no manual "next" button between chapters)
+function runOutro1(){
+  showScene('scene-outro');
+  const capEl = document.getElementById('outroCaption');
+  const lines = [
+    'ในแอปนี้ เราไม่ได้เริ่มจากการจำตัวโน้ต',
+    'แต่เราเริ่มจากการมองเห็นเสียง',
+    'เมื่อมองเห็นเสียงได้ การอ่านโน้ตก็จะง่ายขึ้น'
+  ];
+  let i = 0;
+  (function nextLine(){
+    if (i >= lines.length){
+      setTimeout(() => { showScene('scene2-intro'); runIntro2(); }, 700);
+      return;
+    }
+    speakOrCaption(capEl, lines[i], 45, nextLine);
+    i++;
+  })();
+}
+
+/* ==================== บทที่ 2 : สูตรคูณเสียง ==================== */
+
+function runIntro2(){
+  const cap = document.getElementById('introCaption2');
+  const orb = document.getElementById('orbIntro2');
+  speakOrCaption(cap, 'นี่คือเสียง "ดำ" หนึ่งครั้ง', 55, () => {
+    const t = ctx.currentTime + 0.1;
+    playTone(392, t, BEAT_SEC);
+    setTimeout(() => pulseOrb(orb, BEAT_SEC), 100);
+    setTimeout(() => {
+      showScene('scene-quarter');
+      runQuarterMission();
+    }, 900);
+  });
+}
+
+function runQuarterMission(){
+  const zone = document.getElementById('tapZoneQ');
+  const cap = document.getElementById('quarterCaption');
+  let n = 0;
+  function playOne(){
+    if (n >= 4){
+      setTimeout(() => { showScene('scene-half'); runHalf(); }, 500);
+      return;
+    }
+    const t = ctx.currentTime + 0.05;
+    playTone(392, t, BEAT_SEC);
+    setTimeout(() => {
+      zone.classList.add('hit');
+      setTimeout(() => zone.classList.remove('hit'), 160);
+    }, 50);
+    n++;
+    setTimeout(playOne, BEAT_SEC * 1000);
+  }
+  speakOrCaption(cap, 'ลองเคาะตาม "ดำ" 4 ครั้ง', 50, playOne);
+  zone.addEventListener('pointerdown', () => {
+    zone.classList.add('hit');
+    setTimeout(() => zone.classList.remove('hit'), 120);
+  });
+}
+
+function runHalf(){
+  const cap = document.getElementById('halfCaption');
+  const barRow = document.getElementById('halfBarRow');
+  const choices = document.getElementById('halfChoices');
+  barRow.innerHTML = '<div class="bar bar-h" id="halfBar"></div>';
+  choices.innerHTML = '';
+
+  speakOrCaption(cap, 'ฟังเสียงนี้ดูนะ', 50, () => {
+    const t = ctx.currentTime + 0.1;
+    const durSec = BEAT_SEC * 2;
+    playTone(392, t, durSec);
+    setTimeout(() => document.getElementById('halfBar').classList.add('lit'), 100);
+    setTimeout(() => {
+      speakOrCaption(cap, 'เสียงนี้ยาวกว่า "ดำ" กี่เท่า?', 50, () => {
+        ['1 เท่า', '2 เท่า', '3 เท่า'].forEach(label => {
+          const b = document.createElement('button');
+          b.className = 'choiceBtn';
+          b.textContent = label;
+          b.addEventListener('click', () => onHalfChoice(b, label === '2 เท่า'));
+          choices.appendChild(b);
+        });
+      });
+    }, durSec * 1000 + 200);
+  });
+
+  function onHalfChoice(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      playConfirmChime();
+      speakOrCaption(cap, 'ถูกต้อง! ขาว = ดำ 2 เม็ดรวมกัน', 48, () => {
+        mergeToBar(barRow, 2, 'bar-h', () => {
+          setTimeout(() => { showScene('scene-whole'); runWhole(); }, 500);
+        });
+      });
+    } else {
+      btn.classList.add('wrong');
+      playGentleNudge();
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+
+function runWhole(){
+  const cap = document.getElementById('wholeCaption');
+  const barRow = document.getElementById('wholeBarRow');
+  const choices = document.getElementById('wholeChoices');
+  barRow.innerHTML = '<div class="bar bar-w" id="wholeBar"></div>';
+  choices.innerHTML = '';
+
+  speakOrCaption(cap, 'แล้วเสียงนี้ล่ะ', 50, () => {
+    const t = ctx.currentTime + 0.1;
+    const durSec = BEAT_SEC * 4;
+    playTone(392, t, durSec);
+    setTimeout(() => document.getElementById('wholeBar').classList.add('lit'), 100);
+    setTimeout(() => {
+      speakOrCaption(cap, 'ยาวกว่า "ดำ" กี่เท่า?', 50, () => {
+        ['2 เท่า', '4 เท่า', '8 เท่า'].forEach(label => {
+          const b = document.createElement('button');
+          b.className = 'choiceBtn';
+          b.textContent = label;
+          b.addEventListener('click', () => onWholeChoice(b, label === '4 เท่า'));
+          choices.appendChild(b);
+        });
+      });
+    }, durSec * 1000 + 200);
+  });
+
+  function onWholeChoice(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      playConfirmChime();
+      speakOrCaption(cap, 'ถูกต้อง! กลม = ดำ 4 เม็ด (หรือ ขาว 2 ตัว) รวมกัน', 46, () => {
+        mergeToBar(barRow, 4, 'bar-w', () => {
+          setTimeout(() => { showScene('scene-expand'); runExpand(); }, 500);
+        });
+      });
+    } else {
+      btn.classList.add('wrong');
+      playGentleNudge();
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+
+function mergeToBar(container, count, targetClass, onDone){
+  container.innerHTML = '';
+  const smalls = [];
+  for (let i = 0; i < count; i++){
+    const b = document.createElement('div');
+    b.className = 'bar bar-q lit';
+    container.appendChild(b);
+    smalls.push(b);
+  }
+  setTimeout(() => {
+    smalls.forEach(b => { b.style.transform = 'scaleX(0.2)'; b.style.opacity = '0'; });
+    setTimeout(() => {
+      container.innerHTML = '<div class="bar ' + targetClass + ' lit"></div>';
+      setTimeout(onDone, 500);
+    }, 350);
+  }, 500);
+}
+
+function runExpand(){
+  const cap = document.getElementById('expandCaption');
+  const row = document.getElementById('expandBarRow');
+  row.innerHTML = '';
+  const groupEls = [];
+  READ_GROUPS.forEach((g, gi) => {
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.gap = '6px';
+    wrap.dataset.gi = gi;
+    g.forEach(n => {
+      const b = document.createElement('div');
+      b.className = 'bar ' + n.c;
+      b.dataset.beats = n.beats;
+      wrap.appendChild(b);
+    });
+    row.appendChild(wrap);
+    groupEls.push(wrap);
+  });
+
+  speakOrCaption(cap, 'มาลองอ่านเสียงกันใหม่', 50, () => {
+    speakOrCaption(cap, 'ก่อนหน้านี้ เราอ่านทีละเม็ด', 48, () => {
+      readAsDots(groupEls, () => {
+        speakOrCaption(cap, 'ตอนนี้ ลองมองทั้งกลุ่มเป็นภาพเดียว', 48, () => {
+          readAsGroups(groupEls, () => {
+            speakOrCaption(cap, 'สุดท้าย มองทั้งหมดเป็นก้อนเดียว', 48, () => {
+              readAsBlock(row, () => {
+                speakOrCaption(cap, 'นี่คือสูตรคูณแม่หนึ่ง', 55, () => {
+                  showScene('scene2-game');
+                  runGame2();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+function readAsDots(groupEls, onDone){
+  const allBars = groupEls.flatMap(g => Array.from(g.children));
+  let i = 0;
+  (function next(){
+    if (i >= allBars.length){ setTimeout(onDone, 300); return; }
+    const bar = allBars[i];
+    const beats = parseInt(bar.dataset.beats || '1', 10);
+    const durSec = beats * BEAT_SEC;
+    bar.classList.add('lit');
+    playTone(392, ctx.currentTime + 0.02, durSec);
+    i++;
+    setTimeout(next, durSec * 1000 + 100);
+  })();
+}
+function readAsGroups(groupEls, onDone){
+  let i = 0;
+  (function next(){
+    if (i >= groupEls.length){ setTimeout(onDone, 300); return; }
+    groupEls[i].classList.add('grouped');
+    playPing(330, 0.22);
+    i++;
+    setTimeout(next, 420);
+  })();
+}
+function readAsBlock(row, onDone){
+  row.style.transition = 'outline 0.3s ease';
+  row.style.outline = '2px solid var(--gold)';
+  row.style.outlineOffset = '10px';
+  row.style.borderRadius = '14px';
+  playConfirmChime();
+  setTimeout(onDone, 900);
+}
+
+function runGame2(){
+  const cap = document.getElementById('gameCaption2');
+  const choices = document.getElementById('gameChoices2');
+  const options = [
+    {label:'ดำ', beats:1}, {label:'ขาว', beats:2}, {label:'กลม', beats:4}
+  ];
+  const answer = options[Math.floor(Math.random() * options.length)];
+  choices.innerHTML = '';
+
+  speakOrCaption(cap, 'ลองเดาดูสิ นี่คือค่าไหน', 50, () => {
+    const t = ctx.currentTime + 0.1;
+    playTone(392, t, answer.beats * BEAT_SEC);
+    setTimeout(() => {
+      options.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = 'choiceBtn';
+        b.textContent = opt.label;
+        b.addEventListener('click', () => onGameChoice2(b, opt.label === answer.label));
+        choices.appendChild(b);
+      });
+    }, answer.beats * BEAT_SEC * 1000 + 200);
+  });
+
+  function onGameChoice2(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      playConfirmChime();
+      speakOrCaption(cap, 'เก่งมาก! ฟังออกแล้วนะเนี่ย', 48, () => {
+        showScene('scene2-outro');
+        runOutro2();
+      });
+    } else {
+      btn.classList.add('wrong');
+      playGentleNudge();
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+
+// end of บทที่ 2 — auto-advances into บทที่ 3
+function runOutro2(){
+  const capEl = document.getElementById('outroCaption2');
+  speakOrCaption(capEl, 'นี่คือสูตรคูณแม่หนึ่ง', 55, () => {
+    setTimeout(() => { showScene('scene3-intro'); runIntro3(); }, 700);
+  });
+}
+
+/* ==================== บทที่ 3 : การเดินทางของเสียง ==================== */
+
+function runIntro3(){
+  const cap = document.getElementById('introCaption3');
+  const orb = document.getElementById('orbIntro3');
+  speakOrCaption(cap, 'นี่คือเสียง "ซอ" เสียงบ้านของเรา', 55, () => {
+    const t = ctx.currentTime + 0.1;
+    playTone(NOTE_FREQ['ซอล'], t, BEAT_SEC * 2);
+    setTimeout(() => pulseOrb(orb, BEAT_SEC * 2), 100);
+    setTimeout(() => { showScene('scene-up'); runUpMission(); }, BEAT_SEC*2*1000 + 500);
+  });
+}
+
+function runUpMission(){
+  const cap = document.getElementById('upCaption');
+  const choices = document.getElementById('upChoices');
+  choices.innerHTML = '';
+  speakOrCaption(cap, 'ฟังเสียงสองเสียงนี้', 50, () => {
+    const t0 = ctx.currentTime + 0.1;
+    playTone(NOTE_FREQ['ซอล'], t0, BEAT_SEC*1.5);
+    playTone(NOTE_FREQ['ลา'], t0 + BEAT_SEC*1.8, BEAT_SEC*1.5);
+    setTimeout(() => {
+      speakOrCaption(cap, 'เสียงที่สองเป็นแบบไหน?', 48, () => {
+        ['เหมือนเดิม','สูงขึ้น','ต่ำลง'].forEach(label => {
+          const b = document.createElement('button');
+          b.className = 'choiceBtn';
+          b.textContent = label;
+          b.addEventListener('click', () => onUpChoice(b, label === 'สูงขึ้น'));
+          choices.appendChild(b);
+        });
+      });
+    }, BEAT_SEC*1.8*1000 + BEAT_SEC*1.5*1000 + 300);
+  });
+  function onUpChoice(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      showScene('scene-up-reveal');
+      runUpReveal();
+    } else {
+      btn.classList.add('wrong');
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+function runUpReveal(){
+  const cap = document.getElementById('upRevealCaption');
+  const dialWrap = document.querySelector('#scene-up-reveal .dial-wrap');
+  const needle = document.getElementById('needleUp');
+  const label = document.getElementById('dialLabelUp');
+  setNeedle(dialWrap, needle, label, NOTE_POS['ซอล'], 'ซอ');
+  speakOrCaption(cap, 'เริ่มที่ "ซอ"', 55, () => {
+    setTimeout(() => {
+      setNeedle(dialWrap, needle, label, NOTE_POS['ลา'], 'ลา');
+      speakOrCaption(cap, 'แล้วเข็มก็ขยับไปทาง "ลา" — สูงขึ้น', 48, () => {
+        setTimeout(() => { showScene('scene-down'); runDownMission(); }, 500);
+      });
+    }, 700);
+  });
+}
+
+function runDownMission(){
+  const cap = document.getElementById('downCaption');
+  const choices = document.getElementById('downChoices');
+  choices.innerHTML = '';
+  speakOrCaption(cap, 'แล้วสองเสียงนี้ล่ะ', 50, () => {
+    const t0 = ctx.currentTime + 0.1;
+    playTone(NOTE_FREQ['ซอล'], t0, BEAT_SEC*1.5);
+    playTone(NOTE_FREQ['ฟา'], t0 + BEAT_SEC*1.8, BEAT_SEC*1.5);
+    setTimeout(() => {
+      speakOrCaption(cap, 'เสียงที่สองเป็นแบบไหน?', 48, () => {
+        ['เหมือนเดิม','สูงขึ้น','ต่ำลง'].forEach(label => {
+          const b = document.createElement('button');
+          b.className = 'choiceBtn';
+          b.textContent = label;
+          b.addEventListener('click', () => onDownChoice(b, label === 'ต่ำลง'));
+          choices.appendChild(b);
+        });
+      });
+    }, BEAT_SEC*1.8*1000 + BEAT_SEC*1.5*1000 + 300);
+  });
+  function onDownChoice(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      showScene('scene-down-reveal');
+      runDownReveal();
+    } else {
+      btn.classList.add('wrong');
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+function runDownReveal(){
+  const cap = document.getElementById('downRevealCaption');
+  const dialWrap = document.querySelector('#scene-down-reveal .dial-wrap');
+  const needle = document.getElementById('needleDown');
+  const label = document.getElementById('dialLabelDown');
+  setNeedle(dialWrap, needle, label, NOTE_POS['ซอล'], 'ซอ');
+  speakOrCaption(cap, 'เริ่มที่ "ซอ"', 55, () => {
+    setTimeout(() => {
+      setNeedle(dialWrap, needle, label, NOTE_POS['ฟา'], 'ฟา');
+      speakOrCaption(cap, 'แล้วเข็มก็ขยับไปทาง "ฟา" — ต่ำลง', 48, () => {
+        setTimeout(() => { showScene('scene-combine'); runCombine(); }, 500);
+      });
+    }, 700);
+  });
+}
+
+function runCombine(){
+  const cap = document.getElementById('combineCaption');
+  const grid = document.getElementById('grid2d');
+  grid.innerHTML = '';
+  const seq = [
+    {note:'ซอล', beats:1, x:20},
+    {note:'ลา',  beats:1, x:110},
+    {note:'ซอล', beats:2, x:200}
+  ];
+  const yFor = n => ({'ฟา':110,'ซอล':75,'ลา':40})[n];
+
+  speakOrCaption(cap, 'ทีนี้ลองรวมสองแกนเข้าด้วยกัน', 50, () => {
+    speakOrCaption(cap, 'แนวนอน = เวลา   แนวตั้ง = ระดับเสียง', 46, () => {
+      let i = 0;
+      (function next(){
+        if (i >= seq.length){
+          setTimeout(() => {
+            speakOrCaption(cap, 'นี่แหละ คือสิ่งที่โน้ตเพลงกำลังบอกเรา', 48, () => {
+              showScene('scene3-game'); runGame3();
+            });
+          }, 500);
+          return;
+        }
+        const n = seq[i];
+        const dot = document.createElement('div');
+        dot.className = 'gdot';
+        dot.style.left = n.x + 'px';
+        dot.style.bottom = (150 - yFor(n.note)) + 'px';
+        grid.appendChild(dot);
+        const bar = document.createElement('div');
+        bar.className = 'gbar';
+        bar.style.left = n.x + 'px';
+        bar.style.width = (n.beats * 40) + 'px';
+        grid.appendChild(bar);
+        requestAnimationFrame(() => dot.classList.add('on'));
+        const t = ctx.currentTime + 0.05;
+        playTone(NOTE_FREQ[n.note], t, n.beats * BEAT_SEC);
+        i++;
+        setTimeout(next, n.beats * BEAT_SEC * 1000 + 250);
+      })();
+    });
+  });
+}
+
+function runGame3(){
+  const cap = document.getElementById('gameCaption3');
+  const choices = document.getElementById('gameChoices3');
+  const options = [
+    {label:'เหมือนเดิม', note:'ซอล'},
+    {label:'สูงขึ้น', note:'ลา'},
+    {label:'ต่ำลง', note:'ฟา'}
+  ];
+  const answer = options[Math.floor(Math.random() * options.length)];
+  choices.innerHTML = '';
+  speakOrCaption(cap, 'ลองฟังแล้วเดาทิศทางดูสิ', 50, () => {
+    const t0 = ctx.currentTime + 0.1;
+    playTone(NOTE_FREQ['ซอล'], t0, BEAT_SEC*1.5);
+    playTone(NOTE_FREQ[answer.note], t0 + BEAT_SEC*1.8, BEAT_SEC*1.5);
+    setTimeout(() => {
+      options.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = 'choiceBtn';
+        b.textContent = opt.label;
+        b.addEventListener('click', () => onGameChoice3(b, opt.label === answer.label));
+        choices.appendChild(b);
+      });
+    }, BEAT_SEC*1.8*1000 + BEAT_SEC*1.5*1000 + 300);
+  });
+  function onGameChoice3(btn, correct){
+    if (correct){
+      btn.classList.add('correct');
+      speakOrCaption(cap, 'เก่งมาก! ฟังทิศทางออกแล้ว', 48, () => showScene('scene3-outro'));
+    } else {
+      btn.classList.add('wrong');
+      setTimeout(() => btn.classList.remove('wrong'), 500);
+    }
+  }
+}
+
+document.getElementById('btnNext3').addEventListener('click', () => {
+  document.getElementById('outroCaption3').textContent =
+    'จบบทที่ 1–3 แล้ว รอบทที่ 4 ครับ';
+});
+</script>
+</body>
+</html>
