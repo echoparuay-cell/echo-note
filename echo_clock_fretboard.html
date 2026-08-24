@@ -676,9 +676,11 @@ function onMIDI(e){
 function closeOverlay(){document.getElementById('overlay').style.display='none';}
 
 
-// ── AUDIO ENGINE (iOS Safe) ──
-let soundOn = false;
+// ── WEB AUDIO ENGINE ──
 let audioCtx = null;
+let soundOn = true;
+let masterVolume = 0.8;
+let currentWave = 'sine';
 
 const NOTE_FREQS = {
   'C':261.63,'C#':277.18,'D':293.66,'D#':311.13,
@@ -690,7 +692,6 @@ function initAudio(){
   if(!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
-  // iOS requires resume from user gesture (click/touchend)
   if(audioCtx.state === 'suspended') audioCtx.resume();
 }
 
@@ -698,30 +699,36 @@ function toggleSound(){
   initAudio();
   soundOn = !soundOn;
   const btn = document.getElementById('sound-btn');
-  btn.textContent = soundOn ? '🔊 Sound On' : '🔇 Sound';
-  btn.className = soundOn ? 'sound-btn on' : 'sound-btn';
+  if(btn){
+    btn.textContent = soundOn ? '🔊 Sound On' : '🔇 Sound Off';
+    btn.className = soundOn ? 'sound-btn on' : 'sound-btn';
+  }
+}
+
+function setVolume(v){
+  masterVolume = Math.max(0, Math.min(100, Number(v))) / 100;
 }
 
 function setWave(type, btn){
+  currentWave = type;
   document.querySelectorAll('.wave-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
 function playNote(noteName, octave=4){
   if(!soundOn) return;
-  // Always init + resume (iOS requirement)
   initAudio();
-
   const freq = NOTE_FREQS[noteName] * Math.pow(2, octave - 4);
   const now = audioCtx.currentTime;
+  const peak = 0.6 * masterVolume;
 
-  // Use multiple oscillators for richer sound (piano-like)
-  [1, 2, 4].forEach((harmonic, i) => {
+  // Piano-like: 3 harmonics
+  [1, 2, 4].forEach((h, i) => {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq * harmonic, now);
-    const vol = [0.5, 0.15, 0.05][i];
+    osc.frequency.setValueAtTime(freq * h, now);
+    const vol = [peak, peak*0.25, peak*0.08][i];
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(vol, now + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
@@ -731,6 +738,16 @@ function playNote(noteName, octave=4){
     osc.stop(now + 1.2);
   });
 }
+
+// ── iOS / Desktop AUDIO UNLOCK ──
+document.addEventListener('touchstart', function unlock(){
+  initAudio();
+  document.removeEventListener('touchstart', unlock);
+}, {once:true});
+document.addEventListener('click', function unlockClick(){
+  initAudio();
+  document.removeEventListener('click', unlockClick);
+}, {once:true});
 
 // ── iOS AUDIO UNLOCK ──
 document.addEventListener('click', function unlock(){
