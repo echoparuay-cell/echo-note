@@ -174,8 +174,8 @@ body{
   <div style="font-size:36px">🎸</div>
   <div class="co-title">Echo Hub · Clock + Fretboard</div>
   <div class="co-sub">เชื่อมต่อ MIDI Keyboard ครับ<br>หรือกดโน้ตบน Fretboard ได้เลยครับ</div>
-  <button class="co-btn" onclick="connectMIDI()">🔌 Connect MIDI ครับ</button>
-  <button class="co-skip" onclick="closeOverlay()">ใช้โดยไม่มี MIDI ครับ</button>
+  <button class="co-btn" id="midi-connect-btn" onclick="connectMIDI()">🔌 Connect MIDI ครับ</button>
+  <button class="co-skip" onclick="closeOverlay()">🎸 ใช้ Fretboard เลยครับ</button>
 </div>
 
 <!-- TOPBAR -->
@@ -197,7 +197,11 @@ body{
   <button class="scale-btn" onclick="setScale('penta_major',this)">Penta Major</button>
   <button class="scale-btn" onclick="setScale('penta_minor',this)">Penta Minor</button>
   <button class="scale-btn" onclick="setScale('all',this)">Chromatic</button>
+  <button class="scale-btn" id="practice-toggle-btn" style="margin-left:auto;border-color:var(--gn);color:var(--gn)" onclick="togglePractice()">🎯 โหมดฝึกทาย (สาย 1)</button>
 </div>
+
+<!-- PRACTICE STATUS -->
+<div id="practice-status" style="display:none;padding:10px 16px;background:rgba(0,200,120,0.08);border-bottom:1px solid rgba(0,200,120,0.2);font-family:'Kanit',sans-serif;font-size:13px;color:var(--gn);text-align:center"></div>
 
 <!-- MAIN -->
 <div class="main">
@@ -264,6 +268,15 @@ const GUITAR_STRINGS = [
 let currentRoot = 0; // C
 let currentScale = 'major';
 let activeNote = null;
+let selectedString = 0; // which string row is "in focus" on the fretboard
+let selectedFret = null; // which fret on that string is lit up
+
+// ── PRACTICE MODE STATE ──
+let practiceMode = false;
+let practiceString = 0;
+let practiceTargets = [];
+let practiceIdx = 0;
+let foundFrets = [];
 let midiAccess = null;
 
 // ── SCALE UTILS ──
@@ -313,8 +326,9 @@ function buildClock(){
     svg.appendChild(l);
     const t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',cx+Math.cos(a)*(r+30));t.setAttribute('y',cy+Math.sin(a)*(r+30));
-    t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','8');
-    t.setAttribute('fill','rgba(255,255,255,0.12)');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','13');
+    t.setAttribute('font-weight','700');
+    t.setAttribute('fill','rgba(255,255,255,0.55)');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
     t.textContent=i;svg.appendChild(t);
   }
 
@@ -482,21 +496,39 @@ function buildFretboard(){
     svg.appendChild(c);
   });
 
+  // Row highlight background (brightened for the selected/focused string)
+  GUITAR_STRINGS.forEach((str,si)=>{
+    const y=startY+si*strH;
+    const rowBg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rowBg.setAttribute('id',`fb-row-${si}`);
+    rowBg.setAttribute('x',startX-32);rowBg.setAttribute('y',y-strH/2);
+    rowBg.setAttribute('width',FRETS*fretW+32);rowBg.setAttribute('height',strH);
+    rowBg.setAttribute('fill','rgba(255,255,255,0)');
+    svg.appendChild(rowBg);
+  });
+
   // Strings + labels + dots
   GUITAR_STRINGS.forEach((str,si)=>{
     const y=startY+si*strH;
     const sline=document.createElementNS('http://www.w3.org/2000/svg','line');
+    sline.setAttribute('id',`fb-sline-${si}`);
     sline.setAttribute('x1',startX);sline.setAttribute('y1',y);
     sline.setAttribute('x2',startX+FRETS*fretW);sline.setAttribute('y2',y);
     sline.setAttribute('stroke','rgba(255,255,255,0.18)');
     sline.setAttribute('stroke-width',str.thick?'2.5':'1');
+    sline.style.cursor='pointer';
+    sline.addEventListener('click',()=>focusString(si));
     svg.appendChild(sline);
 
     // String label
     const sl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    sl.setAttribute('id',`fb-slabel-${si}`);
     sl.setAttribute('x',8);sl.setAttribute('y',y);
     sl.setAttribute('font-family','Share Tech Mono,monospace');sl.setAttribute('font-size','8');
+    sl.setAttribute('font-weight','700');
     sl.setAttribute('fill','rgba(255,255,255,0.25)');sl.setAttribute('dominant-baseline','middle');
+    sl.style.cursor='pointer';
+    sl.addEventListener('click',()=>focusString(si));
     sl.textContent=str.label;svg.appendChild(sl);
 
     // All fret positions
@@ -508,7 +540,7 @@ function buildFretboard(){
       const g=document.createElementNS('http://www.w3.org/2000/svg','g');
       g.setAttribute('id',id);g.setAttribute('data-note',note);g.setAttribute('data-si',si);g.setAttribute('data-fi',f);
       g.style.cursor='pointer';
-      g.addEventListener('click',()=>selectNote(note,si,f));
+      g.addEventListener('click',()=>handleFretClick(note,si,f));
 
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','7');
@@ -535,6 +567,24 @@ function updateFretboard(){
   const scaleNotes=getScaleNotes(currentRoot,currentScale);
   const rootName=NOTE_NAMES[currentRoot];
 
+  // Brighten the row/string/label that is currently "in focus" so it's
+  // obvious which string the fretboard is showing, and dim the rest.
+  GUITAR_STRINGS.forEach((str,si)=>{
+    const isFocus = si===selectedString;
+    const rowBg=document.getElementById(`fb-row-${si}`);
+    const sline=document.getElementById(`fb-sline-${si}`);
+    const slabel=document.getElementById(`fb-slabel-${si}`);
+    if(rowBg) rowBg.setAttribute('fill', isFocus ? 'rgba(255,167,38,0.06)' : 'rgba(255,255,255,0)');
+    if(sline){
+      sline.setAttribute('stroke', isFocus ? 'rgba(255,167,38,0.55)' : 'rgba(255,255,255,0.12)');
+      sline.setAttribute('stroke-width', isFocus ? (str.thick?'3.5':'2') : (str.thick?'2':'1'));
+    }
+    if(slabel){
+      slabel.setAttribute('fill', isFocus ? '#ffa726' : 'rgba(255,255,255,0.2)');
+      slabel.setAttribute('font-size', isFocus ? '9' : '8');
+    }
+  });
+
   GUITAR_STRINGS.forEach((str,si)=>{
     for(let f=0;f<=12;f++){
       const note=getNoteAtFret(str.open,f);
@@ -542,10 +592,17 @@ function updateFretboard(){
       if(!g) continue;
       const c=g.querySelector('.fb-circle');
       const t=g.querySelector('.fb-label');
-      const inScale=scaleNotes.includes(note);
-      const isActive=note===activeNote;
-      const isRoot=note===rootName;
-      const color=NOTE_COLORS[note];
+
+      // In practice mode, on the string being practiced, only reveal
+      // frets already "found" by ear — everything else stays hidden
+      // so the kid can't just look for the highlighted colour.
+      const masked = practiceMode && si===practiceString && !foundFrets.includes(f);
+      const inScale = masked ? false : scaleNotes.includes(note);
+      // Only the exact fret the kid tapped lights up as "active" — not
+      // every occurrence of that note name across the whole neck.
+      const isActive = !masked && si===selectedString && f===selectedFret;
+      const isRoot = !masked && note===rootName;
+      const color = NOTE_COLORS[note];
 
       if(isActive){
         c.setAttribute('fill',color);c.setAttribute('stroke',color);
@@ -560,10 +617,11 @@ function updateFretboard(){
         t.setAttribute('fill',color+(isRoot?'FF':'AA'));
         t.setAttribute('opacity','1');t.setAttribute('font-size','6');
       } else {
-        c.setAttribute('fill',color+'08');c.setAttribute('stroke',color+'15');
+        c.setAttribute('fill',masked?'rgba(255,255,255,0.03)':color+'08');
+        c.setAttribute('stroke',masked?'rgba(255,255,255,0.08)':color+'15');
         c.setAttribute('stroke-width','1');c.setAttribute('r','6');
         c.removeAttribute('filter');
-        t.setAttribute('fill',color+'20');t.setAttribute('opacity','1');t.setAttribute('font-size','5');
+        t.setAttribute('fill',masked?'rgba(255,255,255,0.06)':color+'20');t.setAttribute('opacity','1');t.setAttribute('font-size','5');
       }
     }
   });
@@ -589,7 +647,26 @@ function buildLegend(scaleNotes){
 
 // ── SELECT NOTE ──
 function selectNote(note, si, fi){
+  const prevNote = activeNote;
   activeNote = note;
+
+  // Figure out exactly one fret position to light up on the fretboard.
+  // If a specific string/fret was tapped, use that. Otherwise (e.g. the
+  // note was picked from the clock or the legend), find where that note
+  // sits on the currently focused string, so only ONE dot lights up
+  // instead of every occurrence of the note across the whole neck.
+  if(si !== undefined && fi !== undefined){
+    selectedString = si;
+    selectedFret = fi;
+  } else {
+    const str = GUITAR_STRINGS[selectedString];
+    let found = null;
+    for(let f=0; f<=12; f++){
+      if(getNoteAtFret(str.open, f) === note){ found = f; break; }
+    }
+    selectedFret = found;
+  }
+
   const color = NOTE_COLORS[note];
   const scaleNotes = getScaleNotes(currentRoot, currentScale);
   const inScale = scaleNotes.includes(note);
@@ -598,6 +675,12 @@ function selectNote(note, si, fi){
 
   // Update clock + fretboard
   updateClock();
+  // Show the needle "traveling" from the last note to this one
+  animateClockTravel(prevNote, note);
+  // Flash the clock dot on every single tap — even repeated taps on
+  // the same note — so a rhythm (เช่น สูตรคูณเสียง: กด กด กด) is visible
+  // as a flicker in time with the sound, not just a static highlight.
+  pulseClockDot(note);
   // Play sound
   initAudio();
   playNote(note, 4);
@@ -655,7 +738,7 @@ function setScale(type, btn){
 // ── MIDI ──
 async function connectMIDI(){
   if(!navigator.requestMIDIAccess){
-    alert('ใช้ Chrome หรือ Edge ครับ');return;
+    alert('อุปกรณ์หรือเบราว์เซอร์นี้ไม่รองรับ MIDI ครับ (เช่น iPhone/iPad ทุกเบราว์เซอร์) กดปุ่ม "🎸 ใช้ Fretboard เลยครับ" แทนได้เลยครับ');return;
   }
   try{
     midiAccess=await navigator.requestMIDIAccess();
@@ -752,7 +835,160 @@ document.addEventListener('touchstart', function unlock(){
   document.removeEventListener('touchstart', unlock);
 }, {once:true});
 
-// ── INIT ──
+// ── STRING FOCUS ──
+// Lets the kid tap a string label/line to bring that string "into focus"
+// (brighter row) without needing to also pick a note.
+function focusString(si){
+  selectedString = si;
+  selectedFret = null;
+  updateFretboard();
+}
+
+// ── CLOCK DOT FLASH (for rhythm/beat demonstration) ──
+// Every tap — including repeat taps on the same note — makes the
+// matching clock dot flash bright white for an instant, then settle
+// back into its normal state. This is what makes tapping ดำ-ดำ-ดำ-ดำ
+// (or any rhythm) visible as a flicker on the clock, in sync with sound.
+function pulseClockDot(note){
+  const g = document.getElementById(`cdot-${note.replace('#','s')}`);
+  if(!g) return;
+  const circle = g.querySelector('.cdot-circle');
+  if(!circle) return;
+  circle.setAttribute('fill', '#ffffff');
+  circle.setAttribute('opacity', '1');
+  circle.setAttribute('r', '22');
+  circle.setAttribute('filter', 'drop-shadow(0 0 16px #ffffff)');
+  clearTimeout(pulseClockDot._t);
+  pulseClockDot._t = setTimeout(()=>{ updateClock(); }, 110);
+}
+
+// ── CLOCK NEEDLE TRAVEL ANIMATION ──// Draws the "journey" of the sound: a small marker glides along the
+// shortest arc from the previous note's clock position to the new one,
+// so the kid SEES the movement, not just a jump-cut highlight.
+function animateClockTravel(fromNote, toNote){
+  if(!fromNote || fromNote === toNote) return;
+  const svg = document.getElementById('clock-svg');
+  if(!svg) return;
+  const cx=140, cy=140, r=95;
+  const posFrom = CLOCK_POS[fromNote], posTo = CLOCK_POS[toNote];
+  let diff = ((posTo - posFrom + 6) % 12 + 12) % 12 - 6; // shortest direction, -6..5
+
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('r','5'); dot.setAttribute('fill','#fff');
+  dot.setAttribute('opacity','0.95');
+  svg.appendChild(dot);
+
+  const steps = 18;
+  let i = 0;
+  function frame(){
+    i++;
+    const t = i/steps;
+    const pos = posFrom + diff*t;
+    const a = (pos/12)*Math.PI*2 - Math.PI/2;
+    dot.setAttribute('cx', cx+Math.cos(a)*r);
+    dot.setAttribute('cy', cy+Math.sin(a)*r);
+    dot.setAttribute('opacity', String(0.95*(1-t*0.4)));
+    if(i<steps) requestAnimationFrame(frame);
+    else svg.removeChild(dot);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ── FRET CLICK ROUTER ──
+// Normal mode: tapping a fret just plays/selects it as before.
+// Practice mode on the active string: the tap is checked against
+// the next "in scale" fret the kid needs to find, in order.
+function handleFretClick(note, si, f){
+  if(practiceMode && si === practiceString){
+    checkPracticeGuess(note, si, f);
+  } else {
+    selectNote(note, si, f);
+  }
+}
+
+function togglePractice(){
+  const btn = document.getElementById('practice-toggle-btn');
+  if(!practiceMode){
+    startPractice(0);
+    btn.textContent = '✖ ออกจากโหมดฝึก';
+  } else {
+    practiceMode = false;
+    document.getElementById('practice-status').style.display = 'none';
+    btn.textContent = '🎯 โหมดฝึกทาย (สาย 1)';
+    updateFretboard();
+  }
+}
+
+function startPractice(si){
+  practiceMode = true;
+  practiceString = si;
+  selectedString = si;
+  selectedFret = null;
+  foundFrets = [];
+  practiceIdx = 0;
+
+  const scaleNotes = getScaleNotes(currentRoot, currentScale);
+  const str = GUITAR_STRINGS[si];
+  practiceTargets = [];
+  for(let f=0; f<=12; f++){
+    if(scaleNotes.includes(getNoteAtFret(str.open, f))) practiceTargets.push(f);
+  }
+
+  const btn = document.getElementById('practice-toggle-btn');
+  btn.textContent = '✖ ออกจากโหมดฝึก';
+
+  renderPracticeStatus(str.label);
+  updateFretboard();
+}
+
+function renderPracticeStatus(strLabel){
+  const el = document.getElementById('practice-status');
+  el.style.display = 'block';
+  el.innerHTML = `🎯 สาย <b>${strLabel || GUITAR_STRINGS[practiceString].label}</b> · เดินนิ้วทีละเฟรตแล้วฟัง — เจอ "บ้าน" ไปแล้ว <b>${foundFrets.length}/${practiceTargets.length}</b>`;
+}
+
+function checkPracticeGuess(note, si, f){
+  const target = practiceTargets[practiceIdx];
+  if(f === target){
+    selectNote(note, si, f); // plays sound + moves the clock needle
+    foundFrets.push(f);
+    practiceIdx++;
+    renderPracticeStatus();
+    if(practiceIdx >= practiceTargets.length){
+      setTimeout(()=>finishPracticeString(), 500);
+    }
+  } else {
+    flashWrong(si, f);
+  }
+}
+
+function flashWrong(si, f){
+  const g = document.getElementById(`fb-${si}-${f}`);
+  if(!g) return;
+  const c = g.querySelector('.fb-circle');
+  const prevFill = c.getAttribute('fill'), prevStroke = c.getAttribute('stroke');
+  c.setAttribute('fill','rgba(255,60,60,0.35)');
+  c.setAttribute('stroke','rgba(255,60,60,0.6)');
+  setTimeout(()=>{ c.setAttribute('fill',prevFill); c.setAttribute('stroke',prevStroke); }, 300);
+}
+
+function finishPracticeString(){
+  const el = document.getElementById('practice-status');
+  const nextSi = practiceString + 1;
+  if(nextSi < GUITAR_STRINGS.length){
+    el.innerHTML = `🎉 เก่งมาก! สาย <b>${GUITAR_STRINGS[practiceString].label}</b> ครบแล้ว — รูปแบบเดินนิ้วเหมือนเดิมทุกสาย แค่จุดเริ่มขยับ
+      <button class="scale-btn" style="margin-left:8px" onclick="startPractice(${nextSi})">ลองสาย ${GUITAR_STRINGS[nextSi].label} เลย</button>`;
+  } else {
+    el.innerHTML = `🏆 ครบทุกสายแล้วครับ! เก่งมากกก`;
+    setTimeout(()=>{ practiceMode=false; document.getElementById('practice-toggle-btn').textContent='🎯 โหมดฝึกทาย (สาย 1)'; el.style.display='none'; updateFretboard(); }, 3000);
+  }
+}
+
+
+if(!navigator.requestMIDIAccess){
+  const midiBtn=document.getElementById('midi-connect-btn');
+  if(midiBtn) midiBtn.style.display='none';
+}
 buildRootBtns();
 buildClock();
 buildFretboard();
