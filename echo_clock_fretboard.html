@@ -1162,14 +1162,14 @@ function finishPracticeString(){
 // Visual reference for "สูตรคูณแม่หนึ่ง": ดำ ดำ ขาว | ดำ ดำ ขาว | ดำ ดำ ดำ ดำ
 // 'q' = ดำ (quarter note), 'h' = ขาว (half note). Grouped into bars.
 const RHYTHM_PATTERN = [
-  ['q','q','q'], // ccc
-  ['q','q','q'], // ddd
-  ['q','q','q','q'], // eeee
-  ['w'],         // f
-  ['q','q','q'], // ggg
-  ['q','q','q'], // aaa
-  ['q','q','q','q'], // bbbb
-  ['w'],         // c
+  ['q','q','h'], // ccc → ดำ ดำ ขาว (C)
+  ['q','q','h'], // ddd → ดำ ดำ ขาว (D)
+  ['q','q','q','q'], // eeee → ดำ ดำ ดำ ดำ (E)
+  ['w'],         // f → กลม (F)
+  ['q','q','h'], // ggg → ดำ ดำ ขาว (G)
+  ['q','q','h'], // aaa → ดำ ดำ ขาว (A)
+  ['q','q','q','q'], // bbbb → ดำ ดำ ดำ ดำ (B)
+  ['w'],         // c → กลม (C)
 ];
 // Which scale degree (0=root/โด ... 6=7th/ที) each bar sits on.
 // Line 1: โด เร มี ฟา · Line 2: ซอล ลา ที โด(อ็อกเทฟ)
