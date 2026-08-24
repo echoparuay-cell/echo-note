@@ -906,15 +906,17 @@ function createClockNoteIconEl(type){
   const ellipse = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
   ellipse.setAttribute('cx','7');ellipse.setAttribute('cy','20');
   ellipse.setAttribute('rx','6');ellipse.setAttribute('ry','4.5');
-  ellipse.setAttribute('fill', type==='h' ? 'none' : '#ffffff');
+  ellipse.setAttribute('fill', type==='q' ? '#ffffff' : 'none');
   ellipse.setAttribute('stroke','#ffffff');ellipse.setAttribute('stroke-width','2');
   ellipse.setAttribute('transform','rotate(-18 7 20)');
   g.appendChild(ellipse);
-  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-  line.setAttribute('x1','12.5');line.setAttribute('y1','18');
-  line.setAttribute('x2','12.5');line.setAttribute('y2','2');
-  line.setAttribute('stroke','#ffffff');line.setAttribute('stroke-width','2');
-  g.appendChild(line);
+  if(type!=='w'){ // whole note (กลม) has no stem
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1','12.5');line.setAttribute('y1','18');
+    line.setAttribute('x2','12.5');line.setAttribute('y2','2');
+    line.setAttribute('stroke','#ffffff');line.setAttribute('stroke-width','2');
+    g.appendChild(line);
+  }
   return g;
 }
 
@@ -1163,15 +1165,19 @@ const RHYTHM_PATTERN = [
   ['q','q','h'],
   ['q','q','h'],
   ['q','q','q','q'],
+  ['w'],
 ];
 
 function noteIconSVG(type, lit){
   // Simple note-head + stem icon drawn as inline SVG.
+  // 'q' = ดำ (quarter, filled head + stem), 'h' = ขาว (half, open head + stem),
+  // 'w' = กลม (whole note, open head, NO stem).
   const fillColor = lit ? '#42a5f5' : 'rgba(255,255,255,0.5)';
-  const headFill = type==='h' ? 'none' : fillColor;
+  const headFill = type==='q' ? fillColor : 'none';
+  const stem = type==='w' ? '' : `<line x1="12.5" y1="18" x2="12.5" y2="2" stroke="${fillColor}" stroke-width="2"/>`;
   return `<svg width="20" height="26" viewBox="0 0 20 26">
     <ellipse cx="7" cy="20" rx="6" ry="4.5" fill="${headFill}" stroke="${fillColor}" stroke-width="2" transform="rotate(-18 7 20)"/>
-    <line x1="12.5" y1="18" x2="12.5" y2="2" stroke="${fillColor}" stroke-width="2"/>
+    ${stem}
   </svg>`;
 }
 
@@ -1195,14 +1201,22 @@ async function playRhythmDemo(){
   const btn = document.getElementById('demo-play-btn');
   if(btn) btn.disabled = true;
 
-  const rootName = NOTE_NAMES[currentRoot];
+  // Walk the current scale one degree per note-event (not just the root),
+  // so the demo shows real pitch movement around the clock, completing
+  // a full lap of the scale as the pattern plays.
+  const scaleNotes = getScaleNotes(currentRoot, currentScale);
+  let degIdx = 0;
+
   const flatIcons = document.querySelectorAll('#rhythm-guide .rg-note');
   let iconIdx = 0;
+  const DUR = { q:450, h:900, w:1800 };
 
   for(const bar of RHYTHM_PATTERN){
     for(const type of bar){
-      const dur = type==='h' ? 900 : 450; // ขาว ยาวเป็น 2 เท่าของดำ
-      selectNote(rootName, undefined, undefined, type); // sound + clock flash + needle + note-icon at position
+      const dur = DUR[type] || 450;
+      const pitch = scaleNotes[degIdx % scaleNotes.length];
+      degIdx++;
+      selectNote(pitch, undefined, undefined, type); // sound + clock flash + needle + note-icon at position
       const icon = flatIcons[iconIdx];
       if(icon){
         icon.innerHTML = noteIconSVG(type, true);
