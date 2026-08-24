@@ -1162,11 +1162,18 @@ function finishPracticeString(){
 // Visual reference for "สูตรคูณแม่หนึ่ง": ดำ ดำ ขาว | ดำ ดำ ขาว | ดำ ดำ ดำ ดำ
 // 'q' = ดำ (quarter note), 'h' = ขาว (half note). Grouped into bars.
 const RHYTHM_PATTERN = [
-  ['q','q','h'],
-  ['q','q','h'],
-  ['q','q','q','q'],
-  ['w'],
+  ['q','q','q'], // ccc
+  ['q','q','q'], // ddd
+  ['q','q','q','q'], // eeee
+  ['w'],         // f
+  ['q','q','q'], // ggg
+  ['q','q','q'], // aaa
+  ['q','q','q','q'], // bbbb
+  ['w'],         // c
 ];
+// Which scale degree (0=root/โด ... 6=7th/ที) each bar sits on.
+// Line 1: โด เร มี ฟา · Line 2: ซอล ลา ที โด(อ็อกเทฟ)
+const MELODY_DEGREES = [0,1,2,3,4,5,6,0];
 
 function noteIconSVG(type, lit){
   // Simple note-head + stem icon drawn as inline SVG.
@@ -1184,9 +1191,14 @@ function noteIconSVG(type, lit){
 function renderRhythmGuide(){
   const div = document.getElementById('rhythm-guide');
   if(!div) return;
-  div.innerHTML = RHYTHM_PATTERN.map((bar,bi)=>{
-    const icons = bar.map(type=>`<span class="rg-note" data-type="${type}">${noteIconSVG(type,false)}</span>`).join('');
-    return `<div style="display:flex;align-items:center;gap:3px;padding:3px 6px;border-left:2px solid rgba(255,255,255,0.15)">${icons}</div>`;
+  // Two lines of 4 bars each, matching |ccc|ddd|eeee|f| / |ggg|aaa|bbbb|c|
+  const lines = [RHYTHM_PATTERN.slice(0,4), RHYTHM_PATTERN.slice(4,8)];
+  div.innerHTML = lines.map(line=>{
+    const bars = line.map(bar=>{
+      const icons = bar.map(type=>`<span class="rg-note" data-type="${type}">${noteIconSVG(type,false)}</span>`).join('');
+      return `<div style="display:flex;align-items:center;gap:2px;padding:2px 5px;border-left:2px solid rgba(255,255,255,0.15)">${icons}</div>`;
+    }).join('');
+    return `<div style="display:flex;gap:2px">${bars}</div>`;
   }).join('');
 }
 
@@ -1201,21 +1213,19 @@ async function playRhythmDemo(){
   const btn = document.getElementById('demo-play-btn');
   if(btn) btn.disabled = true;
 
-  // Walk the current scale one degree per note-event (not just the root),
-  // so the demo shows real pitch movement around the clock, completing
-  // a full lap of the scale as the pattern plays.
+  // Each bar sits on ONE scale degree (ccc = C three times, ddd = D
+  // three times, etc.) — matches the melody exactly: |ccc|ddd|eeee|f|
+  // |ggg|aaa|bbbb|c| — while the clock still visibly moves once per bar.
   const scaleNotes = getScaleNotes(currentRoot, currentScale);
-  let degIdx = 0;
-
   const flatIcons = document.querySelectorAll('#rhythm-guide .rg-note');
   let iconIdx = 0;
-  const DUR = { q:450, h:900, w:1800 };
+  const DUR = { q:450, h:900, w:1400 };
 
-  for(const bar of RHYTHM_PATTERN){
+  for(let bi=0; bi<RHYTHM_PATTERN.length; bi++){
+    const bar = RHYTHM_PATTERN[bi];
+    const pitch = scaleNotes[MELODY_DEGREES[bi] % scaleNotes.length];
     for(const type of bar){
       const dur = DUR[type] || 450;
-      const pitch = scaleNotes[degIdx % scaleNotes.length];
-      degIdx++;
       selectNote(pitch, undefined, undefined, type); // sound + clock flash + needle + note-icon at position
       const icon = flatIcons[iconIdx];
       if(icon){
