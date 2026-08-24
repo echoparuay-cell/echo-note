@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Hub — Clock + Fretboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608;--s1:#0E0E12;--s2:#14141A;--s3:#1A1A22;
+  --or:#FF6B00;--wh:#FFFFFF;--tx:#CCCCCC;--mt:#444;--bd:rgba(255,255,255,0.07);
+  --gn:#00E676;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:var(--bg);color:var(--tx);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+
+/* TOPBAR */
+.topbar{
+  background:rgba(6,6,8,0.97);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--bd);
+  height:48px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.tb-logo{font-family:'Kanit',sans-serif;font-size:13px;font-weight:800;color:var(--wh)}
+.tb-logo span{color:var(--or)}
+
+/* SCALE SELECTOR */
+.scale-bar{
+  padding:8px 16px;
+  background:var(--s1);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  flex-shrink:0;
+}
+.sb-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mt)}
+.scale-btn{
+  font-family:'Kanit',sans-serif;font-size:11px;font-weight:600;
+  padding:4px 12px;border-radius:3px;border:1px solid var(--bd);
+  background:none;color:var(--mt);cursor:pointer;transition:all .2s;
+  letter-spacing:.5px;
+}
+.scale-btn:hover{border-color:var(--or);color:var(--or)}
+.scale-btn.active{background:var(--or);border-color:var(--or);color:#fff}
+
+/* ROOT SELECTOR */
+.root-btns{display:flex;gap:4px;flex-wrap:wrap}
+.root-btn{
+  font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;
+  padding:3px 9px;border-radius:2px;border:1px solid var(--bd);
+  background:none;color:var(--mt);cursor:pointer;transition:all .15s;
+}
+.root-btn:hover{opacity:.8}
+.root-btn.active{color:#fff;border-color:currentColor}
+
+/* MAIN — vertical */
+.main{
+  display:flex;flex-direction:column;
+  flex:1;gap:2px;padding:2px;
+  max-width:900px;width:100%;margin:0 auto;
+}
+
+/* CLOCK PANEL */
+.clock-panel{
+  background:var(--s1);border:1px solid var(--bd);
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 16px 8px;
+  position:relative;overflow:hidden;
+}
+.clock-panel::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,107,0,0.05),transparent 70%);
+  pointer-events:none;
+}
+.panel-label{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:3px;color:var(--or);
+  align-self:flex-start;margin-bottom:8px;
+  position:relative;z-index:2;
+}
+.clock-info{
+  display:flex;gap:20px;margin-top:8px;
+  position:relative;z-index:2;
+}
+.ci-item{text-align:center}
+.ci-val{font-family:'Kanit',sans-serif;font-size:14px;font-weight:700;color:var(--wh)}
+.ci-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--mt);margin-top:1px}
+
+/* FRETBOARD PANEL */
+.fret-panel{
+  background:var(--s1);border:1px solid var(--bd);
+  padding:14px 16px;
+  flex:1;
+}
+.fret-scroll{overflow-x:auto;overflow-y:hidden}
+.fret-note-legend{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;
+}
+.fnl-item{
+  display:flex;align-items:center;gap:4px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+}
+.fnl-dot{width:8px;height:8px;border-radius:50%}
+.fnl-deg{color:var(--mt)}
+
+/* ACTIVE NOTE STRIP */
+.note-strip{
+  background:var(--s2);border:1px solid var(--bd);
+  padding:8px 16px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;flex-wrap:wrap;
+}
+.ns-note{font-family:'Kanit',sans-serif;font-size:22px;font-weight:900;color:var(--or);min-width:36px}
+.ns-scale{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt);line-height:1.8}
+.ns-degrees{display:flex;gap:4px;flex-wrap:wrap}
+.ns-deg{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  padding:2px 7px;border-radius:2px;border:1px solid var(--bd);color:var(--mt);
+}
+.ns-deg.in-scale{border-color:currentColor;color:var(--wh)}
+
+/* CONNECT */
+.connect-overlay{
+  position:fixed;inset:0;background:rgba(6,6,8,0.94);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:300;gap:14px;
+}
+.co-title{font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--wh)}
+.co-sub{font-size:12px;color:var(--mt);text-align:center;max-width:300px;line-height:1.7}
+.co-btn{
+  background:var(--or);color:#fff;
+  font-family:'Kanit',sans-serif;font-size:13px;font-weight:600;
+  padding:10px 28px;border-radius:3px;border:none;cursor:pointer;
+}
+.co-skip{
+  background:none;border:1px solid var(--bd);color:var(--mt);
+  font-size:10px;padding:6px 16px;border-radius:2px;cursor:pointer;
+  font-family:'Share Tech Mono',monospace;
+}
+
+
+/* SOUND TOGGLE */
+.sound-btn{
+  background:none;border:1px solid var(--bd);
+  color:var(--mt);font-family:'Share Tech Mono',monospace;
+  font-size:10px;padding:4px 12px;border-radius:3px;
+  cursor:pointer;transition:all .2s;letter-spacing:1px;
+}
+.sound-btn.on{border-color:var(--gn);color:var(--gn)}
+.wave-btns{display:flex;gap:4px}
+.wave-btn{
+  background:none;border:1px solid var(--bd);color:var(--mt);
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  padding:3px 8px;border-radius:2px;cursor:pointer;transition:all .2s;
+}
+.wave-btn.active{border-color:var(--or);color:var(--or)}
+
+/* MIDI STATUS */
+.midi-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--mt);display:inline-block;margin-right:4px;
+}
+.midi-dot.on{background:var(--gn);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<!-- CONNECT -->
+<div class="connect-overlay" id="overlay">
+  <div style="font-size:36px">🎸</div>
+  <div class="co-title">Echo Hub · Clock + Fretboard</div>
+  <div class="co-sub">เชื่อมต่อ MIDI Keyboard ครับ<br>หรือกดโน้ตบน Fretboard ได้เลยครับ</div>
+  <button class="co-btn" onclick="connectMIDI()">🔌 Connect MIDI ครับ</button>
+  <button class="co-skip" onclick="closeOverlay()">ใช้โดยไม่มี MIDI ครับ</button>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">Echo <span>Hub</span> · Musical Advantage</div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt)">
+    <span class="midi-dot" id="midi-dot"></span>
+    <span id="midi-lbl">MIDI Off</span>
+  </div>
+</div>
+
+<!-- SCALE BAR -->
+<div class="scale-bar">
+  <div class="sb-label">ROOT</div>
+  <div class="root-btns" id="root-btns"></div>
+  <div class="sb-label" style="margin-left:8px">SCALE</div>
+  <button class="scale-btn active" onclick="setScale('major',this)">Major</button>
+  <button class="scale-btn" onclick="setScale('minor',this)">Minor</button>
+  <button class="scale-btn" onclick="setScale('penta_major',this)">Penta Major</button>
+  <button class="scale-btn" onclick="setScale('penta_minor',this)">Penta Minor</button>
+  <button class="scale-btn" onclick="setScale('all',this)">Chromatic</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CLOCK -->
+  <div class="clock-panel">
+    <div class="panel-label">CLOCK · นาฬิกาเสียง</div>
+    <svg id="clock-svg" width="280" height="280" viewBox="0 0 280 280" style="position:relative;z-index:2"></svg>
+    <div class="clock-info">
+      <div class="ci-item"><div class="ci-val" id="ci-root">C</div><div class="ci-lbl">ROOT</div></div>
+      <div class="ci-item"><div class="ci-val" id="ci-scale">Major</div><div class="ci-lbl">SCALE</div></div>
+      <div class="ci-item"><div class="ci-val" id="ci-notes">7</div><div class="ci-lbl">NOTES</div></div>
+      <div class="ci-item"><div class="ci-val" id="ci-active">—</div><div class="ci-lbl">ACTIVE</div></div>
+    </div>
+  </div>
+
+  <!-- FRETBOARD -->
+  <div class="fret-panel">
+    <div class="panel-label" style="margin-bottom:10px">FRETBOARD · แสดงเฉพาะโน้ตใน Scale ครับ</div>
+    <div class="fret-scroll">
+      <svg id="fb-svg" viewBox="0 0 660 130" style="width:100%;min-width:500px;display:block"></svg>
+    </div>
+    <div class="fret-note-legend" id="fret-legend"></div>
+  </div>
+
+</div>
+
+<!-- ACTIVE NOTE STRIP -->
+<div class="note-strip">
+  <div class="ns-note" id="ns-note">—</div>
+  <div>
+    <div class="ns-scale" id="ns-pos">กดโน้ตบน Fretboard หรือ MIDI ครับ</div>
+    <div class="ns-degrees" id="ns-degs"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NOTE_COLORS = {
+  'C':'#FF6B00','C#':'#FF9500','D':'#FFD600','D#':'#99CC00',
+  'E':'#00E676','F':'#00BCD4','F#':'#2196F3','G':'#5C6BC0',
+  'G#':'#9C27B0','A':'#E91E63','A#':'#FF5722','B':'#FF8F00'
+};
+const CLOCK_POS = {'C':12,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11};
+const SCALE_PATTERNS = {
+  major:       [0,2,4,5,7,9,11],
+  minor:       [0,2,3,5,7,8,10],
+  penta_major: [0,2,4,7,9],
+  penta_minor: [0,3,5,7,10],
+  all:         [0,1,2,3,4,5,6,7,8,9,10,11],
+};
+const SCALE_NAMES = {major:'Major',minor:'Minor',penta_major:'Penta Major',penta_minor:'Penta Minor',all:'Chromatic'};
+const DEGREE_NAMES = ['1','♭2','2','♭3','3','4','♯4','5','♭6','6','♭7','7'];
+const GUITAR_STRINGS = [
+  {open:'E',label:'e  (1st)',thick:false},
+  {open:'B',label:'B  (2nd)',thick:false},
+  {open:'G',label:'G  (3rd)',thick:false},
+  {open:'D',label:'D  (4th)',thick:true},
+  {open:'A',label:'A  (5th)',thick:true},
+  {open:'E',label:'E  (6th)',thick:true},
+];
+
+let currentRoot = 0; // C
+let currentScale = 'major';
+let activeNote = null;
+let midiAccess = null;
+
+// ── SCALE UTILS ──
+function getScaleNotes(rootIdx, scaleType){
+  return SCALE_PATTERNS[scaleType].map(i => NOTE_NAMES[(rootIdx + i) % 12]);
+}
+
+function getNoteAtFret(stringOpen, fret){
+  const openIdx = NOTE_NAMES.indexOf(stringOpen);
+  return NOTE_NAMES[(openIdx + fret) % 12];
+}
+
+function getDegree(noteIdx, rootIdx, scaleType){
+  const interval = (noteIdx - rootIdx + 12) % 12;
+  const degIdx = SCALE_PATTERNS[scaleType].indexOf(interval);
+  return degIdx >= 0 ? DEGREE_NAMES[interval] : null;
+}
+
+// ── BUILD CLOCK ──
+function buildClock(){
+  const svg = document.getElementById('clock-svg');
+  svg.innerHTML = '';
+  const cx=140,cy=140,R=128,r=95,dotR=16;
+
+  // Rings
+  const addC=(r2,clr,sw)=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r2);
+    c.setAttribute('fill','none');c.setAttribute('stroke',clr);c.setAttribute('stroke-width',sw);
+    svg.appendChild(c);
+  };
+  addC(R,'rgba(255,107,0,0.06)','1');
+  addC(r,'rgba(255,255,255,0.04)','1');
+
+  // Face
+  const face=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  face.setAttribute('cx',cx);face.setAttribute('cy',cy);face.setAttribute('r',R);
+  face.setAttribute('fill','var(--s2)');svg.insertBefore(face,svg.firstChild);
+
+  // Hour ticks
+  for(let i=1;i<=12;i++){
+    const a=(i/12)*Math.PI*2-Math.PI/2;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',cx+Math.cos(a)*(r+8));l.setAttribute('y1',cy+Math.sin(a)*(r+8));
+    l.setAttribute('x2',cx+Math.cos(a)*(r+18));l.setAttribute('y2',cy+Math.sin(a)*(r+18));
+    l.setAttribute('stroke','rgba(255,255,255,0.08)');l.setAttribute('stroke-width','1');
+    svg.appendChild(l);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',cx+Math.cos(a)*(r+30));t.setAttribute('y',cy+Math.sin(a)*(r+30));
+    t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','8');
+    t.setAttribute('fill','rgba(255,255,255,0.12)');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.textContent=i;svg.appendChild(t);
+  }
+
+  // Triangle
+  const tri=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  tri.setAttribute('id','clock-tri');tri.setAttribute('points','0,0 0,0 0,0');
+  tri.setAttribute('fill','none');tri.setAttribute('stroke','var(--or)');
+  tri.setAttribute('stroke-width','1.5');tri.setAttribute('stroke-dasharray','5 3');tri.setAttribute('opacity','0.5');
+  svg.appendChild(tri);
+
+  // Note dots
+  NOTE_NAMES.forEach(note=>{
+    const pos=CLOCK_POS[note];
+    const a=(pos/12)*Math.PI*2-Math.PI/2;
+    const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+    const color=NOTE_COLORS[note];
+
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('id',`cdot-${note.replace('#','s')}`);
+    g.style.cursor='pointer';
+    g.addEventListener('click',()=>selectNote(note));
+
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',x);circle.setAttribute('cy',y);circle.setAttribute('r',dotR);
+    circle.setAttribute('fill','var(--s3)');circle.setAttribute('stroke',color);circle.setAttribute('stroke-width','1.5');
+    circle.setAttribute('opacity','0.3');circle.setAttribute('class','cdot-circle');
+    g.appendChild(circle);
+
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',x);lbl.setAttribute('y',y);
+    lbl.setAttribute('font-family','Kanit,sans-serif');lbl.setAttribute('font-size',note.length>1?'8':'10');
+    lbl.setAttribute('font-weight','700');lbl.setAttribute('fill',color);lbl.setAttribute('opacity','0.4');
+    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('dominant-baseline','middle');
+    lbl.setAttribute('class','cdot-label');lbl.setAttribute('pointer-events','none');
+    lbl.textContent=note;
+    g.appendChild(lbl);
+
+    svg.appendChild(g);
+  });
+
+  // Center
+  const cc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  cc.setAttribute('cx',cx);cc.setAttribute('cy',cy);cc.setAttribute('r',38);
+  cc.setAttribute('fill','var(--s2)');cc.setAttribute('stroke','var(--bd)');cc.setAttribute('stroke-width','1');
+  svg.appendChild(cc);
+
+  const cNote=document.createElementNS('http://www.w3.org/2000/svg','text');
+  cNote.setAttribute('id','clock-center-note');
+  cNote.setAttribute('x',cx);cNote.setAttribute('y',cy-4);
+  cNote.setAttribute('font-family','Kanit,sans-serif');cNote.setAttribute('font-size','22');cNote.setAttribute('font-weight','900');
+  cNote.setAttribute('fill','var(--or)');cNote.setAttribute('text-anchor','middle');cNote.setAttribute('dominant-baseline','middle');
+  cNote.textContent='C';svg.appendChild(cNote);
+
+  const cSub=document.createElementNS('http://www.w3.org/2000/svg','text');
+  cSub.setAttribute('id','clock-center-sub');
+  cSub.setAttribute('x',cx);cSub.setAttribute('y',cy+18);
+  cSub.setAttribute('font-family','Share Tech Mono,monospace');cSub.setAttribute('font-size','8');
+  cSub.setAttribute('fill','var(--mt)');cSub.setAttribute('text-anchor','middle');
+  cSub.textContent='Major';svg.appendChild(cSub);
+
+  updateClock();
+}
+
+function updateClock(){
+  const scaleNotes = getScaleNotes(currentRoot, currentScale);
+  const rootName = NOTE_NAMES[currentRoot];
+
+  // Update all dots
+  NOTE_NAMES.forEach(note=>{
+    const g=document.getElementById(`cdot-${note.replace('#','s')}`);
+    if(!g) return;
+    const circle=g.querySelector('.cdot-circle');
+    const lbl=g.querySelector('.cdot-label');
+    const inScale = scaleNotes.includes(note);
+    const isActive = note === activeNote;
+    const isRoot = note === rootName;
+    const color = NOTE_COLORS[note];
+
+    if(isActive){
+      circle.setAttribute('fill',color);circle.setAttribute('opacity','1');circle.setAttribute('r','19');
+      circle.setAttribute('filter',`drop-shadow(0 0 10px ${color})`);
+      lbl.setAttribute('opacity','1');lbl.setAttribute('fill','#fff');
+    } else if(inScale){
+      circle.setAttribute('fill',isRoot? color+'44' : 'var(--s3)');
+      circle.setAttribute('opacity',isRoot?'0.9':'0.7');circle.setAttribute('r','16');
+      circle.setAttribute('stroke-width',isRoot?'2.5':'1.5');circle.removeAttribute('filter');
+      lbl.setAttribute('opacity',isRoot?'1':'0.8');lbl.setAttribute('fill',color);
+    } else {
+      circle.setAttribute('fill','var(--s3)');circle.setAttribute('opacity','0.15');circle.setAttribute('r','14');
+      circle.setAttribute('stroke-width','1');circle.removeAttribute('filter');
+      lbl.setAttribute('opacity','0.15');lbl.setAttribute('fill',color);
+    }
+  });
+
+  // Triangle for root chord (1-3-5)
+  if(currentScale !== 'all'){
+    const cx=140,cy=140,r=95;
+    const chord3 = [0,2,4].map(i=>{
+      const note = NOTE_NAMES[(currentRoot + SCALE_PATTERNS[currentScale][i]) % 12];
+      const pos=CLOCK_POS[note];
+      const a=(pos/12)*Math.PI*2-Math.PI/2;
+      return `${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;
+    });
+    document.getElementById('clock-tri').setAttribute('points',chord3.join(' '));
+    document.getElementById('clock-tri').style.stroke = NOTE_COLORS[rootName];
+  } else {
+    document.getElementById('clock-tri').setAttribute('points','0,0 0,0 0,0');
+  }
+
+  // Update center
+  document.getElementById('clock-center-note').textContent = rootName;
+  document.getElementById('clock-center-note').setAttribute('fill', NOTE_COLORS[rootName]);
+  document.getElementById('clock-center-sub').textContent = SCALE_NAMES[currentScale];
+
+  // Update info
+  document.getElementById('ci-root').textContent = rootName;
+  document.getElementById('ci-root').style.color = NOTE_COLORS[rootName];
+  document.getElementById('ci-scale').textContent = SCALE_NAMES[currentScale];
+  document.getElementById('ci-notes').textContent = scaleNotes.length;
+  document.getElementById('ci-active').textContent = activeNote || '—';
+  document.getElementById('ci-active').style.color = activeNote ? NOTE_COLORS[activeNote] : 'var(--wh)';
+
+  // Update fretboard
+  updateFretboard();
+  // Update legend
+  buildLegend(scaleNotes);
+}
+
+// ── BUILD FRETBOARD ──
+function buildFretboard(){
+  const svg=document.getElementById('fb-svg');
+  svg.innerHTML='';
+  const FRETS=12,STRINGS=6;
+  const startX=62,startY=12,fretW=49,strH=17;
+
+  // Fret lines
+  for(let f=0;f<=FRETS;f++){
+    const x=startX+f*fretW;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x);l.setAttribute('y1',startY);
+    l.setAttribute('x2',x);l.setAttribute('y2',startY+(STRINGS-1)*strH);
+    l.setAttribute('stroke',f===0?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.08)');
+    l.setAttribute('stroke-width',f===0?'3':'1');
+    svg.appendChild(l);
+    if(f>0){
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',startX+(f-0.5)*fretW);t.setAttribute('y',startY+(STRINGS-1)*strH+14);
+      t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','8');
+      t.setAttribute('fill','rgba(255,255,255,0.15)');t.setAttribute('text-anchor','middle');
+      t.textContent=f;svg.appendChild(t);
+    }
+  }
+
+  // Inlay dots
+  [3,5,7,9].forEach(f=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',startX+(f-0.5)*fretW);c.setAttribute('cy',startY+(STRINGS-1)*strH/2);
+    c.setAttribute('r','3');c.setAttribute('fill','rgba(255,255,255,0.04)');
+    svg.appendChild(c);
+  });
+  [startY+strH,startY+(STRINGS-2)*strH].forEach(y=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',startX+11.5*fretW);c.setAttribute('cy',y);
+    c.setAttribute('r','3');c.setAttribute('fill','rgba(255,255,255,0.04)');
+    svg.appendChild(c);
+  });
+
+  // Strings + labels + dots
+  GUITAR_STRINGS.forEach((str,si)=>{
+    const y=startY+si*strH;
+    const sline=document.createElementNS('http://www.w3.org/2000/svg','line');
+    sline.setAttribute('x1',startX);sline.setAttribute('y1',y);
+    sline.setAttribute('x2',startX+FRETS*fretW);sline.setAttribute('y2',y);
+    sline.setAttribute('stroke','rgba(255,255,255,0.18)');
+    sline.setAttribute('stroke-width',str.thick?'2.5':'1');
+    svg.appendChild(sline);
+
+    // String label
+    const sl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    sl.setAttribute('x',8);sl.setAttribute('y',y);
+    sl.setAttribute('font-family','Share Tech Mono,monospace');sl.setAttribute('font-size','8');
+    sl.setAttribute('fill','rgba(255,255,255,0.25)');sl.setAttribute('dominant-baseline','middle');
+    sl.textContent=str.label;svg.appendChild(sl);
+
+    // All fret positions
+    for(let f=0;f<=FRETS;f++){
+      const note=getNoteAtFret(str.open,f);
+      const x=f===0 ? startX-30 : startX+(f-0.5)*fretW;
+      const id=`fb-${si}-${f}`;
+
+      const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('id',id);g.setAttribute('data-note',note);g.setAttribute('data-si',si);g.setAttribute('data-fi',f);
+      g.style.cursor='pointer';
+      g.addEventListener('click',()=>selectNote(note,si,f));
+
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','7');
+      c.setAttribute('fill',NOTE_COLORS[note]+'11');c.setAttribute('stroke',NOTE_COLORS[note]+'22');
+      c.setAttribute('stroke-width','1');c.setAttribute('class','fb-circle');
+      g.appendChild(c);
+
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',x);t.setAttribute('y',y);
+      t.setAttribute('font-family','Kanit,sans-serif');t.setAttribute('font-size','6');t.setAttribute('font-weight','700');
+      t.setAttribute('fill',NOTE_COLORS[note]+'33');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('class','fb-label');t.setAttribute('pointer-events','none');
+      t.textContent=note;
+      g.appendChild(t);
+
+      svg.appendChild(g);
+    }
+  });
+
+  updateFretboard();
+}
+
+function updateFretboard(){
+  const scaleNotes=getScaleNotes(currentRoot,currentScale);
+  const rootName=NOTE_NAMES[currentRoot];
+
+  GUITAR_STRINGS.forEach((str,si)=>{
+    for(let f=0;f<=12;f++){
+      const note=getNoteAtFret(str.open,f);
+      const g=document.getElementById(`fb-${si}-${f}`);
+      if(!g) continue;
+      const c=g.querySelector('.fb-circle');
+      const t=g.querySelector('.fb-label');
+      const inScale=scaleNotes.includes(note);
+      const isActive=note===activeNote;
+      const isRoot=note===rootName;
+      const color=NOTE_COLORS[note];
+
+      if(isActive){
+        c.setAttribute('fill',color);c.setAttribute('stroke',color);
+        c.setAttribute('stroke-width','2');c.setAttribute('r','9');
+        c.setAttribute('filter',`drop-shadow(0 0 6px ${color})`);
+        t.setAttribute('fill','#fff');t.setAttribute('opacity','1');t.setAttribute('font-size','7');
+      } else if(inScale){
+        c.setAttribute('fill',isRoot? color+'55' : color+'22');
+        c.setAttribute('stroke',color+(isRoot?'CC':'66'));
+        c.setAttribute('stroke-width',isRoot?'2':'1');c.setAttribute('r','7');
+        c.removeAttribute('filter');
+        t.setAttribute('fill',color+(isRoot?'FF':'AA'));
+        t.setAttribute('opacity','1');t.setAttribute('font-size','6');
+      } else {
+        c.setAttribute('fill',color+'08');c.setAttribute('stroke',color+'15');
+        c.setAttribute('stroke-width','1');c.setAttribute('r','6');
+        c.removeAttribute('filter');
+        t.setAttribute('fill',color+'20');t.setAttribute('opacity','1');t.setAttribute('font-size','5');
+      }
+    }
+  });
+}
+
+// ── LEGEND ──
+function buildLegend(scaleNotes){
+  const div=document.getElementById('fret-legend');
+  div.innerHTML='';
+  const rootName=NOTE_NAMES[currentRoot];
+  scaleNotes.forEach((note,i)=>{
+    const deg=DEGREE_NAMES[SCALE_PATTERNS[currentScale][i]];
+    const item=document.createElement('div');
+    item.className='fnl-item';
+    item.innerHTML=`<div class="fnl-dot" style="background:${NOTE_COLORS[note]}${note===rootName?'':'88'}"></div>
+      <span style="color:${NOTE_COLORS[note]};font-weight:${note===rootName?'800':'400'}">${note}</span>
+      <span class="fnl-deg">${deg}</span>`;
+    item.style.cursor='pointer';
+    item.addEventListener('click',()=>selectNote(note));
+    div.appendChild(item);
+  });
+}
+
+// ── SELECT NOTE ──
+function selectNote(note, si, fi){
+  activeNote = note;
+  const color = NOTE_COLORS[note];
+  const scaleNotes = getScaleNotes(currentRoot, currentScale);
+  const inScale = scaleNotes.includes(note);
+  const interval = (NOTE_NAMES.indexOf(note) - currentRoot + 12) % 12;
+  const deg = getDegree(NOTE_NAMES.indexOf(note), currentRoot, currentScale);
+
+  // Update clock + fretboard
+  updateClock();
+  // Play sound
+  initAudio();
+  playNote(note, 4);
+
+  // Note strip
+  document.getElementById('ns-note').textContent = note;
+  document.getElementById('ns-note').style.color = color;
+  document.getElementById('ns-pos').textContent =
+    inScale
+      ? `ใน ${NOTE_NAMES[currentRoot]} ${SCALE_NAMES[currentScale]} ครับ · Degree: ${deg} · Clock: ตำแหน่ง ${CLOCK_POS[note]}`
+      : `ไม่อยู่ใน Scale นี้ครับ · Clock: ตำแหน่ง ${CLOCK_POS[note]}`;
+
+  // Degree badges
+  const degs=document.getElementById('ns-degs');
+  degs.innerHTML=NOTE_NAMES.map(n=>{
+    const inSc=scaleNotes.includes(n);
+    const isAct=n===note;
+    return `<div class="ns-deg ${inSc?'in-scale':''}" style="color:${NOTE_COLORS[n]};border-color:${inSc?NOTE_COLORS[n]+'88':'rgba(255,255,255,0.07)'};background:${isAct?NOTE_COLORS[n]+'22':'transparent'}">${n}</div>`;
+  }).join('');
+}
+
+// ── ROOT BUTTONS ──
+function buildRootBtns(){
+  const div=document.getElementById('root-btns');
+  NOTE_NAMES.forEach((note,i)=>{
+    const btn=document.createElement('button');
+    btn.className=`root-btn${i===0?' active':''}`;
+    btn.textContent=note;
+    btn.style.color=NOTE_COLORS[note];
+    btn.style.borderColor=i===0?NOTE_COLORS[note]:'rgba(255,255,255,0.1)';
+    btn.style.background=i===0?NOTE_COLORS[note]+'22':'none';
+    btn.addEventListener('click',()=>{
+      currentRoot=i;activeNote=null;
+      document.querySelectorAll('.root-btn').forEach(b=>{
+        b.classList.remove('active');
+        b.style.background='none';
+        b.style.borderColor='rgba(255,255,255,0.1)';
+      });
+      btn.classList.add('active');
+      btn.style.background=NOTE_COLORS[note]+'22';
+      btn.style.borderColor=NOTE_COLORS[note];
+      updateClock();
+    });
+    div.appendChild(btn);
+  });
+}
+
+function setScale(type, btn){
+  currentScale=type;activeNote=null;
+  document.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateClock();
+}
+
+// ── MIDI ──
+async function connectMIDI(){
+  if(!navigator.requestMIDIAccess){
+    alert('ใช้ Chrome หรือ Edge ครับ');return;
+  }
+  try{
+    midiAccess=await navigator.requestMIDIAccess();
+    midiAccess.inputs.forEach(inp=>{inp.onmidimessage=onMIDI});
+    midiAccess.onstatechange=()=>midiAccess.inputs.forEach(inp=>{inp.onmidimessage=onMIDI});
+    document.getElementById('midi-dot').classList.add('on');
+    document.getElementById('midi-lbl').textContent='MIDI On';
+    closeOverlay();
+  } catch(e){ alert('ไม่สามารถเข้าถึง MIDI ครับ'); }
+}
+
+function onMIDI(e){
+  const [status,note,vel]=e.data;
+  const cmd=status&0xf0;
+  if(cmd===0x90&&vel>0) selectNote(NOTE_NAMES[note%12]);
+}
+
+function closeOverlay(){document.getElementById('overlay').style.display='none';}
+
+
+// ── WEB AUDIO ENGINE ──
+let audioCtx = null;
+let soundOn = false;
+let currentWave = 'sine';
+let activeOsc = null;
+
+const NOTE_FREQS = {
+  'C':261.63,'C#':277.18,'D':293.66,'D#':311.13,
+  'E':329.63,'F':349.23,'F#':369.99,'G':392.00,
+  'G#':415.30,'A':440.00,'A#':466.16,'B':493.88
+};
+
+function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function toggleSound(){
+  initAudio();
+  soundOn = !soundOn;
+  const btn = document.getElementById('sound-btn');
+  btn.textContent = soundOn ? '🔊 Sound On' : '🔇 Sound Off';
+  btn.className = soundOn ? 'sound-btn on' : 'sound-btn';
+}
+
+function setWave(type, btn){
+  currentWave = type;
+  document.querySelectorAll('.wave-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function playNote(noteName, octave=4){
+  if(!soundOn || !audioCtx) return;
+
+  // Stop previous
+  if(activeOsc){
+    try{ activeOsc.stop(); } catch(e){}
+    activeOsc = null;
+  }
+
+  const freq = NOTE_FREQS[noteName] * Math.pow(2, octave - 4);
+
+  const osc = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  const now = audioCtx.currentTime;
+
+  if(currentWave === 'triangle'){
+    // Piano-like: Sine + fast decay
+    osc.type = 'sine';
+    gainNode.gain.setValueAtTime(0.6, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+    osc.start(now);
+    osc.stop(now + 1.5);
+  } else {
+    osc.type = currentWave;
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+    osc.start(now);
+    osc.stop(now + 0.8);
+  }
+
+  osc.frequency.setValueAtTime(freq, now);
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  activeOsc = osc;
+}
+
+// ── iOS AUDIO UNLOCK ──
+document.addEventListener('touchstart', function unlock(){
+  initAudio();
+  document.removeEventListener('touchstart', unlock);
+}, {once:true});
+
+// ── INIT ──
+buildRootBtns();
+buildClock();
+buildFretboard();
+selectNote('C');
+</script>
+</body>
+</html>
