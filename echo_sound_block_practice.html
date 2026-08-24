@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Hub — สูตรคูณแม่ 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608;--s1:#0E0E12;--s2:#14141A;--s3:#1A1A22;
+  --or:#FF6B00;--wh:#FFFFFF;--tx:#CCCCCC;--mt:#444;--bd:rgba(255,255,255,0.07);
+  --gn:#00E676;--yw:#FFD600;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+
+/* TOPBAR */
+.topbar{
+  background:rgba(6,6,8,0.97);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--bd);
+  height:48px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.tb-logo{font-family:'Kanit',sans-serif;font-size:13px;font-weight:800;color:var(--wh)}
+.tb-logo span{color:var(--or)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.sound-btn{
+  background:none;border:1px solid var(--bd);color:var(--mt);
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  padding:4px 12px;border-radius:3px;cursor:pointer;transition:all .2s;
+}
+.sound-btn.on{border-color:var(--gn);color:var(--gn)}
+
+/* STEP BAR */
+.step-bar{
+  background:var(--s1);border-bottom:1px solid var(--bd);
+  padding:8px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.sb-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--mt)}
+.step-btn{
+  font-family:'Kanit',sans-serif;font-size:11px;font-weight:600;
+  padding:5px 16px;border-radius:3px;border:1px solid var(--bd);
+  background:none;color:var(--mt);cursor:pointer;transition:all .2s;
+}
+.step-btn.active{background:var(--or);border-color:var(--or);color:#fff}
+.step-btn:hover:not(.active){border-color:var(--or);color:var(--or)}
+
+/* MA SELECTOR */
+.ma-bar{
+  background:var(--s2);border-bottom:1px solid var(--bd);
+  padding:6px 16px;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;
+}
+.ma-btn{
+  font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;
+  padding:3px 10px;border-radius:2px;border:1px solid var(--bd);
+  background:none;color:var(--mt);cursor:pointer;transition:all .15s;
+}
+.ma-btn.active{border-color:var(--or);color:var(--or);background:rgba(255,107,0,0.1)}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;flex:1;gap:2px;padding:2px;max-width:900px;width:100%;margin:0 auto}
+
+/* BLOCK DISPLAY */
+.block-panel{
+  background:var(--s1);border:1px solid var(--bd);padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.block-panel-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--or)}
+
+/* GROUPS */
+.groups-wrap{display:flex;gap:3px}
+.group-section{flex:1;display:flex;flex-direction:column;gap:4px}
+.gs-label{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  color:var(--mt);padding:4px 8px;
+  border-radius:2px;text-align:center;
+}
+.gs-label.part1{background:rgba(255,107,0,0.08);color:var(--or)}
+.gs-label.part2{background:rgba(0,230,118,0.08);color:var(--gn)}
+.groups-row{display:flex;gap:3px}
+.group-box{
+  flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:6px;
+  padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.group-box:hover{border-color:rgba(255,107,0,0.4)}
+.group-box.active{border-color:var(--or);background:rgba(255,107,0,0.06)}
+.group-box.playing{border-color:var(--yw);background:rgba(255,214,0,0.06)}
+.group-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+.group-box.active::before{background:var(--or)}
+.group-box.playing::before{background:var(--yw)}
+.gb-num{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--mt)}
+.gb-note{font-family:'Kanit',sans-serif;font-size:22px;font-weight:900;color:var(--wh);line-height:1}
+.gb-sub{font-size:9px;color:var(--mt);font-family:'Share Tech Mono',monospace}
+.gb-play{font-size:18px;opacity:0}
+.group-box:hover .gb-play{opacity:0.5}
+.group-box.active .gb-play{opacity:1}
+
+/* BEAT DOTS */
+.beat-row{display:flex;gap:4px;justify-content:center}
+.beat-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  transition:all .15s;
+}
+.beat-dot.on{background:var(--or);box-shadow:0 0 6px var(--or)}
+.beat-dot.playing{background:var(--yw);box-shadow:0 0 8px var(--yw);transform:scale(1.3)}
+
+/* CLOCK */
+.clock-panel{
+  background:var(--s1);border:1px solid var(--bd);
+  display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;
+  position:relative;overflow:hidden;
+}
+.clock-panel::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,107,0,0.04),transparent 70%);
+  pointer-events:none;
+}
+.panel-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--or);align-self:flex-start;margin-bottom:8px;position:relative;z-index:2}
+
+/* FRETBOARD */
+.fret-panel{background:var(--s1);border:1px solid var(--bd);padding:14px 16px}
+.fret-scroll{overflow-x:auto}
+
+/* INFO STRIP */
+.info-strip{
+  background:var(--s2);border:1px solid var(--bd);
+  padding:8px 16px;flex-shrink:0;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.is-note{font-family:'Kanit',sans-serif;font-size:20px;font-weight:900;min-width:32px}
+.is-info{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt);line-height:1.8}
+
+/* PLAY ALL BTN */
+.play-btn{
+  background:var(--or);color:#fff;
+  font-family:'Kanit',sans-serif;font-size:12px;font-weight:600;
+  padding:6px 18px;border-radius:3px;border:none;cursor:pointer;
+  transition:all .2s;margin-left:auto;
+}
+.play-btn:hover{background:#FF9500}
+.play-btn.playing{background:var(--yw);color:#000}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.midi-dot{width:6px;height:6px;border-radius:50%;background:var(--mt);display:inline-block;margin-right:4px}
+.midi-dot.on{background:var(--gn);animation:pulse 1.5s infinite}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">Echo <span>Hub</span> · สูตรคูณเสียง</div>
+  <div class="tb-right">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt)">
+      <span class="midi-dot" id="midi-dot"></span>
+      <span id="midi-lbl">MIDI Off</span>
+    </span>
+    <button class="sound-btn" id="sound-btn" onclick="toggleSound()">🔇 Sound</button>
+  </div>
+</div>
+
+<!-- STEP BAR -->
+<div class="step-bar">
+  <div class="sb-label">STEP</div>
+  <button class="step-btn active" onclick="setStep(1,this)">Step 1 — กลุ่ม 1+2</button>
+  <button class="step-btn" onclick="setStep(2,this)">Step 2 — กลุ่ม 3+4</button>
+  <button class="step-btn" onclick="setStep(3,this)">Step 3 — ครบก้อน</button>
+  <div class="sb-label" style="margin-left:auto">แม่</div>
+  <div class="ma-bar" style="border:none;padding:0;background:none">
+    <button class="ma-btn active" onclick="setMa(1,this)">1</button>
+    <button class="ma-btn" onclick="setMa(2,this)">2</button>
+    <button class="ma-btn" onclick="setMa(3,this)">3</button>
+    <button class="ma-btn" onclick="setMa(4,this)">4</button>
+    <button class="ma-btn" onclick="setMa(5,this)">5</button>
+    <button class="ma-btn" onclick="setMa(6,this)">6</button>
+    <button class="ma-btn" onclick="setMa(7,this)">7</button>
+    <button class="ma-btn" onclick="setMa(8,this)">8</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- BLOCK DISPLAY -->
+  <div class="block-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="block-panel-label" id="block-title">สูตรคูณแม่ 1 · Step 1 — กลุ่ม 1+2</div>
+      <button class="play-btn" id="play-all-btn" onclick="playAll()">▶ เล่นครับ</button>
+    </div>
+
+    <!-- GROUPS -->
+    <div class="groups-wrap" id="groups-wrap">
+      <!-- จะ Render ด้วย JS ครับ -->
+    </div>
+  </div>
+
+  <!-- CLOCK -->
+  <div class="clock-panel">
+    <div class="panel-label" style="position:relative;z-index:2">CLOCK · นาฬิกาเสียง</div>
+    <svg id="clock-svg" width="240" height="240" viewBox="0 0 240 240" style="position:relative;z-index:2"></svg>
+  </div>
+
+  <!-- FRETBOARD -->
+  <div class="fret-panel">
+    <div class="panel-label" style="margin-bottom:10px">FRETBOARD · ตำแหน่งโน้ตบนกีตาร์</div>
+    <div class="fret-scroll">
+      <svg id="fb-svg" viewBox="0 0 660 120" style="width:100%;min-width:480px;display:block"></svg>
+    </div>
+  </div>
+
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="is-note" id="is-note" style="color:var(--or)">—</div>
+  <div class="is-info" id="is-info">กดกลุ่มเสียงด้านบนครับ · หรือกด ▶ เพื่อเล่นทั้งหมดครับ</div>
+</div>
+
+<script>
+// ── DATA ──
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NOTE_COLORS = {
+  'C':'#FF6B00','C#':'#FF9500','D':'#FFD600','D#':'#99CC00',
+  'E':'#00E676','F':'#00BCD4','F#':'#2196F3','G':'#5C6BC0',
+  'G#':'#9C27B0','A':'#E91E63','A#':'#FF5722','B':'#FF8F00'
+};
+const CLOCK_POS = {'C':12,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11};
+const NOTE_FREQS = {
+  'C':261.63,'C#':277.18,'D':293.66,'D#':311.13,'E':329.63,
+  'F':349.23,'F#':369.99,'G':392.00,'G#':415.30,'A':440.00,'A#':466.16,'B':493.88
+};
+
+// สูตรคูณ 8 แม่ครับ — แต่ละแม่มี 4 กลุ่ม แต่ละกลุ่มมี 1 โน้ตหลัก
+// แม่ที่ n = C major scale เริ่มจาก degree n
+const C_MAJOR = ['C','D','E','F','G','A','B','C'];
+function getMaGroups(ma){
+  // แม่ n เริ่มจาก C_MAJOR[n-1]
+  // 4 กลุ่ม = 4 โน้ตติดกันในสเกลครับ
+  const start = ma - 1;
+  return [0,1,2,3].map(i => C_MAJOR[(start + i) % 8]);
+}
+
+const GUITAR_STRINGS = [
+  {open:'E',label:'e',thick:false},
+  {open:'B',label:'B',thick:false},
+  {open:'G',label:'G',thick:false},
+  {open:'D',label:'D',thick:true},
+  {open:'A',label:'A',thick:true},
+  {open:'E',label:'E',thick:true},
+];
+
+let currentMa = 1;
+let currentStep = 1;
+let activeGroup = null;
+let soundOn = false;
+let audioCtx = null;
+let isPlayingAll = false;
+let playTimeout = null;
+let midiAccess = null;
+
+// ── AUDIO ──
+function initAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
+function toggleSound(){
+  initAudio();soundOn=!soundOn;
+  const btn=document.getElementById('sound-btn');
+  btn.textContent=soundOn?'🔊 Sound On':'🔇 Sound';
+  btn.className=soundOn?'sound-btn on':'sound-btn';
+}
+function playNoteSound(note, octave=4, duration=0.8){
+  if(!soundOn) return;
+  initAudio(); // Always resume on iOS
+  const freq=NOTE_FREQS[note]*Math.pow(2,octave-4);
+  const now=audioCtx.currentTime;
+  [1,2,4].forEach((h,i)=>{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.type='sine';
+    osc.frequency.setValueAtTime(freq*h,now);
+    const vol=[0.5,0.15,0.05][i];
+    gain.gain.setValueAtTime(0,now);
+    gain.gain.linearRampToValueAtTime(vol,now+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001,now+duration);
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.start(now);osc.stop(now+duration);
+  });
+}
+
+// ── STEP / MA ──
+function setStep(n,btn){
+  currentStep=n;activeGroup=null;
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGroups();updateClock(null);updateFretboard([]);
+  document.getElementById('block-title').textContent=
+    `สูตรคูณแม่ ${currentMa} · ${btn.textContent.split('—')[1]?.trim()||''}`;
+}
+function setMa(n,btn){
+  currentMa=n;activeGroup=null;
+  document.querySelectorAll('.ma-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGroups();updateClock(null);updateFretboard([]);
+  document.getElementById('block-title').textContent=
+    `สูตรคูณแม่ ${currentMa} · ${['กลุ่ม 1+2','กลุ่ม 3+4','ครบก้อน'][currentStep-1]}`;
+}
+
+// ── RENDER GROUPS ──
+function getVisibleGroups(){
+  const all=getMaGroups(currentMa);
+  if(currentStep===1) return [{label:'ส่วนที่ 1 — กลุ่ม 1+2',cls:'part1',groups:all.slice(0,2),indices:[0,1]}];
+  if(currentStep===2) return [{label:'ส่วนที่ 2 — กลุ่ม 3+4',cls:'part2',groups:all.slice(2,4),indices:[2,3]}];
+  return [
+    {label:'ส่วนที่ 1 — กลุ่ม 1+2',cls:'part1',groups:all.slice(0,2),indices:[0,1]},
+    {label:'ส่วนที่ 2 — กลุ่ม 3+4',cls:'part2',groups:all.slice(2,4),indices:[2,3]},
+  ];
+}
+
+function renderGroups(){
+  const wrap=document.getElementById('groups-wrap');
+  wrap.innerHTML='';
+  const sections=getVisibleGroups();
+
+  sections.forEach(sec=>{
+    const secDiv=document.createElement('div');
+    secDiv.className='group-section';
+
+    const lbl=document.createElement('div');
+    lbl.className=`gs-label ${sec.cls}`;
+    lbl.textContent=sec.label;
+    secDiv.appendChild(lbl);
+
+    const row=document.createElement('div');
+    row.className='groups-row';
+
+    sec.groups.forEach((note,i)=>{
+      const gIdx=sec.indices[i];
+      const color=NOTE_COLORS[note];
+      const box=document.createElement('div');
+      box.className='group-box';
+      box.id=`group-${gIdx}`;
+      box.style.borderColor='rgba(255,255,255,0.07)';
+      box.innerHTML=`
+        <div class="gb-num">กลุ่ม ${gIdx+1}</div>
+        <div class="gb-note" style="color:${color}">${note}</div>
+        <div class="gb-sub">ตำแหน่ง ${CLOCK_POS[note]}</div>
+        <div class="beat-row">
+          ${[0,1,2,3].map(b=>`<div class="beat-dot" id="beat-${gIdx}-${b}"></div>`).join('')}
+        </div>
+        <div class="gb-play">▶</div>
+      `;
+      box.addEventListener('click',()=>selectGroup(gIdx,note));
+      row.appendChild(box);
+    });
+
+    secDiv.appendChild(row);
+    wrap.appendChild(secDiv);
+  });
+}
+
+// ── SELECT GROUP ──
+function selectGroup(idx,note){
+  activeGroup=idx;
+  // Reset all boxes
+  document.querySelectorAll('.group-box').forEach(b=>{
+    b.classList.remove('active','playing');
+    b.style.borderColor='rgba(255,255,255,0.07)';
+  });
+  const box=document.getElementById(`group-${idx}`);
+  if(box){
+    box.classList.add('active');
+    box.style.borderColor=NOTE_COLORS[note];
+    animateBeat(idx,note);
+  }
+  updateClock(note);
+  updateFretboard([note]);
+  playNoteSound(note,4,0.6);
+
+  document.getElementById('is-note').textContent=note;
+  document.getElementById('is-note').style.color=NOTE_COLORS[note];
+  document.getElementById('is-info').textContent=
+    `กลุ่มที่ ${idx+1} · Clock ตำแหน่ง ${CLOCK_POS[note]} · แม่ ${currentMa}`;
+}
+
+function animateBeat(gIdx,note){
+  const beats=4;
+  for(let b=0;b<beats;b++){
+    setTimeout(()=>{
+      const dot=document.getElementById(`beat-${gIdx}-${b}`);
+      if(dot){ dot.classList.add('playing'); }
+      setTimeout(()=>{
+        if(dot){ dot.classList.remove('playing');dot.classList.add('on'); }
+      },120);
+    },b*150);
+  }
+}
+
+// ── PLAY ALL ──
+function playAll(){
+  if(isPlayingAll){
+    clearTimeout(playTimeout);isPlayingAll=false;
+    const btn=document.getElementById('play-all-btn');
+    btn.textContent='▶ เล่นครับ';btn.classList.remove('playing');
+    document.querySelectorAll('.group-box').forEach(b=>b.classList.remove('active','playing'));
+    return;
+  }
+  initAudio();soundOn=true;
+  const sBtn=document.getElementById('sound-btn');
+  sBtn.textContent='🔊 Sound On';sBtn.className='sound-btn on';
+
+  isPlayingAll=true;
+  const btn=document.getElementById('play-all-btn');
+  btn.textContent='⏹ หยุดครับ';btn.classList.add('playing');
+
+  const groups=getMaGroups(currentMa);
+  const visible=currentStep===1?[0,1]:currentStep===2?[2,3]:[0,1,2,3];
+  let i=0;
+
+  function next(){
+    if(!isPlayingAll||i>=visible.length){
+      isPlayingAll=false;
+      btn.textContent='▶ เล่นครับ';btn.classList.remove('playing');
+      document.querySelectorAll('.group-box').forEach(b=>b.classList.remove('active','playing'));
+      return;
+    }
+    const gIdx=visible[i];
+    const note=groups[gIdx];
+    selectGroup(gIdx,note);
+    i++;
+    playTimeout=setTimeout(next,900);
+  }
+  next();
+}
+
+// ── CLOCK ──
+function buildClock(){
+  const svg=document.getElementById('clock-svg');
+  svg.innerHTML='';
+  const cx=120,cy=120,R=112,r=82,dotR=15;
+
+  // Face
+  const face=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  face.setAttribute('cx',cx);face.setAttribute('cy',cy);face.setAttribute('r',R);
+  face.setAttribute('fill','var(--s2)');svg.appendChild(face);
+
+  // Rings
+  [[R,'rgba(255,107,0,0.05)'],[r,'rgba(255,255,255,0.03)']].forEach(([r2,clr])=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r2);
+    c.setAttribute('fill','none');c.setAttribute('stroke',clr);c.setAttribute('stroke-width','1');
+    svg.appendChild(c);
+  });
+
+  // Hour ticks
+  for(let i=1;i<=12;i++){
+    const a=(i/12)*Math.PI*2-Math.PI/2;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',cx+Math.cos(a)*(r+6));l.setAttribute('y1',cy+Math.sin(a)*(r+6));
+    l.setAttribute('x2',cx+Math.cos(a)*(r+14));l.setAttribute('y2',cy+Math.sin(a)*(r+14));
+    l.setAttribute('stroke','rgba(255,255,255,0.07)');l.setAttribute('stroke-width','1');
+    svg.appendChild(l);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',cx+Math.cos(a)*(r+24));t.setAttribute('y',cy+Math.sin(a)*(r+24));
+    t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','7');
+    t.setAttribute('fill','rgba(255,255,255,0.1)');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.textContent=i;svg.appendChild(t);
+  }
+
+  // Triangle
+  const tri=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  tri.setAttribute('id','c-tri');tri.setAttribute('points','0,0 0,0 0,0');
+  tri.setAttribute('fill','none');tri.setAttribute('stroke','var(--or)');
+  tri.setAttribute('stroke-width','1.5');tri.setAttribute('stroke-dasharray','5 3');tri.setAttribute('opacity','0');
+  svg.appendChild(tri);
+
+  // Note dots
+  NOTE_NAMES.forEach(note=>{
+    const pos=CLOCK_POS[note];
+    const a=(pos/12)*Math.PI*2-Math.PI/2;
+    const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+    const color=NOTE_COLORS[note];
+
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('id',`cd-${note.replace('#','s')}`);
+    g.style.cursor='pointer';
+    g.addEventListener('click',()=>{
+      const all=getMaGroups(currentMa);
+      const idx=all.indexOf(note);
+      if(idx>=0) selectGroup(idx,note);
+    });
+
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',dotR);
+    c.setAttribute('fill','var(--s3)');c.setAttribute('stroke',color);
+    c.setAttribute('stroke-width','1');c.setAttribute('opacity','0.15');
+    c.setAttribute('class','cd-circle');
+    g.appendChild(c);
+
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',x);lbl.setAttribute('y',y);
+    lbl.setAttribute('font-family','Kanit,sans-serif');lbl.setAttribute('font-size',note.length>1?'7':'9');
+    lbl.setAttribute('font-weight','700');lbl.setAttribute('fill',color);
+    lbl.setAttribute('opacity','0.15');lbl.setAttribute('text-anchor','middle');lbl.setAttribute('dominant-baseline','middle');
+    lbl.setAttribute('class','cd-label');lbl.setAttribute('pointer-events','none');
+    lbl.textContent=note;
+    g.appendChild(lbl);
+
+    svg.appendChild(g);
+  });
+
+  // Center
+  const cc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  cc.setAttribute('cx',cx);cc.setAttribute('cy',cy);cc.setAttribute('r',32);
+  cc.setAttribute('fill','var(--s2)');cc.setAttribute('stroke','var(--bd)');cc.setAttribute('stroke-width','1');
+  svg.appendChild(cc);
+
+  const cn=document.createElementNS('http://www.w3.org/2000/svg','text');
+  cn.setAttribute('id','c-center');
+  cn.setAttribute('x',cx);cn.setAttribute('y',cy-2);
+  cn.setAttribute('font-family','Kanit,sans-serif');cn.setAttribute('font-size','18');cn.setAttribute('font-weight','900');
+  cn.setAttribute('fill','var(--or)');cn.setAttribute('text-anchor','middle');cn.setAttribute('dominant-baseline','middle');
+  cn.textContent='M1';svg.appendChild(cn);
+
+  const cs=document.createElementNS('http://www.w3.org/2000/svg','text');
+  cs.setAttribute('id','c-sub');
+  cs.setAttribute('x',cx);cs.setAttribute('y',cy+16);
+  cs.setAttribute('font-family','Share Tech Mono,monospace');cs.setAttribute('font-size','7');
+  cs.setAttribute('fill','var(--mt)');cs.setAttribute('text-anchor','middle');
+  cs.textContent='แม่ 1';svg.appendChild(cs);
+
+  updateClock(null);
+}
+
+function updateClock(activeNote){
+  const maGroups=getMaGroups(currentMa);
+  const visible=currentStep===1?[0,1]:currentStep===2?[2,3]:[0,1,2,3];
+  const visibleNotes=visible.map(i=>maGroups[i]);
+
+  NOTE_NAMES.forEach(note=>{
+    const g=document.getElementById(`cd-${note.replace('#','s')}`);
+    if(!g) return;
+    const c=g.querySelector('.cd-circle');
+    const l=g.querySelector('.cd-label');
+    const color=NOTE_COLORS[note];
+    const inVisible=visibleNotes.includes(note);
+    const isActive=note===activeNote;
+
+    if(isActive){
+      c.setAttribute('fill',color);c.setAttribute('opacity','1');c.setAttribute('r','18');
+      c.setAttribute('filter',`drop-shadow(0 0 10px ${color})`);
+      l.setAttribute('opacity','1');l.setAttribute('fill','#fff');
+    } else if(inVisible){
+      c.setAttribute('fill',color+'33');c.setAttribute('opacity','0.85');c.setAttribute('r','15');
+      c.removeAttribute('filter');
+      l.setAttribute('opacity','0.8');l.setAttribute('fill',color);
+    } else {
+      c.setAttribute('fill','var(--s3)');c.setAttribute('opacity','0.12');c.setAttribute('r','13');
+      c.removeAttribute('filter');
+      l.setAttribute('opacity','0.12');l.setAttribute('fill',color);
+    }
+  });
+
+  // Triangle for visible notes
+  const cx=120,cy=120,r=82;
+  if(visibleNotes.length>=2){
+    const pts=visibleNotes.map(note=>{
+      const pos=CLOCK_POS[note];
+      const a=(pos/12)*Math.PI*2-Math.PI/2;
+      return `${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;
+    });
+    const tri=document.getElementById('c-tri');
+    tri.setAttribute('points',pts.join(' '));
+    tri.setAttribute('opacity','0.4');
+    tri.style.stroke=activeNote?NOTE_COLORS[activeNote]:'var(--or)';
+  }
+
+  // Center text
+  document.getElementById('c-center').textContent=activeNote||`M${currentMa}`;
+  document.getElementById('c-center').setAttribute('fill',activeNote?NOTE_COLORS[activeNote]:'var(--or)');
+  document.getElementById('c-sub').textContent=activeNote?`ตำแหน่ง ${CLOCK_POS[activeNote]}`:`แม่ ${currentMa}`;
+}
+
+// ── FRETBOARD ──
+function buildFretboard(){
+  const svg=document.getElementById('fb-svg');
+  svg.innerHTML='';
+  const FRETS=12,STRINGS=6;
+  const startX=54,startY=10,fretW=49,strH=16;
+
+  for(let f=0;f<=FRETS;f++){
+    const x=startX+f*fretW;
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x);l.setAttribute('y1',startY);
+    l.setAttribute('x2',x);l.setAttribute('y2',startY+(STRINGS-1)*strH);
+    l.setAttribute('stroke',f===0?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.07)');
+    l.setAttribute('stroke-width',f===0?'3':'1');
+    svg.appendChild(l);
+    if(f>0){
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',startX+(f-0.5)*fretW);t.setAttribute('y',startY+(STRINGS-1)*strH+13);
+      t.setAttribute('font-family','Share Tech Mono,monospace');t.setAttribute('font-size','8');
+      t.setAttribute('fill','rgba(255,255,255,0.12)');t.setAttribute('text-anchor','middle');
+      t.textContent=f;svg.appendChild(t);
+    }
+  }
+
+  [3,5,7,9].forEach(f=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',startX+(f-0.5)*fretW);c.setAttribute('cy',startY+(STRINGS-1)*strH/2);
+    c.setAttribute('r','3');c.setAttribute('fill','rgba(255,255,255,0.04)');
+    svg.appendChild(c);
+  });
+
+  GUITAR_STRINGS.forEach((str,si)=>{
+    const y=startY+si*strH;
+    const sl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    sl.setAttribute('x',10);sl.setAttribute('y',y);
+    sl.setAttribute('font-family','Share Tech Mono,monospace');sl.setAttribute('font-size','8');
+    sl.setAttribute('fill','rgba(255,255,255,0.2)');sl.setAttribute('dominant-baseline','middle');
+    sl.textContent=str.label;svg.appendChild(sl);
+
+    const sline=document.createElementNS('http://www.w3.org/2000/svg','line');
+    sline.setAttribute('x1',startX);sline.setAttribute('y1',y);
+    sline.setAttribute('x2',startX+FRETS*fretW);sline.setAttribute('y2',y);
+    sline.setAttribute('stroke','rgba(255,255,255,0.15)');
+    sline.setAttribute('stroke-width',str.thick?'2.5':'1');
+    svg.appendChild(sline);
+
+    for(let f=0;f<=FRETS;f++){
+      const openIdx=NOTE_NAMES.indexOf(str.open);
+      const note=NOTE_NAMES[(openIdx+f)%12];
+      const x=f===0?startX-30:startX+(f-0.5)*fretW;
+      const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('id',`fb-${si}-${f}`);g.setAttribute('data-note',note);
+      g.style.cursor='pointer';
+      g.addEventListener('click',()=>{
+        const all=getMaGroups(currentMa);
+        const idx=all.indexOf(note);
+        if(idx>=0) selectGroup(idx,note);
+        else{ updateClock(note);playNoteSound(note,4,0.5); }
+      });
+
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','6');
+      c.setAttribute('fill',NOTE_COLORS[note]+'11');c.setAttribute('stroke',NOTE_COLORS[note]+'22');
+      c.setAttribute('stroke-width','1');c.setAttribute('class','fb-c');
+      g.appendChild(c);
+
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',x);t.setAttribute('y',y);
+      t.setAttribute('font-family','Kanit,sans-serif');t.setAttribute('font-size','5');t.setAttribute('font-weight','700');
+      t.setAttribute('fill',NOTE_COLORS[note]+'33');t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('class','fb-t');t.setAttribute('pointer-events','none');
+      t.textContent=note;
+      g.appendChild(t);
+      svg.appendChild(g);
+    }
+  });
+  updateFretboard([]);
+}
+
+function updateFretboard(activeNotes){
+  const maGroups=getMaGroups(currentMa);
+  const visible=currentStep===1?[0,1]:currentStep===2?[2,3]:[0,1,2,3];
+  const visibleNotes=visible.map(i=>maGroups[i]);
+  const noteSet=new Set(activeNotes.length?activeNotes:visibleNotes);
+  const activeSet=new Set(activeNotes);
+
+  GUITAR_STRINGS.forEach((str,si)=>{
+    for(let f=0;f<=12;f++){
+      const openIdx=NOTE_NAMES.indexOf(str.open);
+      const note=NOTE_NAMES[(openIdx+f)%12];
+      const g=document.getElementById(`fb-${si}-${f}`);
+      if(!g) continue;
+      const c=g.querySelector('.fb-c');
+      const t=g.querySelector('.fb-t');
+      const color=NOTE_COLORS[note];
+      const isActive=activeSet.has(note);
+      const inVisible=visibleNotes.includes(note);
+
+      if(isActive){
+        c.setAttribute('fill',color);c.setAttribute('stroke',color);
+        c.setAttribute('r','9');c.setAttribute('stroke-width','2');
+        c.setAttribute('filter',`drop-shadow(0 0 7px ${color})`);
+        t.setAttribute('fill','#fff');t.setAttribute('font-size','7');t.setAttribute('opacity','1');
+      } else if(inVisible){
+        c.setAttribute('fill',color+'33');c.setAttribute('stroke',color+'77');
+        c.setAttribute('r','6');c.setAttribute('stroke-width','1');
+        c.removeAttribute('filter');
+        t.setAttribute('fill',color+'CC');t.setAttribute('font-size','5');t.setAttribute('opacity','1');
+      } else {
+        c.setAttribute('fill',color+'08');c.setAttribute('stroke',color+'15');
+        c.setAttribute('r','5');c.setAttribute('stroke-width','1');
+        c.removeAttribute('filter');
+        t.setAttribute('fill',color+'20');t.setAttribute('font-size','5');t.setAttribute('opacity','1');
+      }
+    }
+  });
+}
+
+// ── MIDI ──
+async function connectMIDI(){
+  if(!navigator.requestMIDIAccess) return;
+  try{
+    midiAccess=await navigator.requestMIDIAccess();
+    midiAccess.inputs.forEach(inp=>{inp.onmidimessage=onMIDI});
+    document.getElementById('midi-dot').classList.add('on');
+    document.getElementById('midi-lbl').textContent='MIDI On';
+  } catch(e){}
+}
+function onMIDI(e){
+  const [st,note,vel]=e.data;
+  if((st&0xf0)===0x90&&vel>0){
+    const noteName=NOTE_NAMES[note%12];
+    const all=getMaGroups(currentMa);
+    const idx=all.indexOf(noteName);
+    if(idx>=0) selectGroup(idx,noteName);
+  }
+}
+
+// iOS unlock
+document.addEventListener('click',function u(){initAudio();document.removeEventListener('click',u);},{once:true});
+
+// ── INIT ──
+buildClock();
+buildFretboard();
+renderGroups();
+connectMIDI();
+</script>
+</body>
+</html>
