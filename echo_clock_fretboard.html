@@ -698,6 +698,11 @@ function selectNote(note, si, fi, noteType){
   // the same note — so a rhythm (เช่น สูตรคูณเสียง: กด กด กด) is visible
   // as a flicker in time with the sound, not just a static highlight.
   pulseClockDot(note, noteType);
+  // 3rd point of light — flash the exact string/fret on the fretboard
+  // too, so เห็น (clock) + เห็น (instrument) + ได้ยิน (sound) all fire
+  // in the same instant. This is the piece that should carry over
+  // 1:1 onto a piano/keyboard key later.
+  pulseFretDot(selectedString, selectedFret);
   // Play sound
   initAudio();
   playNote(note, 4);
@@ -901,6 +906,31 @@ function pulseClockDot(note, noteType){
   // clock position, timed with the sound — hearing + seeing + the tap
   // that triggered it all happen in the same place, same instant.
   spawnClockNoteIcon(note, noteType || 'q');
+}
+
+// ── FRETBOARD DOT PULSE (3rd point of light) ──
+// Same idea as pulseClockDot, but ON THE INSTRUMENT ITSELF — the exact
+// string/fret the note lives on flashes bright white in sync with the
+// clock flash and the sound. Together this gives THREE synchronized
+// points every tap: (1) clock position, (2) instrument position,
+// (3) the sound the child just made — the same "เห็น-ได้ยิน-สัมผัส" idea,
+// just extended onto the fretboard instead of stopping at the clock.
+// This same pattern (flash the on-screen key/pad/string position) is
+// exactly what should carry over to a future piano/keyboard version —
+// only WHERE the dot lives changes, not the concept.
+function pulseFretDot(si, f){
+  if(si == null || f == null) return;
+  const g = document.getElementById(`fb-${si}-${f}`);
+  if(!g) return;
+  const c = g.querySelector('.fb-circle');
+  if(!c) return;
+  c.setAttribute('fill', '#ffffff');
+  c.setAttribute('stroke', '#ffffff');
+  c.setAttribute('stroke-width', '2.5');
+  c.setAttribute('r', '11');
+  c.setAttribute('filter', 'drop-shadow(0 0 8px #ffffff)');
+  clearTimeout(pulseFretDot._t);
+  pulseFretDot._t = setTimeout(()=>{ updateFretboard(); }, 110);
 }
 
 // ── NOTE-VALUE ICON AT THE CLOCK POSITION ──
