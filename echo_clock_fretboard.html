@@ -215,8 +215,14 @@ body{
       <svg id="clock-svg" width="280" height="280" viewBox="0 0 280 280" style="position:relative;z-index:2"></svg>
       <div id="rhythm-guide" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"></div>
     </div>
-    <div style="text-align:center;margin-top:8px">
+    <div style="text-align:center;margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
       <button class="scale-btn" id="demo-play-btn" style="border-color:#42a5f5;color:#42a5f5" onclick="playRhythmDemo()">🔊 ฟังตัวอย่าง</button>
+      <button class="scale-btn" id="sound-btn" style="border-color:var(--gn);color:var(--gn)" onclick="toggleSound()">🔊 เสียงเปิด</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--mt)">🔈</span>
+        <input type="range" id="volume-slider" min="0" max="100" value="80" oninput="setVolume(this.value)" style="width:90px">
+        <span style="font-size:12px;color:var(--mt)">🔊</span>
+      </div>
     </div>
     <div class="clock-info">
       <div class="ci-item"><div class="ci-val" id="ci-root">C</div><div class="ci-lbl">ROOT</div></div>
@@ -657,7 +663,7 @@ function buildLegend(scaleNotes){
 }
 
 // ── SELECT NOTE ──
-function selectNote(note, si, fi){
+function selectNote(note, si, fi, noteType){
   const prevNote = activeNote;
   activeNote = note;
 
@@ -691,7 +697,7 @@ function selectNote(note, si, fi){
   // Flash the clock dot on every single tap — even repeated taps on
   // the same note — so a rhythm (เช่น สูตรคูณเสียง: กด กด กด) is visible
   // as a flicker in time with the sound, not just a static highlight.
-  pulseClockDot(note);
+  pulseClockDot(note, noteType);
   // Play sound
   initAudio();
   playNote(note, 4);
@@ -772,7 +778,10 @@ function closeOverlay(){document.getElementById('overlay').style.display='none';
 
 // ── WEB AUDIO ENGINE ──
 let audioCtx = null;
-let soundOn = false;
+let soundOn = true; // sound is ON by default now — was defaulting to
+                     // off with no visible way to turn it on, which is
+                     // why nothing played before
+let masterVolume = 0.8; // 0..1, controlled by the volume slider
 let currentWave = 'sine';
 let activeOsc = null;
 
@@ -793,8 +802,12 @@ function toggleSound(){
   initAudio();
   soundOn = !soundOn;
   const btn = document.getElementById('sound-btn');
-  btn.textContent = soundOn ? '🔊 Sound On' : '🔇 Sound Off';
-  btn.className = soundOn ? 'sound-btn on' : 'sound-btn';
+  btn.textContent = soundOn ? '🔊 เสียงเปิด' : '🔇 เสียงปิด';
+  btn.className = soundOn ? 'scale-btn active' : 'scale-btn';
+}
+
+function setVolume(v){
+  masterVolume = Math.max(0, Math.min(100, Number(v))) / 100;
 }
 
 function setWave(type, btn){
@@ -817,18 +830,20 @@ function playNote(noteName, octave=4){
   const osc = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
   const now = audioCtx.currentTime;
+  const peak = 0.6 * masterVolume;
+  const peak2 = 0.5 * masterVolume;
 
   if(currentWave === 'triangle'){
     // Piano-like: Sine + fast decay
     osc.type = 'sine';
-    gainNode.gain.setValueAtTime(0.6, now);
+    gainNode.gain.setValueAtTime(peak, now);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
     osc.start(now);
     osc.stop(now + 1.5);
   } else {
     osc.type = currentWave;
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02);
+    gainNode.gain.linearRampToValueAtTime(peak2, now + 0.02);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
     osc.start(now);
     osc.stop(now + 0.8);
@@ -841,9 +856,16 @@ function playNote(noteName, octave=4){
 }
 
 // ── iOS AUDIO UNLOCK ──
+// ── AUDIO UNLOCK (touch for mobile, click for desktop) ──
+// Browsers require a real user gesture before audio can play — this
+// makes sure the very first tap/click anywhere wakes the audio engine.
 document.addEventListener('touchstart', function unlock(){
   initAudio();
   document.removeEventListener('touchstart', unlock);
+}, {once:true});
+document.addEventListener('click', function unlockClick(){
+  initAudio();
+  document.removeEventListener('click', unlockClick);
 }, {once:true});
 
 // ── STRING FOCUS ──
@@ -860,7 +882,7 @@ function focusString(si){
 // matching clock dot flash bright white for an instant, then settle
 // back into its normal state. This is what makes tapping ดำ-ดำ-ดำ-ดำ
 // (or any rhythm) visible as a flicker on the clock, in sync with sound.
-function pulseClockDot(note){
+function pulseClockDot(note, noteType){
   const g = document.getElementById(`cdot-${note.replace('#','s')}`);
   if(!g) return;
   const circle = g.querySelector('.cdot-circle');
@@ -871,9 +893,60 @@ function pulseClockDot(note){
   circle.setAttribute('filter', 'drop-shadow(0 0 16px #ffffff)');
   clearTimeout(pulseClockDot._t);
   pulseClockDot._t = setTimeout(()=>{ updateClock(); }, 110);
+
+  // The note-value symbol (ก้อนเสียง) appears exactly at this note's own
+  // clock position, timed with the sound — hearing + seeing + the tap
+  // that triggered it all happen in the same place, same instant.
+  spawnClockNoteIcon(note, noteType || 'q');
 }
 
-// ── CLOCK NEEDLE TRAVEL ANIMATION ──// Draws the "journey" of the sound: a small marker glides along the
+// ── NOTE-VALUE ICON AT THE CLOCK POSITION ──
+function createClockNoteIconEl(type){
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  const ellipse = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+  ellipse.setAttribute('cx','7');ellipse.setAttribute('cy','20');
+  ellipse.setAttribute('rx','6');ellipse.setAttribute('ry','4.5');
+  ellipse.setAttribute('fill', type==='h' ? 'none' : '#ffffff');
+  ellipse.setAttribute('stroke','#ffffff');ellipse.setAttribute('stroke-width','2');
+  ellipse.setAttribute('transform','rotate(-18 7 20)');
+  g.appendChild(ellipse);
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1','12.5');line.setAttribute('y1','18');
+  line.setAttribute('x2','12.5');line.setAttribute('y2','2');
+  line.setAttribute('stroke','#ffffff');line.setAttribute('stroke-width','2');
+  g.appendChild(line);
+  return g;
+}
+
+function spawnClockNoteIcon(note, noteType){
+  const svg = document.getElementById('clock-svg');
+  const pos = CLOCK_POS[note];
+  if(!svg || pos===undefined) return;
+  const cx=140, cy=140, r=95;
+  const a = (pos/12)*Math.PI*2 - Math.PI/2;
+  const x = cx+Math.cos(a)*r, y = cy+Math.sin(a)*r;
+
+  const wrap = document.createElementNS('http://www.w3.org/2000/svg','g');
+  wrap.setAttribute('transform', `translate(${x-9},${y-32}) scale(0.9)`);
+  wrap.style.opacity = '0';
+  wrap.appendChild(createClockNoteIconEl(noteType));
+  svg.appendChild(wrap);
+
+  requestAnimationFrame(()=>{
+    wrap.style.transition = 'opacity 0.15s ease, transform 0.4s ease';
+    wrap.style.opacity = '1';
+    wrap.setAttribute('transform', `translate(${x-9},${y-42}) scale(0.9)`);
+  });
+
+  const life = noteType==='h' ? 700 : 380;
+  setTimeout(()=>{
+    wrap.style.opacity = '0';
+    setTimeout(()=>{ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 200);
+  }, life);
+}
+
+// ── CLOCK NEEDLE TRAVEL ANIMATION ──
+// Draws the "journey" of the sound: a small marker glides along the
 // shortest arc from the previous note's clock position to the new one,
 // so the kid SEES the movement, not just a jump-cut highlight.
 function animateClockTravel(fromNote, toNote){
@@ -1129,7 +1202,7 @@ async function playRhythmDemo(){
   for(const bar of RHYTHM_PATTERN){
     for(const type of bar){
       const dur = type==='h' ? 900 : 450; // ขาว ยาวเป็น 2 เท่าของดำ
-      selectNote(rootName); // sound + clock flash + needle
+      selectNote(rootName, undefined, undefined, type); // sound + clock flash + needle + note-icon at position
       const icon = flatIcons[iconIdx];
       if(icon){
         icon.innerHTML = noteIconSVG(type, true);
