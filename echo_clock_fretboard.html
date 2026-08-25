@@ -198,7 +198,7 @@ body{
   <button class="scale-btn" onclick="setScale('penta_minor',this)">Penta Minor</button>
   <button class="scale-btn" onclick="setScale('all',this)">Chromatic</button>
   <button class="scale-btn" id="practice-toggle-btn" style="margin-left:auto;border-color:var(--gn);color:var(--gn)" onclick="togglePractice()">🎯 โหมดฝึกทาย (สาย 1)</button>
-  <button class="scale-btn" id="level1-btn" style="border-color:#ffa726;color:#ffa726" onclick="startLevel1()">🥇 ด่านที่ 1 · สูตรคูณแม่หนึ่ง</button>
+  <button class="scale-btn" id="level1-btn" style="border-color:#ffa726;color:#ffa726" onclick="startLevel1()">🥇 ด่านที่ 1 · สูตรคูณแม่หนึ่ง (ขึ้น-ลง)</button>
 </div>
 
 <!-- PRACTICE STATUS -->
@@ -294,6 +294,7 @@ let foundFrets = [];
 let requiredTaps = [];   // taps needed on the current target before it advances
 let tapCount = 0;        // taps landed on the current target so far
 let levelLabel = null;   // e.g. "ด่านที่ 1 · สูตรคูณแม่หนึ่ง" — null = free-explore practice
+let TAP_START = [];      // cumulative tap offsets for the right-hand i/m alternation (Level 1 only)
 let midiAccess = null;
 
 // ── SCALE UTILS ──
@@ -1035,6 +1036,7 @@ function togglePractice(){
     levelLabel = null;
     document.getElementById('practice-status').style.display = 'none';
     document.getElementById('solfege-guide').style.display = 'none';
+    clearFingerGroup();
     btn.textContent = '🎯 โหมดฝึกทาย (สาย 1)';
     updateFretboard();
   }
@@ -1105,10 +1107,20 @@ function startLevel1(){
   foundFrets = [];
   practiceIdx = 0;
   tapCount = 0;
-  levelLabel = 'ด่านที่ 1 · สูตรคูณแม่หนึ่ง';
+  levelLabel = 'ด่านที่ 1 · สูตรคูณแม่หนึ่ง (ขึ้น-ลง)';
 
-  practiceTargets = buildLevel1Targets(0);
-  requiredTaps = [3,3,4,1,3,3,4,1];
+  // ขึ้น 8 ขั้น (เฟรตเดิม) แล้ววนกลับลง 8 ขั้น (เฟรตเดิมย้อนลำดับ) —
+  // จังหวะ (จำนวนครั้งที่ต้องกด) ใช้แพทเทิร์นเดียวกันซ้ำสองรอบ ตามที่
+  // ยืนยันไว้ว่าสูตรคูณแม่หนึ่งกำกับทั้งขาขึ้นและขาลง
+  const upFrets = buildLevel1Targets(0); // [8,10,0,1,3,5,7,8]
+  const downFrets = [...upFrets].reverse(); // [8,7,5,3,1,0,10,8]
+  practiceTargets = [...upFrets, ...downFrets];
+  requiredTaps = [3,3,4,1,3,3,4,1, 3,3,4,1,3,3,4,1];
+  // Cumulative tap-count offset per step, so the right-hand i/m
+  // alternation runs continuously across the WHOLE piece (never
+  // resetting per note-group) — matches real picking technique.
+  TAP_START = [];
+  (function(){ let acc=0; requiredTaps.forEach(t=>{ TAP_START.push(acc); acc+=t; }); })();
 
   document.getElementById('practice-toggle-btn').textContent = '✖ ออกจากโหมดฝึก';
   updateClock();
@@ -1138,6 +1150,17 @@ function checkPracticeGuess(note, si, f){
     if(!foundFrets.includes(f)) foundFrets.push(f);
     selectNote(note, si, f); // plays sound + flashes the clock + lights the fret
 
+    // 4th point of light — Level 1 only. Left hand slides one finger
+    // (นิ้ว 1) fret to fret since the notes aren't within one fixed
+    // hand span; right hand alternates i-m-i-m continuously across the
+    // WHOLE piece (never repeating the same finger twice running),
+    // which is the standard picking technique regardless of fret jumps.
+    if(levelLabel){
+      const need = requiredTaps[practiceIdx] || 1;
+      const absoluteTapIdx = (TAP_START[practiceIdx] || 0) + tapCount;
+      updateFingerGroup(si, f, need, absoluteTapIdx, tapCount);
+    }
+
     tapCount++;
     const need = requiredTaps[practiceIdx] || 1;
     if(tapCount >= need){
@@ -1151,6 +1174,93 @@ function checkPracticeGuess(note, si, f){
   } else {
     flashWrong(si, f);
   }
+}
+
+// ── POINT 4: FINGER GROUP (guitar) ──
+// Same "whole group floats at once, current tap highlighted" idea as
+// the piano version — left hand stays "1" the whole time (sliding,
+// no fixed hand position), right hand shows the running i/m
+// alternation for every tap in this note-group.
+function updateFingerGroup(si, f, need, groupStartAbsIdx, activeI){
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('fb-svg');
+  const g = document.getElementById(`fb-${si}-${f}`);
+  if(!svg || !g) return;
+  const circle = g.querySelector('.fb-circle');
+  if(!circle) return;
+  const x = parseFloat(circle.getAttribute('cx'));
+  const y = parseFloat(circle.getAttribute('cy'));
+
+  const key = `${si}-${f}-${need}-${groupStartAbsIdx}`;
+  let wrap = document.getElementById('finger-group-wrap');
+
+  if(!wrap || wrap.dataset.key !== key){
+    if(wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    wrap = document.createElementNS(svgNS,'g');
+    wrap.setAttribute('id','finger-group-wrap');
+    wrap.dataset.key = key;
+    wrap.style.opacity = '0';
+    svg.appendChild(wrap);
+
+    const spacing = 26;
+    const totalW = (need-1)*spacing;
+    for(let i=0;i<need;i++){
+      const dx = -totalW/2 + i*spacing;
+      const cell = document.createElementNS(svgNS,'g');
+      cell.setAttribute('class','fg-cell');
+      cell.setAttribute('data-i', i);
+      cell.setAttribute('transform', `translate(${dx},0)`);
+
+      const letter = (groupStartAbsIdx + i) % 2 === 0 ? 'i' : 'm';
+
+      const rC = document.createElementNS(svgNS,'circle');
+      rC.setAttribute('class','fg-r-circle');
+      rC.setAttribute('cy','-13');rC.setAttribute('r','9');rC.setAttribute('fill','#42a5f5');
+      cell.appendChild(rC);
+      const rT = document.createElementNS(svgNS,'text');
+      rT.setAttribute('y','-13');rT.setAttribute('text-anchor','middle');rT.setAttribute('dominant-baseline','central');
+      rT.setAttribute('font-family','Kanit,sans-serif');rT.setAttribute('font-weight','700');rT.setAttribute('fill','#fff');
+      rT.setAttribute('class','fg-r-text');rT.textContent = letter;
+      cell.appendChild(rT);
+
+      const lC = document.createElementNS(svgNS,'circle');
+      lC.setAttribute('class','fg-l-circle');
+      lC.setAttribute('cy','13');lC.setAttribute('r','9');lC.setAttribute('fill','#e91e63');
+      cell.appendChild(lC);
+      const lT = document.createElementNS(svgNS,'text');
+      lT.setAttribute('y','13');lT.setAttribute('text-anchor','middle');lT.setAttribute('dominant-baseline','central');
+      lT.setAttribute('font-family','Kanit,sans-serif');lT.setAttribute('font-weight','700');lT.setAttribute('fill','#fff');
+      lT.setAttribute('class','fg-l-text');lT.textContent = '1';
+      cell.appendChild(lT);
+
+      wrap.appendChild(cell);
+    }
+
+    requestAnimationFrame(()=>{
+      wrap.style.transition = 'opacity 0.15s ease, transform 0.3s ease';
+      wrap.style.opacity = '1';
+    });
+  }
+
+  wrap.setAttribute('transform', `translate(${x},${y-34})`);
+
+  wrap.querySelectorAll('.fg-cell').forEach(cell=>{
+    const i = Number(cell.getAttribute('data-i'));
+    const isActive = i === activeI;
+    const rC = cell.querySelector('.fg-r-circle'), lC = cell.querySelector('.fg-l-circle');
+    const rT = cell.querySelector('.fg-r-text'), lT = cell.querySelector('.fg-l-text');
+    const r = isActive ? 11 : 8;
+    const fs = isActive ? 13 : 10;
+    const op = isActive ? 1 : 0.4;
+    rC.setAttribute('r', r); lC.setAttribute('r', r);
+    rT.setAttribute('font-size', fs); lT.setAttribute('font-size', fs);
+    cell.style.opacity = op;
+  });
+}
+
+function clearFingerGroup(){
+  const wrap = document.getElementById('finger-group-wrap');
+  if(wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
 }
 
 function flashWrong(si, f){
@@ -1169,6 +1279,7 @@ function finishPracticeString(){
   if(levelLabel){
     // Level 1 is defined for สาย 1 only — celebrate and stop here.
     el.innerHTML = `🏆 <b>${levelLabel}</b> จบครบแล้วครับ! เก่งมากกก`;
+    clearFingerGroup();
     setTimeout(()=>{
       practiceMode = false;
       levelLabel = null;
@@ -1285,14 +1396,28 @@ function renderSolfegeGuide(){
   if(!div) return;
   if(!levelLabel){ div.style.display='none'; return; }
 
-  const curDeg = practiceIdx % SOLFEGE.length;
   const doneFully = practiceIdx >= practiceTargets.length;
+  // Look up the SCALE DEGREE of the actual note at the current target
+  // fret, rather than practiceIdx % 7 — that raw-index approach only
+  // worked for a one-directional walk. Once the pattern goes up AND
+  // back down, practiceIdx keeps climbing past 7 while the notes
+  // repeat/reverse, so the modulo pointed at the wrong syllable.
+  let curDeg = 0;
+  if(!doneFully){
+    const str = GUITAR_STRINGS[practiceString];
+    const fret = practiceTargets[practiceIdx];
+    const note = getNoteAtFret(str.open, fret);
+    const di = getScaleNotes(currentRoot, currentScale).indexOf(note);
+    curDeg = di >= 0 ? di : 0;
+  }
   div.style.display = 'flex';
   div.innerHTML = SOLFEGE.map((s,i)=>{
-    const isDone = i < curDeg || doneFully;
     const isCurrent = i === curDeg && !doneFully;
-    const bg = isCurrent ? '#ffa726' : (isDone ? 'rgba(255,167,38,0.25)' : 'rgba(255,255,255,0.06)');
-    const color = isCurrent ? '#1a1a2e' : (isDone ? '#ffa726' : 'rgba(255,255,255,0.4)');
+    // No more persistent "completed" trail — on an up-down pattern the
+    // same degree gets revisited on the way back, so just highlight
+    // whichever ONE syllable is current right now.
+    const bg = isCurrent ? '#ffa726' : 'rgba(255,255,255,0.06)';
+    const color = isCurrent ? '#1a1a2e' : 'rgba(255,255,255,0.4)';
     const weight = isCurrent ? '800' : '500';
     return `<div style="padding:5px 10px;border-radius:8px;background:${bg};color:${color};font-family:'Kanit',sans-serif;font-weight:${weight};font-size:13px">${s}</div>`;
   }).join('');
