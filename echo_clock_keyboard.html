@@ -128,6 +128,15 @@ body{
 <!-- ═══ PAYWALL / TRIAL LOCK ═══
      แก้ราคา/บัญชี/QR/โค้ดโปรโมชั่นได้ในสคริปต์ด้านล่าง มองหาคอมเมนต์
      "แก้ตรงนี้" ครับ -->
+<!-- URGENCY BANNER — เตือน 3 วันสุดท้ายก่อนหมดอายุทดลอง, กดสมัครได้ทันที -->
+<div id="urgency-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#ffa726;color:#1a1a2e;padding:10px 14px;z-index:450;align-items:center;justify-content:space-between;gap:10px;font-family:'Kanit',sans-serif;font-size:12px;font-weight:600">
+  <span id="urgency-text" style="flex:1"></span>
+  <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+    <button onclick="openPaywallToPayment()" style="background:#1a1a2e;color:#fff;border:none;border-radius:4px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">สมัครเลย</button>
+    <button onclick="dismissUrgencyBanner()" style="background:none;border:none;color:#1a1a2e;font-size:16px;cursor:pointer;line-height:1;padding:0 2px">✕</button>
+  </div>
+</div>
+
 <div id="paywall-overlay" style="display:none;position:fixed;inset:0;background:rgba(6,6,8,0.97);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-family:'Sarabun',sans-serif">
   <div id="paywall-choice" style="display:flex;flex-direction:column;align-items:center;gap:14px;max-width:320px">
     <div style="font-size:36px">⏰</div>
@@ -277,8 +286,29 @@ const LINE_OA_URL = 'https://line.me/R/ti/p/@musicsupport';
 // เมื่อลูกค้าโอนเงินแล้วส่งสลิปมาทาง LINE ก็ให้สร้างโค้ดใหม่แล้วส่งให้
 // ลูกค้าไปกรอกในช่องเดียวกันนี้ (ยังไม่มีระบบยืนยันการโอนเงินอัตโนมัติ)
 const PROMO_CODES = {
-  // 'CODE123': 180,
-  // 'CODE456': 365,
+  // ── ผูกกับสินค้า (ตั้งชื่อโค้ด = สินค้า + จำนวนวัน จะได้ย้อนดูทีหลัง
+  //    ได้ว่าสินค้าตัวไหนดันยอดแอปได้ดีที่สุด) ──
+  'UKULELE-90':  90,   // แถมกับอูคูเลเล่ (ราคาย่อมเยา) = 3 เดือน
+  'GUITAR-180':  180,  // แถมกับกีตาร์ระดับกลาง = 6 เดือน
+  'PREMIUM-365': 365,  // แถมกับเซ็ตพรีเมียม/ของแถมครบ = 1 ปีเต็ม
+
+  // ── ผูกกับบริการหลังการขาย ──
+  'SETUP-90':  90,   // ตั้งสาย/เซ็ตอัพกีตาร์ที่ร้าน
+  'REPAIR-90': 90,   // ซ่อมเครื่องดนตรี
+
+  // ── แคมเปญเฉพาะกิจ (ตั้งชื่อ = ชื่อแคมเปญ จะวัดได้ว่าแคมเปญไหนช่วยขายแอป) ──
+  'NENE2026-180':  180,  // แคมเปญ Gratitude Guitars รุ่นภูเก็ต (NENE First)
+  'SEKLOSO-90':    90,   // แคมเปญวันเกิด Sek Loso
+
+  // ── โรงเรียนดนตรี (Siam Sakon) — สิทธิพิเศษนักเรียน/รางวัลจากครู ──
+  'SCHOOL-365': 365,
+
+  // ── แนะนำเพื่อน (Referral) ──
+  // ข้อจำกัด: โค้ดแบบนี้ให้วันเฉพาะ "คนที่กรอก" เท่านั้น ยังไม่ให้วันคืน
+  // กลับไปยังคนแนะนำอัตโนมัติ (ต้องมีระบบหลังบ้านถึงจะทำสองทางได้)
+  // ใช้วิธีตั้งโค้ดเฉพาะคน เช่น REF-สมชาย, REF-มายด์ แล้วให้แอดมินคอย
+  // เพิ่มวันให้คนแนะนำเองด้วยมือไปก่อน
+  // 'REF-<ชื่อลูกค้า>': 30,
 };
 
 function getTrialStart(){
@@ -334,6 +364,39 @@ function showPaymentInfo(){
   document.getElementById('paywall-payment').style.display = 'flex';
 }
 
+// เปิดหน้าจ่ายเงินตรงๆ จากแบนเนอร์เตือน (ข้ามหน้าเลือก 2 ทาง ไปหน้า
+// รายละเอียดบัญชี/QR ทันที เพราะผู้ใช้กดปุ่ม "สมัครเลย" มาแล้ว)
+function openPaywallToPayment(){
+  document.getElementById('paywall-overlay').style.display = 'flex';
+  document.getElementById('paywall-choice').style.display = 'none';
+  document.getElementById('paywall-payment').style.display = 'flex';
+}
+
+function dismissUrgencyBanner(){
+  document.getElementById('urgency-banner').style.display = 'none';
+  sessionStorage.setItem('echo_urgency_dismissed', '1'); // ปิดแค่รอบนี้ เปิดแอปใหม่จะเห็นอีก
+}
+
+// เช็คว่าควรโชว์แบนเนอร์เตือนไหม — เฉพาะช่วง 3 วันสุดท้ายของการทดลองใช้
+// (ยังไม่หมดอายุเลย ไม่งั้นจะเจอหน้าล็อกเต็มจอซ้อนกันอยู่แล้ว, และยังไม่ได้
+// ปลดล็อกสมาชิกอยู่ก่อน)
+function updateUrgencyBanner(){
+  const banner = document.getElementById('urgency-banner');
+  if(!banner) return;
+  const now = Date.now();
+  const trialEnd = getTrialStart() + TRIAL_DAYS*24*60*60*1000;
+  if(now < getUnlockUntil()) return; // เป็นสมาชิกอยู่แล้ว ไม่ต้องเตือน
+  if(now >= trialEnd) return;        // หมดอายุแล้ว เจอหน้าล็อกเต็มจอแทน
+  const daysLeft = Math.ceil((trialEnd - now) / (24*60*60*1000));
+  if(daysLeft > 3) return;
+  if(sessionStorage.getItem('echo_urgency_dismissed')) return;
+  document.getElementById('urgency-text').textContent =
+    daysLeft <= 1
+      ? `⏰ วันนี้วันสุดท้ายแล้วครับ! สมัครวันนี้เพื่อเล่นต่อได้ไม่มีสะดุด`
+      : `⏰ เหลืออีก ${daysLeft} วันเท่านั้น! สมัครวันนี้เพื่อเล่นต่อได้ไม่มีสะดุด`;
+  banner.style.display = 'flex';
+}
+
 function redeemCode(){
   const input = document.getElementById('promo-code-input');
   const code = input.value.trim().toUpperCase();
@@ -345,6 +408,7 @@ function redeemCode(){
     msgEl.textContent = `ปลดล็อกสำเร็จ! ใช้งานได้อีก ${days} วันครับ`;
     msgEl.style.color = '#00E676';
     updateTrialBadge();
+    document.getElementById('urgency-banner').style.display = 'none';
     setTimeout(()=>{ document.getElementById('paywall-overlay').style.display = 'none'; }, 1200);
   } else {
     msgEl.textContent = 'โค้ดไม่ถูกต้องครับ ลองใหม่อีกครั้ง';
@@ -365,6 +429,7 @@ function initPaywall(){
   document.getElementById('pw-price-btn').textContent = `💳 ชำระเงิน ${PRICE_LABEL}`;
   document.getElementById('pw-payment-title').textContent = `ชำระเงิน ${PRICE_LABEL}`;
   updateTrialBadge();
+  updateUrgencyBanner();
   if(hasAccess()) return; // ยังอยู่ในช่วงทดลอง หรือปลดล็อกแล้ว
   document.getElementById('paywall-overlay').style.display = 'flex';
   document.getElementById('overlay').style.display = 'none'; // ล็อกไว้ก่อน ไม่ให้เข้าหน้า MIDI connect
