@@ -277,6 +277,18 @@ body{
 // ระบบกันโกงที่แน่นหนา เหมาะกับช่วงทดลอง/soft launch ก่อน)
 // ══════════════════════════════════════════════════════════════
 const TRIAL_DAYS = 9;
+
+// ── โหมดทดสอบ (สำหรับดูหน้าจอโดยไม่ต้องรอ 9 วันจริง) ──
+// พิมพ์ต่อท้าย URL ในเบราว์เซอร์ได้เลย ไม่กระทบข้อมูลจริง ยกเว้น "reset":
+//   ?test=expired  → จำลองว่าหมดอายุทดลองแล้ว (เห็นหน้าจอล็อก)
+//   ?test=warn     → จำลองว่าเหลืออีก 2 วัน (เห็นป้ายส้ม + แบนเนอร์เตือน)
+//   ?test=reset    → ล้างข้อมูลทดลอง/ปลดล็อกจริงทั้งหมด เริ่มนับ 9 วันใหม่
+// เอา ?test=... ออกจาก URL แล้วเปิดใหม่ = กลับสู่การทำงานปกติทันที
+const TEST_MODE = new URLSearchParams(window.location.search).get('test');
+if(TEST_MODE === 'reset'){
+  localStorage.removeItem('echo_trial_start');
+  localStorage.removeItem('echo_unlock_until');
+}
 const PRICE_LABEL = '฿1,900 / ปี'; // แก้ตรงนี้: ราคาที่แสดงบนปุ่ม
 const LINE_OA_URL = 'https://line.me/R/ti/p/@musicsupport';
 
@@ -312,6 +324,8 @@ const PROMO_CODES = {
 };
 
 function getTrialStart(){
+  if(TEST_MODE === 'expired') return Date.now() - (TRIAL_DAYS+1)*24*60*60*1000;
+  if(TEST_MODE === 'warn') return Date.now() - (TRIAL_DAYS-2)*24*60*60*1000;
   let start = localStorage.getItem('echo_trial_start');
   if(!start){
     start = Date.now().toString();
