@@ -169,21 +169,79 @@ body{
 </head>
 <body>
 
+<!-- ═══ PAYWALL / TRIAL LOCK ═══
+     แก้ราคา/บัญชี/QR/โค้ดโปรโมชั่นได้ในสคริปต์ด้านล่าง มองหาคอมเมนต์
+     "แก้ตรงนี้" ครับ -->
+<div id="paywall-overlay" style="display:none;position:fixed;inset:0;background:rgba(6,6,8,0.97);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-family:'Sarabun',sans-serif">
+  <div id="paywall-choice" style="display:flex;flex-direction:column;align-items:center;gap:14px;max-width:320px">
+    <div style="font-size:36px">⏰</div>
+    <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:800;color:#fff">ครบ 9 วันทดลองใช้แล้วครับ</div>
+    <div style="font-size:13px;color:#888;line-height:1.7">สมัครสมาชิก 1 ปี หรือกรอกโค้ดที่ได้รับ เพื่อใช้งานต่อครับ</div>
+    <button class="co-btn" onclick="showPaymentInfo()" id="pw-price-btn">💳 ชำระเงิน / ปี</button>
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+      <input id="promo-code-input" type="text" placeholder="มีโค้ดอยู่แล้ว? กรอกตรงนี้" style="padding:8px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.1);background:#14141A;color:#fff;font-family:'Share Tech Mono',monospace;text-align:center;text-transform:uppercase">
+      <button class="co-skip" onclick="redeemCode()">ยืนยันโค้ด</button>
+      <div id="promo-code-msg" style="font-size:12px;min-height:16px"></div>
+    </div>
+  </div>
+  <div id="paywall-payment" style="display:none;flex-direction:column;align-items:center;gap:12px;max-width:320px">
+    <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;color:#fff" id="pw-payment-title">ชำระเงิน</div>
+    <!-- แก้ตรงนี้: ใส่เลขบัญชีจริง -->
+    <div style="background:#14141A;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;font-size:13px;color:#ccc;line-height:1.8;text-align:left;width:100%">
+      <b>ธนาคาร:</b> [ใส่ชื่อธนาคาร]<br>
+      <b>เลขบัญชี:</b> [ใส่เลขบัญชี]<br>
+      <b>ชื่อบัญชี:</b> [ใส่ชื่อบัญชี]
+    </div>
+    <!-- แก้ตรงนี้: เอา div ด้านล่างออก แล้วใส่ <img src="qr.png" style="width:160px;height:160px"> แทน -->
+    <div style="width:160px;height:160px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;text-align:center;padding:8px">
+      [ใส่รูป QR พร้อมเพย์ตรงนี้]
+    </div>
+    <div style="font-size:12px;color:#888;line-height:1.7">โอนเงินแล้ว ส่งสลิปมาทาง LINE เพื่อรับโค้ดปลดล็อกครับ</div>
+    <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" style="text-decoration:none;width:100%">
+      <button class="co-btn" style="width:100%;background:#00c300">💬 ส่งสลิปทาง LINE @musicsupport</button>
+    </a>
+    <button class="co-skip" onclick="document.getElementById('paywall-payment').style.display='none';document.getElementById('paywall-choice').style.display='flex'">← กลับ</button>
+  </div>
+</div>
+
 <!-- CONNECT -->
 <div class="connect-overlay" id="overlay">
   <div style="font-size:36px">🎸</div>
   <div class="co-title">Echo Hub · Clock + Fretboard</div>
+  <!-- นี่คือปุ่ม "ดูวิธีเล่น" ก่อนเข้าเล่นจริง — แก้ชื่อคอร์สได้ที่นี่ -->
+  <button onclick="showInstructions()" style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:#ffa726;background:none;border:1px solid rgba(255,167,38,0.4);border-radius:3px;padding:5px 10px;cursor:pointer">🎓 ตัวอย่างจากคอร์ส Echo Program · แตะเพื่อดูวิธีเล่น</button>
   <div class="co-sub">เชื่อมต่อ MIDI Keyboard ครับ<br>หรือกดโน้ตบน Fretboard ได้เลยครับ</div>
   <button class="co-btn" id="midi-connect-btn" onclick="connectMIDI()">🔌 Connect MIDI ครับ</button>
   <button class="co-skip" onclick="closeOverlay()">🎸 ใช้ Fretboard เลยครับ</button>
+  <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" style="text-decoration:none;margin-top:4px">
+    <div style="font-family:'Kanit',sans-serif;font-size:11px;color:#42a5f5;border-bottom:1px solid #42a5f5">👉 ดูคอร์สเต็มที่ Echo Hub</div>
+  </a>
+</div>
+
+<!-- INSTRUCTIONS (เปิดจากป้ายสีส้มด้านบน) -->
+<div id="instructions-overlay" style="display:none;position:fixed;inset:0;background:rgba(6,6,8,0.97);z-index:350;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;font-family:'Sarabun',sans-serif">
+  <div style="max-width:320px;width:100%">
+    <div style="font-family:'Kanit',sans-serif;font-size:19px;font-weight:800;color:#fff;text-align:center;margin-bottom:2px">🎸 วิธีเล่นเบื้องต้น</div>
+    <div style="font-size:9px;color:#ffa726;text-align:center;margin-bottom:16px;font-family:'Share Tech Mono',monospace;letter-spacing:1px">ตัวอย่างจากคอร์ส Echo Program</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:16px">🎯</span><span style="font-size:13px;color:#ccc;line-height:1.6">กดโน้ตบนเฟรตบอร์ด เพื่อฟังเสียงและดูตำแหน่งของมันบนนาฬิกาเสียงพร้อมกัน</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:16px">🥇</span><span style="font-size:13px;color:#ccc;line-height:1.6">กด "ด่านที่ 1" เพื่อฝึกสูตรคูณแม่หนึ่ง มีนับจังหวะและเลขนิ้วมือขึ้นให้ดูด้วย</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:16px">🔊</span><span style="font-size:13px;color:#ccc;line-height:1.6">กด "ฟังตัวอย่าง" เพื่อฟังทำนองเล่นให้ฟังอัตโนมัติ</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:16px">🔌</span><span style="font-size:13px;color:#ccc;line-height:1.6">มีกีตาร์ MIDI จริงก็เชื่อมต่อเล่นได้เหมือนกันครับ</span></div>
+    </div>
+    <button class="co-btn" style="width:100%;margin-top:20px" onclick="startPlaying()">🎸 เริ่มเล่นเลยครับ</button>
+  </div>
 </div>
 
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="tb-logo">Echo <span>Hub</span> · Musical Advantage</div>
-  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt)">
-    <span class="midi-dot" id="midi-dot"></span>
-    <span id="midi-lbl">MIDI Off</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div id="trial-badge" style="display:none;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;border:1px solid;white-space:nowrap"></div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mt)">
+      <span class="midi-dot" id="midi-dot"></span>
+      <span id="midi-lbl">MIDI Off</span>
+    </div>
   </div>
 </div>
 
@@ -253,6 +311,115 @@ body{
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════════
+// ── TRIAL / PAYWALL SYSTEM ──
+// ทดลองใช้ฟรี 9 วันนับจากเปิดครั้งแรก (เก็บวันที่ไว้ในเครื่อง/เบราว์เซอร์
+// ผู้ใช้ — ล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่องแล้วนับใหม่ได้ ยังไม่ใช่
+// ระบบกันโกงที่แน่นหนา เหมาะกับช่วงทดลอง/soft launch ก่อน)
+// ══════════════════════════════════════════════════════════════
+const TRIAL_DAYS = 9;
+const PRICE_LABEL = '฿1,900 / ปี'; // แก้ตรงนี้: ราคาที่แสดงบนปุ่ม
+const LINE_OA_URL = 'https://line.me/R/ti/p/@musicsupport';
+
+// แก้ตรงนี้: เพิ่ม/แก้โค้ดโปรโมชั่นได้เลย — key = โค้ดที่ลูกค้าพิมพ์
+// (ไม่สนตัวพิมพ์เล็ก/ใหญ่), value = จำนวนวันที่จะปลดล็อกให้
+// ตัวอย่าง: โค้ดแถมตอนซื้อเครื่องดนตรี = 6 เดือน (180 วัน)
+// เมื่อลูกค้าโอนเงินแล้วส่งสลิปมาทาง LINE ก็ให้สร้างโค้ดใหม่แล้วส่งให้
+// ลูกค้าไปกรอกในช่องเดียวกันนี้ (ยังไม่มีระบบยืนยันการโอนเงินอัตโนมัติ)
+const PROMO_CODES = {
+  // 'CODE123': 180,
+  // 'CODE456': 365,
+};
+
+function getTrialStart(){
+  let start = localStorage.getItem('echo_trial_start');
+  if(!start){
+    start = Date.now().toString();
+    localStorage.setItem('echo_trial_start', start);
+  }
+  return Number(start);
+}
+
+function getUnlockUntil(){
+  const v = localStorage.getItem('echo_unlock_until');
+  return v ? Number(v) : 0;
+}
+
+function hasAccess(){
+  const now = Date.now();
+  const trialEnd = getTrialStart() + TRIAL_DAYS*24*60*60*1000;
+  return now < trialEnd || now < getUnlockUntil();
+}
+
+// แสดงป้าย DEMO + จำนวนวันที่เหลือ มุมขวาบนของหน้าจอ ให้เห็นชัดว่ากำลัง
+// ทดลองใช้อยู่ (หรือสมาชิกเหลืออีกกี่วัน หลังปลดล็อกแล้ว)
+function updateTrialBadge(){
+  const badge = document.getElementById('trial-badge');
+  if(!badge) return;
+  const now = Date.now();
+  const trialEnd = getTrialStart() + TRIAL_DAYS*24*60*60*1000;
+  const unlockUntil = getUnlockUntil();
+
+  let daysLeft, label, color;
+  if(now < unlockUntil){
+    daysLeft = Math.ceil((unlockUntil - now) / (24*60*60*1000));
+    label = `✅ สมาชิก · เหลือ ${daysLeft} วัน`;
+    color = '#00E676';
+  } else if(now < trialEnd){
+    daysLeft = Math.ceil((trialEnd - now) / (24*60*60*1000));
+    label = `🎬 DEMO · เหลือ ${daysLeft} วัน`;
+    color = daysLeft <= 3 ? '#ff9800' : '#42a5f5';
+  } else {
+    label = `🔒 หมดอายุทดลองแล้ว`;
+    color = '#ff5252';
+  }
+  badge.textContent = label;
+  badge.style.display = 'block';
+  badge.style.color = color;
+  badge.style.borderColor = color;
+}
+
+function showPaymentInfo(){
+  document.getElementById('paywall-choice').style.display = 'none';
+  document.getElementById('paywall-payment').style.display = 'flex';
+}
+
+function redeemCode(){
+  const input = document.getElementById('promo-code-input');
+  const code = input.value.trim().toUpperCase();
+  const days = PROMO_CODES[code];
+  const msgEl = document.getElementById('promo-code-msg');
+  if(days){
+    const newUntil = Date.now() + days*24*60*60*1000;
+    localStorage.setItem('echo_unlock_until', newUntil.toString());
+    msgEl.textContent = `ปลดล็อกสำเร็จ! ใช้งานได้อีก ${days} วันครับ`;
+    msgEl.style.color = '#00E676';
+    updateTrialBadge();
+    setTimeout(()=>{ document.getElementById('paywall-overlay').style.display = 'none'; }, 1200);
+  } else {
+    msgEl.textContent = 'โค้ดไม่ถูกต้องครับ ลองใหม่อีกครั้ง';
+    msgEl.style.color = '#ff5252';
+  }
+}
+
+function showInstructions(){
+  document.getElementById('instructions-overlay').style.display = 'flex';
+}
+
+function startPlaying(){
+  document.getElementById('instructions-overlay').style.display = 'none';
+  closeOverlay();
+}
+
+function initPaywall(){
+  document.getElementById('pw-price-btn').textContent = `💳 ชำระเงิน ${PRICE_LABEL}`;
+  document.getElementById('pw-payment-title').textContent = `ชำระเงิน ${PRICE_LABEL}`;
+  updateTrialBadge();
+  if(hasAccess()) return; // ยังอยู่ในช่วงทดลอง หรือปลดล็อกแล้ว
+  document.getElementById('paywall-overlay').style.display = 'flex';
+  document.getElementById('overlay').style.display = 'none'; // ล็อกไว้ก่อน ไม่ให้เข้าหน้า MIDI connect
+}
+
 // ── DATA ──
 const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const NOTE_COLORS = {
@@ -1432,6 +1599,7 @@ buildClock();
 buildFretboard();
 renderRhythmGuide();
 selectNote('C');
+initPaywall();
 </script>
 </body>
 </html>
