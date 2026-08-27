@@ -283,7 +283,8 @@ body{
       <div id="rhythm-guide" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"></div>
     </div>
     <div style="text-align:center;margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
-      <button class="scale-btn" id="demo-play-btn" style="border-color:#42a5f5;color:#42a5f5" onclick="playRhythmDemo()">🔊 ฟังตัวอย่าง</button>
+      <button class="scale-btn" id="demo-play-btn" style="border-color:#42a5f5;color:#42a5f5" onclick="toggleRhythmDemo()">🔊 ฟังตัวอย่าง</button>
+      <button class="scale-btn" id="tempo-btn" style="border-color:#9c27b0;color:#9c27b0" onclick="toggleTempo()">🎼 240 BPM</button>
       <button class="scale-btn" id="sound-btn" style="border-color:var(--gn);color:var(--gn)" onclick="toggleSound()">🔊 เสียงเปิด</button>
       <div style="display:flex;align-items:center;gap:6px">
         <span style="font-size:12px;color:var(--mt)">🔈</span>
@@ -1597,11 +1598,39 @@ function renderRhythmGuide(){
 // matching icon and the clock dot in time with the sound — a worked
 // example the kid can watch/listen to before trying it themselves.
 let demoPlaying = false;
+let demoStopRequested = false;
+let currentBPM = 240; // ค่าเริ่มต้น — สลับได้ที่ปุ่ม 🎼
+
+// คำนวณความยาวโน้ตแต่ละแบบจาก BPM จริง (สัดส่วน 4/4 เป๊ะ):
+// ดำ = 1 จังหวะ, ขาว = 2 จังหวะ (2 เท่าของดำ), กลม = 4 จังหวะ (4 เท่าของดำ)
+function getDUR(){
+  const q = 60000 / currentBPM;
+  return { q, h: q*2, w: q*4 };
+}
+
+function toggleTempo(){
+  currentBPM = currentBPM === 240 ? 60 : 240;
+  const btn = document.getElementById('tempo-btn');
+  if(btn) btn.textContent = `🎼 ${currentBPM} BPM`;
+}
+
+// ปุ่มเดียวทำหน้าที่ทั้งเริ่มและหยุด — ถ้ากำลังเล่นอยู่แล้วกดอีกที
+// จะหยุดทันที และครั้งถัดไปที่กด "เริ่ม" จะ**ย้อนกลับไปกลุ่มที่ 1 เสมอ**
+// (ฟังก์ชันไม่มีการจำตำแหน่งเดิมไว้ต่ออยู่แล้ว จึงเริ่มจากต้นทุกครั้งโดยธรรมชาติ)
+function toggleRhythmDemo(){
+  if(demoPlaying){
+    demoStopRequested = true;
+  } else {
+    playRhythmDemo();
+  }
+}
+
 async function playRhythmDemo(){
   if(demoPlaying) return;
   demoPlaying = true;
+  demoStopRequested = false;
   const btn = document.getElementById('demo-play-btn');
-  if(btn) btn.disabled = true;
+  if(btn) btn.textContent = '⏹ หยุด';
 
   // Each bar sits on ONE scale degree (ccc = C three times, ddd = D
   // three times, etc.) — matches the melody exactly: |ccc|ddd|eeee|f|
@@ -1609,12 +1638,14 @@ async function playRhythmDemo(){
   const scaleNotes = getScaleNotes(currentRoot, currentScale);
   const flatIcons = document.querySelectorAll('#rhythm-guide .rg-note');
   let iconIdx = 0;
-  const DUR = { q:450, h:900, w:1400 };
+  const DUR = getDUR();
 
+  outer:
   for(let bi=0; bi<RHYTHM_PATTERN.length; bi++){
     const bar = RHYTHM_PATTERN[bi];
     const pitch = scaleNotes[MELODY_DEGREES[bi] % scaleNotes.length];
     for(const type of bar){
+      if(demoStopRequested) break outer;
       const dur = DUR[type] || 450;
       selectNote(pitch, undefined, undefined, type); // sound + clock flash + needle + note-icon at position
       const icon = flatIcons[iconIdx];
@@ -1628,7 +1659,8 @@ async function playRhythmDemo(){
   }
 
   demoPlaying = false;
-  if(btn) btn.disabled = false;
+  demoStopRequested = false;
+  if(btn) btn.textContent = '🔊 ฟังตัวอย่าง';
 }
 
 // ── SOLFÈGE GUIDE (โด เร มี ฟา ซอล ลา ที) ──

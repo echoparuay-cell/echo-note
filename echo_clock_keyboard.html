@@ -237,7 +237,8 @@ body{
       <div id="rhythm-guide" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;max-width:100%;overflow:hidden"></div>
     </div>
     <div style="text-align:center;margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
-      <button class="scale-btn" id="demo-play-btn" style="border-color:#42a5f5;color:#42a5f5" onclick="playPianoDemo()">🔊 ฟังตัวอย่าง (ขึ้น-ลง)</button>
+      <button class="scale-btn" id="demo-play-btn" style="border-color:#42a5f5;color:#42a5f5" onclick="togglePianoDemo()">🔊 ฟังตัวอย่าง (ขึ้น-ลง)</button>
+      <button class="scale-btn" id="tempo-btn" style="border-color:#9c27b0;color:#9c27b0" onclick="toggleTempo()">🎼 240 BPM</button>
       <button class="scale-btn active" id="sound-btn" style="border-color:var(--gn);color:var(--gn)" onclick="toggleSound()">🔊 เสียงเปิด</button>
       <div style="display:flex;align-items:center;gap:6px">
         <span style="font-size:12px;color:var(--mt)">🔈</span>
@@ -1229,14 +1230,43 @@ function finishLevel1(){
 
 // ── DEMO PLAYBACK (ขึ้น-ลง, ตามจังหวะสูตรคูณแม่หนึ่ง) ──
 let demoPlaying = false;
+let demoStopRequested = false;
+let currentBPM = 240; // ค่าเริ่มต้น — สลับได้ที่ปุ่ม 🎼
+
+// คำนวณความยาวโน้ตแต่ละแบบจาก BPM จริง (สัดส่วน 4/4 เป๊ะ):
+// ดำ = 1 จังหวะ, ขาว = 2 จังหวะ (2 เท่าของดำ), กลม = 4 จังหวะ (4 เท่าของดำ)
+function getDUR(){
+  const q = 60000 / currentBPM;
+  return { q, h: q*2, w: q*4 };
+}
+
+function toggleTempo(){
+  currentBPM = currentBPM === 240 ? 60 : 240;
+  const btn = document.getElementById('tempo-btn');
+  if(btn) btn.textContent = `🎼 ${currentBPM} BPM`;
+}
+
+// ปุ่มเดียวทำหน้าที่ทั้งเริ่มและหยุด — ถ้ากำลังเล่นอยู่แล้วกดอีกที
+// จะหยุดทันที และครั้งถัดไปที่กด "เริ่ม" จะ**ย้อนกลับไปกลุ่มที่ 1 เสมอ**
+// (ฟังก์ชันไม่มีการจำตำแหน่งเดิมไว้ต่ออยู่แล้ว จึงเริ่มจากต้นทุกครั้งโดยธรรมชาติ)
+function togglePianoDemo(){
+  if(demoPlaying){
+    demoStopRequested = true;
+  } else {
+    playPianoDemo();
+  }
+}
+
 async function playPianoDemo(){
   if(demoPlaying) return;
   demoPlaying = true;
+  demoStopRequested = false;
   const btn = document.getElementById('demo-play-btn');
-  if(btn) btn.disabled = true;
+  if(btn) btn.textContent = '⏹ หยุด';
 
-  const DUR = { q:450, h:900, w:1400 };
+  const DUR = getDUR();
 
+  outer:
   for(let step=0; step<16; step++){
     const idx = LEVEL1_KEYIDX[step];
     const note = WHITE_NOTES[idx];
@@ -1244,6 +1274,7 @@ async function playPianoDemo(){
     const need = LEVEL1_TAPS[step];
     const rf = LEVEL1_RFINGER[step], lf = LEVEL1_LFINGER[step];
     for(let subI=0; subI<bar.length; subI++){
+      if(demoStopRequested) break outer;
       const type = bar[subI];
       const dur = DUR[type] || 450;
       selectNote(note, 'w', idx, type);
@@ -1255,7 +1286,8 @@ async function playPianoDemo(){
   clearFingerGroup();
 
   demoPlaying = false;
-  if(btn) btn.disabled = false;
+  demoStopRequested = false;
+  if(btn) btn.textContent = '🔊 ฟังตัวอย่าง (ขึ้น-ลง)';
 }
 
 // ── INIT ──
