@@ -194,7 +194,23 @@ body{
     </div>
   </div>
   <div id="paywall-payment" style="display:none;flex-direction:column;align-items:center;gap:12px;max-width:320px">
-    <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;color:#fff" id="pw-payment-title">ชำระเงิน</div>
+    <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;color:#fff">เลือกแพ็กเกจ</div>
+
+    <!-- แก้ตรงนี้: ปรับราคา/จำนวนวันได้ — data-days ใช้ตอนสร้างโค้ดให้ลูกค้าหลังยืนยันสลิป -->
+    <div id="pricing-tiers" style="display:flex;flex-direction:column;gap:8px;width:100%">
+      <button class="pricing-tier" data-price="690" data-label="3 เดือน" data-days="90" onclick="selectTier(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:#14141A;color:#fff;cursor:pointer;font-family:'Kanit',sans-serif">
+        <span>3 เดือน</span><b>฿690</b>
+      </button>
+      <button class="pricing-tier" data-price="1190" data-label="6 เดือน" data-days="180" onclick="selectTier(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:#14141A;color:#fff;cursor:pointer;font-family:'Kanit',sans-serif">
+        <span>6 เดือน</span><b>฿1,190</b>
+      </button>
+      <button class="pricing-tier" data-price="1900" data-label="1 ปี" data-days="365" onclick="selectTier(this)" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;border:1.5px solid #ffa726;background:rgba(255,167,38,0.1);color:#fff;cursor:pointer;font-family:'Kanit',sans-serif">
+        <span>1 ปี <span style="color:#ffa726;font-size:10px">คุ้มที่สุด</span></span><b>฿1,900</b>
+      </button>
+    </div>
+
+    <div style="font-family:'Kanit',sans-serif;font-size:14px;color:#ccc">ยอดที่ต้องโอน: <b style="color:#ffa726;font-size:18px" id="pw-selected-amount">฿1,900</b></div>
+
     <!-- แก้ตรงนี้: ใส่เลขบัญชีจริง -->
     <div style="background:#14141A;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;font-size:13px;color:#ccc;line-height:1.8;text-align:left;width:100%">
       <b>ธนาคาร:</b> [ใส่ชื่อธนาคาร]<br>
@@ -205,11 +221,12 @@ body{
     <div style="width:160px;height:160px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;text-align:center;padding:8px">
       [ใส่รูป QR พร้อมเพย์ตรงนี้]
     </div>
-    <div style="font-size:12px;color:#888;line-height:1.7">โอนเงินแล้ว ส่งสลิปมาทาง LINE เพื่อรับโค้ดปลดล็อกครับ</div>
+    <div style="font-size:12px;color:#888;line-height:1.7">โอนเงินแล้ว ส่งสลิป**พร้อมแจ้งแพ็กเกจที่เลือก**มาทาง LINE เพื่อรับโค้ดปลดล็อกครับ</div>
     <a href="https://line.me/R/ti/p/@musicsupport" target="_blank" style="text-decoration:none;width:100%">
       <button class="co-btn" style="width:100%;background:#00c300">💬 ส่งสลิปทาง LINE @musicsupport</button>
     </a>
     <button class="co-skip" onclick="document.getElementById('paywall-payment').style.display='none';document.getElementById('paywall-choice').style.display='flex'">← กลับ</button>
+
   </div>
 </div>
 
@@ -340,7 +357,8 @@ if(TEST_MODE === 'reset'){
   localStorage.removeItem('echo_trial_start');
   localStorage.removeItem('echo_unlock_until');
 }
-const PRICE_LABEL = '฿1,900 / ปี'; // แก้ตรงนี้: ราคาที่แสดงบนปุ่ม
+// ราคาแพ็กเกจตั้งอยู่ในการ์ดที่ id="pricing-tiers" ในส่วน HTML ด้านบน
+// (data-price / data-days ต่อการ์ด) — แก้ราคาตรงนั้นได้เลย ไม่ต้องแก้ตรงนี้
 const LINE_OA_URL = 'https://line.me/R/ti/p/@musicsupport';
 
 // แก้ตรงนี้: เพิ่ม/แก้โค้ดโปรโมชั่นได้เลย — key = โค้ดที่ลูกค้าพิมพ์
@@ -427,6 +445,7 @@ function updateTrialBadge(){
 function showPaymentInfo(){
   document.getElementById('paywall-choice').style.display = 'none';
   document.getElementById('paywall-payment').style.display = 'flex';
+  initDefaultTier();
 }
 
 // เปิดหน้าจ่ายเงินตรงๆ จากแบนเนอร์เตือน (ข้ามหน้าเลือก 2 ทาง ไปหน้า
@@ -435,6 +454,26 @@ function openPaywallToPayment(){
   document.getElementById('paywall-overlay').style.display = 'flex';
   document.getElementById('paywall-choice').style.display = 'none';
   document.getElementById('paywall-payment').style.display = 'flex';
+  initDefaultTier();
+}
+
+// เลือกแพ็กเกจ 1 ปีเป็นค่าเริ่มต้นทุกครั้งที่เปิดหน้านี้ (คุ้มที่สุด จูงใจ
+// ให้เลือกแพ็กเกจยาวไว้ก่อน แต่ยังกดเปลี่ยนเป็น 3/6 เดือนได้เสมอ)
+function initDefaultTier(){
+  const yearTier = document.querySelector('.pricing-tier[data-days="365"]');
+  if(yearTier) selectTier(yearTier);
+}
+
+function selectTier(btn){
+  document.querySelectorAll('.pricing-tier').forEach(b=>{
+    const isYear = b.getAttribute('data-days') === '365';
+    b.style.borderColor = isYear ? '#ffa726' : 'rgba(255,255,255,0.15)';
+    b.style.background = isYear ? 'rgba(255,167,38,0.1)' : '#14141A';
+  });
+  btn.style.borderColor = '#42a5f5';
+  btn.style.background = 'rgba(66,165,245,0.15)';
+  const price = Number(btn.getAttribute('data-price')).toLocaleString();
+  document.getElementById('pw-selected-amount').textContent = `฿${price}`;
 }
 
 function dismissUrgencyBanner(){
@@ -491,8 +530,7 @@ function startPlaying(){
 }
 
 function initPaywall(){
-  document.getElementById('pw-price-btn').textContent = `💳 ชำระเงิน ${PRICE_LABEL}`;
-  document.getElementById('pw-payment-title').textContent = `ชำระเงิน ${PRICE_LABEL}`;
+  document.getElementById('pw-price-btn').textContent = `💳 ดูแพ็กเกจ (เริ่ม ฿690)`;
   updateTrialBadge();
   updateUrgencyBanner();
   if(hasAccess()) return; // ยังอยู่ในช่วงทดลอง หรือปลดล็อกแล้ว
