@@ -119,9 +119,11 @@ footer{padding:22px 20px 40px;font-size:12px;color:var(--muted);text-align:cente
 
 <section id="book">
 <h2>จองเวลาเรียน</h2>
+<a class="btn btn-line" style="margin-bottom:10px" href="https://line.me/R/ti/p/@912hgahu" target="_blank" rel="noopener">ไม่อยากกรอก? ทัก LINE ได้เลย</a>
+<p class="note" style="margin:0 0 12px">หรือกรอกด้านล่าง ครูจะได้เตรียมเวลาให้ทันที</p>
 <form id="bookForm" novalidate>
 <div><label for="name">ชื่อผู้เรียน</label><input id="name" type="text" autocomplete="name" placeholder="ชื่อ-นามสกุล" required></div>
-<div><label for="phone">เบอร์โทร</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="08x-xxx-xxxx" required></div>
+<div><label for="phone">เบอร์โทร (ไม่บังคับ)</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="08x-xxx-xxxx"></div>
 <fieldset>
 <legend class="lbl">แพ็กเกจ</legend>
 <div class="choices">
@@ -143,6 +145,13 @@ footer{padding:22px 20px 40px;font-size:12px;color:var(--muted);text-align:cente
 <div class="err" id="err" role="alert"></div>
 <button class="btn btn-line" type="submit">ส่งการจองทาง LINE</button>
 <p class="after">กดแล้วแอป LINE จะเปิดพร้อมข้อความการจองให้อัตโนมัติ แค่กดส่ง ครูจะยืนยันเวลาเรียนและส่ง QR พร้อมเพย์ให้ทาง LINE</p>
+<div id="fallback" style="border:2px solid var(--line-green);border-radius:12px;padding:14px;display:none;gap:10px">
+<b>LINE ไม่เปิดขึ้นมาใช่ไหม?</b>
+<span class="note">บางครั้งแอป Facebook จะไม่ยอมเปิด LINE ให้ ทำ 2 ขั้นนี้แทนได้เลย</span>
+<button type="button" id="copyBtn" class="btn btn-primary" style="min-height:48px;font-size:15px">1. คัดลอกข้อความการจอง</button>
+<a class="btn btn-line" style="min-height:48px;font-size:15px" href="https://line.me/R/ti/p/@912hgahu" target="_blank" rel="noopener">2. เปิด LINE @912hgahu แล้ววางข้อความ</a>
+<span class="note" id="copied" role="status"></span>
+</div>
 </form>
 </section>
 
@@ -168,11 +177,20 @@ f.addEventListener('change',upd);
 f.addEventListener('submit',function(e){
 e.preventDefault();
 var name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),when=document.getElementById('when').value.trim();
-if(!name||!phone){err.textContent='กรุณากรอกชื่อและเบอร์โทร';return;}
+if(!name){err.textContent='กรุณากรอกชื่อผู้เรียน';return;}
 err.textContent='';
 var p=val('pkg').split('|');
-var msg='จองเรียน (ขอเวลา 1 ชั่วโมง)\nชื่อ: '+name+'\nเบอร์: '+phone+'\nแพ็กเกจ: '+p[0]+' '+p[1]+' บาท\nเรียน: '+val('mode')+'\nวันเวลาที่สะดวก: '+(when||'ให้ครูแนะนำ');
+var msg='จองเรียน (ขอเวลา 1 ชั่วโมง)\nชื่อ: '+name+(phone?'\nเบอร์: '+phone:'')+'\nแพ็กเกจ: '+p[0]+' '+p[1]+' บาท\nเรียน: '+val('mode')+'\nวันเวลาที่สะดวก: '+(when||'ให้ครูแนะนำ');
+lastMsg=msg;
+fb.style.display="grid";
+fb.scrollIntoView({behavior:'smooth',block:'center'});
 window.location.href='https://line.me/R/oaMessage/@912hgahu/?'+encodeURIComponent(msg);
+});
+var lastMsg='',fb=document.getElementById('fallback');
+document.getElementById('copyBtn').addEventListener('click',function(){
+var done=function(){document.getElementById('copied').textContent='คัดลอกแล้ว เปิด LINE แล้วกดวางในแชทได้เลย';};
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(lastMsg).then(done,function(){prompt('คัดลอกข้อความนี้',lastMsg);});}
+else{prompt('คัดลอกข้อความนี้',lastMsg);}
 });
 upd();
 })();
