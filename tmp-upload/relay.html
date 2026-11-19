@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>relay</title><p id=s>loading</p>
+<script>
+let blob=null;
+fetch('clip.mov').then(r=>r.blob()).then(b=>{blob=b;document.getElementById('s').textContent='ready '+b.size;});
+window.addEventListener('message',e=>{
+  if(e.data==='getVideo'){
+    const send=()=>blob?e.source.postMessage({video:blob,name:'HiddenCoupon_Guitar.mov'},'*'):setTimeout(send,300);
+    send();
+  }
+});
+</script>
