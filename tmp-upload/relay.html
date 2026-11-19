@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>relay</title><p id=s>loading</p>
+<script>
+let blob=null;
+fetch('piano-20s.mp4').then(r=>r.blob()).then(b=>{blob=b;document.getElementById('s').textContent='ready '+b.size;});
+window.addEventListener('message',e=>{
+  if(e.data==='getVideo'){
+    const send=()=>blob?e.source.postMessage({video:blob,name:'Piano_1Hr_20s.mp4'},'*'):setTimeout(send,300);
+    send();
+  }
+});
+</script>
